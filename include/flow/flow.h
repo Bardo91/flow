@@ -20,6 +20,6 @@
 //---------------------------------------------------------------------------------------------------------------------
 
 // Base classes
-#include <mico/flow/Block.h>
-#include <mico/flow/OutPipe.h>
-#include <mico/flow/Policy.h>
+#include <flow/Block.h>
+#include <flow/OutPipe.h>
+#include <flow/Policy.h>

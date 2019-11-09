@@ -25,7 +25,7 @@
 #include <gtest/gtest.h>
 #include <condition_variable> 
 
-using namespace mico;
+using namespace flow;
 
 TEST(stream_creation, stream_creation)  {
     Policy pol1({"i1"});
