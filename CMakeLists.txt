@@ -27,15 +27,10 @@ PROJECT(flow VERSION 0.0.1)
 ######			General config	   ######
 #########################################
 
+option(FLOW_USE_ROS			"Compile ROS dependent modules"	 			ON)
+
 option(BUILD_EXAMPLES "Compile examples" ON)
 option(BUILD_TESTS "Prepare tests" OFF)
-
-
-
-#########################################
-######			Dependencies       ######
-#########################################
-
 
 #########################################
 ######			Library	   ######
@@ -54,6 +49,42 @@ target_include_directories(${PROJECT_NAME} PUBLIC
 
 target_link_libraries(${PROJECT_NAME} LINK_PUBLIC pthread)
 
+#########################################
+######			Dependencies       ######
+#########################################
+
+find_package(NodeEditor)
+if(${NodeEditor_FOUND})
+  target_include_directories(${PROJECT_NAME} PUBLIC ${NodeEditor_INCLUDE_DIRS})
+  target_link_libraries(${PROJECT_NAME} LINK_PUBLIC ${NodeEditor_LIBRARIES})
+  target_compile_definitions(${PROJECT_NAME} PUBLIC HAS_QTNODEEDITOR)
+endif()
+
+
+#########################################
+# catking
+if(${FLOW_USE_ROS})
+	find_package(catkin COMPONENTS roscpp tf rosbag cv_bridge image_transport sensor_msgs geometry_msgs)
+	if(${catkin_FOUND})
+		catkin_package(
+			CATKIN_DEPENDS roscpp tf rosbag cv_bridge image_transport sensor_msgs geometry_msgs
+			INCLUDE_DIRS include
+		)
+		target_compile_definitions(${PROJECT_NAME} PUBLIC "FLOW_USE_ROS")
+
+		target_include_directories(${PROJECT_NAME} PUBLIC ${catkin_INCLUDE_DIRS})
+		target_link_libraries(${PROJECT_NAME} LINK_PUBLIC ${catkin_LIBRARIES} )
+		add_dependencies(${PROJECT_NAME} ${catkin_EXPORTED_TARGETS})
+		
+		target_include_directories(${PROJECT_NAME}  PUBLIC ${catkin_INCLUDE_DIRS})
+		target_link_libraries(${PROJECT_NAME}  LINK_PUBLIC  ${catkin_LIBRARIES})
+		target_include_directories(${PROJECT_NAME}  PUBLIC ${rosbag_INCLUDE_DIRS})
+		target_link_libraries(${PROJECT_NAME}  LINK_PUBLIC  ${rosbag_LIBRARIES})
+		MESSAGE(STATUS "Found ROS Catkin")
+	else()
+		set(FLOW_USE_ROS OFF)
+	endif()
+endif(${FLOW_USE_ROS})
 
 #########################################
 ######			Documentation	   ######
@@ -71,10 +102,20 @@ endif(DOXYGEN_FOUND)
 ######			Test				######
 #########################################
 
-find_package(GTest)
-if(${GTest_FOUND})
-  enable_testing()
-  add_subdirectory(tests)
+if(${BUILD_TESTS})
+  find_package(GTest)
+  if(${GTest_FOUND})
+    enable_testing()
+    add_subdirectory(tests)
+  endif()
+endif()
+
+#########################################
+######			Test				######
+#########################################
+
+if(${BUILD_EXAMPLES})
+  add_subdirectory(examples)
 endif()
 
 #########################################
