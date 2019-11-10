@@ -21,7 +21,7 @@
 //---------------------------------------------------------------------------------------------------------------------
 
 
-#include <flow/visual/data_types/StreamerPipeInfo.hpp>
+#include <flow/visual/data_types/StreamerPipeInfo.h>
 #include <QJsonArray>
 
 namespace flow{
