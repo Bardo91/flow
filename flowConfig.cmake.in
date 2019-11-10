@@ -1,6 +1,8 @@
 get_filename_component(flow_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
 include(CMakeFindDependencyMacro)
 
+find_dependency(NodeEditor)
+
 if(NOT TARGET flow::flow)
     include("${flow_CMAKE_DIR}/flowTargets.cmake")
 endif()
