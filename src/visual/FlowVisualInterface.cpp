@@ -23,7 +23,7 @@
 
 #ifdef HAS_QTNODEEDITOR
 
-#include <flow/visual/Slam4KidsManager.h>
+#include <flow/visual/FlowVisualInterface.h>
 
 #include <nodes/NodeData>
 #include <nodes/Node>
@@ -49,7 +49,7 @@
 #endif
 
 #include <flow/flow.h>
-#include <flow/visual/blocks/MicoFlowBlock.h>
+#include <flow/visual/blocks/FlowVisualBlock.h>
 #include <flow/visual/code_generation/CodeGenerator.h>
 
 
@@ -57,7 +57,7 @@ using QtNodes::FlowView;
 using QtNodes::FlowScene;
 
 namespace flow{
-    int Slam4KidsManager::init(int _argc, char** _argv){
+    int FlowVisualInterface::init(int _argc, char** _argv){
         kids_app = new QApplication(_argc, _argv);
 
         #ifdef FLOW_USE_ROS
@@ -75,79 +75,87 @@ namespace flow{
 
         QVBoxLayout *l = new QVBoxLayout(&mainWidget);
         l->addWidget(menuBar);
-        auto scene = new FlowScene(     registerDataModels(), 
-                                        &mainWidget
-                                        );
 
-        l->addWidget(new FlowView(scene));
-        l->setContentsMargins(0, 0, 0, 0);
-        l->setSpacing(0);
+        if(registerFn_ != nullptr){
+            auto scene = new FlowScene(     registerDataModels(), 
+                                            &mainWidget
+                                            );
 
-        QObject::connect(saveAction, &QAction::triggered, scene, &FlowScene::save);
+            l->addWidget(new FlowView(scene));
+            l->setContentsMargins(0, 0, 0, 0);
+            l->setSpacing(0);
 
-        QObject::connect(loadAction, &QAction::triggered, scene, &FlowScene::load);
+            QObject::connect(saveAction, &QAction::triggered, scene, &FlowScene::save);
 
-
-        QObject::connect(configureAll, &QAction::triggered, [&](){
-            auto nodes = scene->allNodes();
-
-            for(auto node:nodes){
-                NodeDataModel* dataModel = node->nodeDataModel();
-                // This conversion is not safe but, all nodes in slam4kids are ConfigurableBlocks
-                auto d_ptr = dynamic_cast<ConfigurableBlock*>(dataModel);
-                if(d_ptr != nullptr)
-                    d_ptr->configure();
-            }
-
-        });
-
-        QObject::connect(generateCode, &QAction::triggered, [](){
-            QString fileName = QFileDialog::getOpenFileName(nullptr,
-                                                "Select scene to save",
-                                                QDir::homePath(),
-                                                "Flow Scene Files (*.flow)");
-
-            if (!QFileInfo::exists(fileName))
-            return;
-
-            QFile file(fileName);
-
-            if (!file.open(QIODevice::ReadOnly))
-            return;
-
-            std::string cppFile = fileName.toStdString().substr(0, fileName.size()-4) + "cpp";
-            auto lastBar = cppFile.find_last_of('/');
-            std::string cppFolder = cppFile.substr(0, lastBar);
-            std::string cmakeFilePath = cppFolder + "/CMakeLists.txt";
+            QObject::connect(loadAction, &QAction::triggered, scene, &FlowScene::load);
 
 
-            QByteArray wholeFile = file.readAll();
-            QJsonObject const jsonDocument = QJsonDocument::fromJson(wholeFile).object();
-            CodeGenerator::parseScene(cppFile,jsonDocument);
-            CodeGenerator::generateCmake(cmakeFilePath, cppFile);
-            CodeGenerator::compile(cppFolder);
+            QObject::connect(configureAll, &QAction::triggered, [&](){
+                auto nodes = scene->allNodes();
+
+                for(auto node:nodes){
+                    NodeDataModel* dataModel = node->nodeDataModel();
+                    // This conversion is not safe but, all nodes in slam4kids are ConfigurableBlocks
+                    auto d_ptr = dynamic_cast<ConfigurableBlock*>(dataModel);
+                    if(d_ptr != nullptr)
+                        d_ptr->configure();
+                }
+
+            });
+
+            QObject::connect(generateCode, &QAction::triggered, [](){
+                QString fileName = QFileDialog::getOpenFileName(nullptr,
+                                                    "Select scene to save",
+                                                    QDir::homePath(),
+                                                    "Flow Scene Files (*.flow)");
+
+                if (!QFileInfo::exists(fileName))
+                return;
+
+                QFile file(fileName);
+
+                if (!file.open(QIODevice::ReadOnly))
+                return;
+
+                std::string cppFile = fileName.toStdString().substr(0, fileName.size()-4) + "cpp";
+                auto lastBar = cppFile.find_last_of('/');
+                std::string cppFolder = cppFile.substr(0, lastBar);
+                std::string cmakeFilePath = cppFolder + "/CMakeLists.txt";
 
 
-        });
+                QByteArray wholeFile = file.readAll();
+                QJsonObject const jsonDocument = QJsonDocument::fromJson(wholeFile).object();
+                CodeGenerator::parseScene(cppFile,jsonDocument);
+                CodeGenerator::generateCmake(cmakeFilePath, cppFile);
+                CodeGenerator::compile(cppFolder);
 
-        mainWidget.setWindowTitle("Node-based flow editor");
-        mainWidget.resize(800, 600);
-        mainWidget.showNormal();
 
-        return kids_app->exec();
+            });
+
+            mainWidget.setWindowTitle("Node-based flow editor");
+            mainWidget.resize(800, 600);
+            mainWidget.showNormal();
+
+            return kids_app->exec();
+        }else{
+            std::cout << "No register function has been added to FlowVisualInterface" << std::endl;
+            return false;
+        }
     }
 
 
-    void  Slam4KidsManager::quit(){
-        kids_app->quit();
+    void  FlowVisualInterface::quit(){
+        if(kids_app != nullptr){
+            kids_app->quit();
+        }
     }
 
 
-    void Slam4KidsManager::setNodeRegisterFn(std::function<void(std::shared_ptr<QtNodes::DataModelRegistry> &_registry)> _fn){
+    void FlowVisualInterface::setNodeRegisterFn(std::function<void(std::shared_ptr<QtNodes::DataModelRegistry> &_registry)> _fn){
         registerFn_ = _fn;
     }
 
-    std::shared_ptr<QtNodes::DataModelRegistry> Slam4KidsManager::registerDataModels(){
+    std::shared_ptr<QtNodes::DataModelRegistry> FlowVisualInterface::registerDataModels(){
         auto registry = std::make_shared<QtNodes::DataModelRegistry>();
 
         registerFn_(registry);

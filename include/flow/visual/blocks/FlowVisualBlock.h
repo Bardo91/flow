@@ -110,6 +110,6 @@ namespace flow{
 }
 
 
-#include <flow/visual/blocks/MicoFlowBlock.inl>
+#include <flow/visual/blocks/FlowVisualBlock.inl>
 
 #endif

@@ -21,8 +21,8 @@
 //---------------------------------------------------------------------------------------------------------------------
 
 
-#ifndef FLOW_VISUAL_SLAM4KIDSMANAGER_H_
-#define FLOW_VISUAL_SLAM4KIDSMANAGER_H_
+#ifndef FLOW_VISUAL_FLOWVISUALINTERFACE_H_
+#define FLOW_VISUAL_FLOWVISUALINTERFACE_H_
 
 #ifdef HAS_QTNODEEDITOR
 
@@ -33,8 +33,11 @@
 
 namespace flow{
 
-    class Slam4KidsManager{
+    class FlowVisualInterface{
         public:
+            typedef std::function<void(std::shared_ptr<QtNodes::DataModelRegistry> &_registry)> RegistryFnType_;
+            typedef std::shared_ptr<QtNodes::DataModelRegistry> RegistryType_;
+
             int init(int _argc, char** _argv);
             void quit();
 
@@ -47,7 +50,7 @@ namespace flow{
             QApplication *kids_app;
 
             std::shared_ptr<QtNodes::DataModelRegistry> nodeRegistry_;
-            std::function<void(std::shared_ptr<QtNodes::DataModelRegistry> &_registry)> registerFn_;
+            std::function<void(std::shared_ptr<QtNodes::DataModelRegistry> &_registry)> registerFn_ = nullptr;
 
     };
 }
