@@ -128,7 +128,7 @@ namespace flow{
         cmakeFile << "find_package(mico REQUIRED)" << std::endl;
 
         cmakeFile << "add_executable(" +exePath + " " +_cppName+")" << std::endl;
-        cmakeFile << "target_link_libraries("+exePath+" LINK_PRIVATE mico::mico-base mico::mico-flow mico::mico-kids)" << std::endl;
+        cmakeFile << "target_link_libraries("+exePath+" LINK_PRIVATE mico::mico-base mico::mico-flow)" << std::endl;
 
     }
 
