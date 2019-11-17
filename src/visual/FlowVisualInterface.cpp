@@ -103,7 +103,7 @@ namespace flow{
 
             });
 
-            QObject::connect(generateCode, &QAction::triggered, [](){
+            QObject::connect(generateCode, &QAction::triggered, [&](){
                 QString fileName = QFileDialog::getOpenFileName(nullptr,
                                                     "Select scene to save",
                                                     QDir::homePath(),
@@ -125,11 +125,9 @@ namespace flow{
 
                 QByteArray wholeFile = file.readAll();
                 QJsonObject const jsonDocument = QJsonDocument::fromJson(wholeFile).object();
-                CodeGenerator::parseScene(cppFile,jsonDocument);
-                CodeGenerator::generateCmake(cmakeFilePath, cppFile);
+                CodeGenerator::parseScene(cppFile,jsonDocument, customIncludes_);
+                CodeGenerator::generateCmake(cmakeFilePath, cppFile, customFinds_, customLinks_);
                 CodeGenerator::compile(cppFolder);
-
-
             });
 
             mainWidget.setWindowTitle("Node-based flow editor");
@@ -153,6 +151,15 @@ namespace flow{
 
     void FlowVisualInterface::setNodeRegisterFn(std::function<void(std::shared_ptr<QtNodes::DataModelRegistry> &_registry)> _fn){
         registerFn_ = _fn;
+    }
+
+    void FlowVisualInterface::setCodeGeneratorCustoms(   const std::vector<std::string> &_customIncludes, 
+                                                        const std::vector<std::string> &_customFinds, 
+                                                        const std::vector<std::string> &_customLinks ){
+
+        customIncludes_ = _customIncludes;
+        customFinds_ = _customFinds;
+        customLinks_ = _customLinks;
     }
 
     std::shared_ptr<QtNodes::DataModelRegistry> FlowVisualInterface::registerDataModels(){

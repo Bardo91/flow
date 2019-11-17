@@ -42,7 +42,9 @@ namespace flow{
             void quit();
 
             void setNodeRegisterFn(std::function<void(std::shared_ptr<QtNodes::DataModelRegistry> &_registry)> _fn);
-        
+            void setCodeGeneratorCustoms(   const std::vector<std::string> &_customIncludes = {}, 
+                                            const std::vector<std::string> &_customFinds = {}, 
+                                            const std::vector<std::string> &_customLinks = {} );
         private:
             std::shared_ptr<QtNodes::DataModelRegistry> registerDataModels();
 
@@ -52,6 +54,10 @@ namespace flow{
             std::shared_ptr<QtNodes::DataModelRegistry> nodeRegistry_;
             std::function<void(std::shared_ptr<QtNodes::DataModelRegistry> &_registry)> registerFn_ = nullptr;
 
+            // Code generator extra information
+            std::vector<std::string> customIncludes_ = {};
+            std::vector<std::string> customFinds_ = {};
+            std::vector<std::string> customLinks_ = {};
     };
 }
 

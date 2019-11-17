@@ -34,11 +34,11 @@
 
 namespace flow{
     // Initialize dictionary
-    void CodeGenerator::parseScene(std::string _cppFile, QJsonObject const &_scene){
+    void CodeGenerator::parseScene(std::string _cppFile, QJsonObject const &_scene, const std::vector<std::string> &_customIncludes){
         std::ofstream genMain(_cppFile);
     
         // Write preamble
-        writeInit(genMain);
+        writeInit(genMain, _customIncludes);
         
         genMain << "" << std::endl;
         genMain << "\t// Creating blocks" << std::endl;
@@ -116,7 +116,10 @@ namespace flow{
         writeEnd(genMain);
     }
 
-    void CodeGenerator::generateCmake(std::string _cmakeFilePath, std::string _cppName){
+    void CodeGenerator::generateCmake(  std::string _cmakeFilePath, 
+                                        std::string _cppName, 
+                                        const std::vector<std::string> &_customFinds, 
+                                        const std::vector<std::string> &_customLinks){
         std::ofstream cmakeFile(_cmakeFilePath);
 
         auto exePath = _cppName.substr(0, _cppName.size()-4); // Remove cpp
@@ -125,10 +128,17 @@ namespace flow{
 
         cmakeFile << "cmake_minimum_required (VERSION 3.12 FATAL_ERROR)" << std::endl;
         cmakeFile << "project(mico VERSION 1.0 LANGUAGES C CXX)" << std::endl;
-        cmakeFile << "find_package(mico REQUIRED)" << std::endl;
+        
+        for(auto &cFinds: _customFinds){
+            cmakeFile << "find_package(" + cFinds + ")" << std::endl;
+        }
+
 
         cmakeFile << "add_executable(" +exePath + " " +_cppName+")" << std::endl;
-        cmakeFile << "target_link_libraries("+exePath+" LINK_PRIVATE mico::mico-base mico::mico-flow)" << std::endl;
+
+        for(auto &cLinks: _customLinks){
+            cmakeFile <<  "target_link_libraries(" << exePath << " LINK_PRIVATE "<< cLinks <<")" << std::endl;
+        }
 
     }
 
@@ -139,7 +149,7 @@ namespace flow{
     }
 
 
-    void CodeGenerator::writeInit(std::ofstream &_file){
+    void CodeGenerator::writeInit(std::ofstream &_file, const std::vector<std::string> &_customIncludes){
 
         _file <<    "//---------------------------------------------------------------------------------------------------------------------"<< std::endl;
         _file <<    "//  flow"<< std::endl;
@@ -163,9 +173,13 @@ namespace flow{
         _file <<    "//---------------------------------------------------------------------------------------------------------------------"<< std::endl;
 
         _file <<    ""                                      << std::endl;
-        _file <<    "// MICO AUTO-GENERATED FILE"           << std::endl;
+        _file <<    "// FLOW AUTO-GENERATED FILE"           << std::endl;
         _file <<    ""                                      << std::endl;
-        _file <<    "#include <mico/flow/mico_flow.h>"           << std::endl;
+        
+        for(auto &cIncludes: _customIncludes){
+            _file <<    "#include <" << cIncludes << ">"      << std::endl;
+        }
+
         _file <<    "#include <csignal>"                    << std::endl;
         _file <<    ""                                      << std::endl;
         _file <<    "bool run = true;"                      << std::endl;
@@ -175,7 +189,6 @@ namespace flow{
         _file <<    "    }"                                 << std::endl;
         _file <<    "}"                                     << std::endl;
         _file <<    ""                                      << std::endl;
-        _file <<    "using namespace flow;"                 << std::endl;
         _file <<    "using namespace flow;"                 << std::endl;
         _file <<    ""                                      << std::endl;
         _file <<    "int main(int _argc, char ** _argv){"   << std::endl;
