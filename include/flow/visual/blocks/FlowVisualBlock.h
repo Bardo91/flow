@@ -25,6 +25,8 @@
 
 #include <flow/flow.h>
 
+#include <flow/visual/blocks/ParameterWidget.h>
+
 #include <nodes/NodeDataModel>
 #include <nodes/Connection>
 
@@ -100,7 +102,7 @@ namespace flow{
     private:
         Block_ *flowBlock_;
         //std::unordered_map<std::string, OutPipe*> connectedPipes_;
-        std::vector<QLineEdit*> configLabels_;
+        std::vector<ParameterWidget*> configParams_;
         QVBoxLayout *configsLayout_  = nullptr;
         QGroupBox *configBox_ = nullptr;
         QPushButton *configButton_  = nullptr;

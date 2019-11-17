@@ -1,5 +1,6 @@
+
 //---------------------------------------------------------------------------------------------------------------------
-//  FLOW
+//  flow
 //---------------------------------------------------------------------------------------------------------------------
 //  Copyright 2018 Pablo Ramon Soria (a.k.a. Bardo91) pabramsor@gmail.com
 //---------------------------------------------------------------------------------------------------------------------
@@ -19,8 +20,42 @@
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
 
-// Base classes
-#include <flow/Block.h>
-#include <flow/OutPipe.h>
-#include <flow/Policy.h>
+#include <flow/visual/blocks/ParameterWidget.h>
+
+//---------------------------------------------------------------------------------------------------------------------
+ParameterWidget::ParameterWidget(   const std::string _label, 
+                                    const std::string _default, 
+                                    QWidget *_parent, 
+                                    const char *_name){
+    label_ = new QLabel(_label.c_str());
+
+    value_ = new QLineEdit();
+    value_->setText(_default.c_str());
+
+    this->addWidget(label_);
+    this->addWidget(value_);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+ParameterWidget::~ParameterWidget(){
+    delete layout_;
+    delete label_;
+    delete value_;
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+std::string ParameterWidget::label() const{
+    return label_->text().toStdString();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+void ParameterWidget::value(const std::string &_value){
+    value_->setText(_value.c_str());
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+std::string ParameterWidget::value() const{
+    return value_->text().toStdString();
+}
+
 

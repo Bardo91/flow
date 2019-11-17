@@ -1,5 +1,6 @@
+
 //---------------------------------------------------------------------------------------------------------------------
-//  FLOW
+//  flow
 //---------------------------------------------------------------------------------------------------------------------
 //  Copyright 2018 Pablo Ramon Soria (a.k.a. Bardo91) pabramsor@gmail.com
 //---------------------------------------------------------------------------------------------------------------------
@@ -19,8 +20,35 @@
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
 
-// Base classes
-#include <flow/Block.h>
-#include <flow/OutPipe.h>
-#include <flow/Policy.h>
+#ifndef FLOW_VISUAL_BLOCKS_PARAMETERWIDGET_H_
+#define FLOW_VISUAL_BLOCKS_PARAMETERWIDGET_H_
 
+#include <QWidget>
+#include <QHBoxLayout>
+#include <QLineEdit>
+#include <QLabel>
+
+
+class ParameterWidget: public QHBoxLayout{
+    Q_OBJECT
+public:
+    ParameterWidget(const std::string _label, 
+                    const std::string _default, 
+                    QWidget *_parent = nullptr, 
+                    const char *_name = nullptr);
+    ~ParameterWidget();
+    
+    std::string label() const;
+
+    void value(const std::string &_value);
+    std::string value() const;
+
+
+private:
+    QHBoxLayout * layout_;
+    QLabel   * label_;
+    QLineEdit   * value_;
+
+};
+
+#endif

@@ -35,8 +35,8 @@ namespace flow{
             configBox_ = new QGroupBox("Configuration");
             configBox_->setLayout(configsLayout_);
             for(auto &param: flowBlock_->parameters()){
-                configLabels_.push_back(new QLineEdit(param.c_str()));
-                configsLayout_->addWidget(configLabels_.back());
+                configParams_.push_back(new ParameterWidget(param.c_str(), ""));
+                configsLayout_->addLayout(configParams_.back());
             }
             configButton_ = new QPushButton("Configure");
             configsLayout_->addWidget(configButton_);
@@ -72,7 +72,7 @@ namespace flow{
         unsigned counter = 0;
         QJsonObject jsonParams;
         for(auto &param: flowBlock_->parameters()){
-            jsonParams[param.c_str()] =  configLabels_[counter]->text();
+            jsonParams[param.c_str()] =  configParams_[counter]->value().c_str();
             counter++;
         }
         modelJson["params"] = jsonParams;
@@ -105,7 +105,7 @@ namespace flow{
         std::unordered_map<std::string, std::string> params;
         int counter = 0; 
         for(auto &param: flowBlock_->parameters()){
-            params[param] =  configLabels_[counter]->text().toStdString();
+            params[param] =  configParams_[counter]->value();
             counter++;
         }
 
@@ -120,8 +120,7 @@ namespace flow{
             QJsonValue v = _json["params"].toObject()[param.c_str()];
             if (!v.isUndefined()) {
                 QString strNum = v.toString();
-
-                configLabels_[counter]->setText(strNum);
+                configParams_[counter]->value(strNum.toStdString());
             }
             counter++;
         }
