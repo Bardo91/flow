@@ -45,7 +45,6 @@ public:
 
 
 private:
-    QHBoxLayout * layout_;
     QLabel   * label_;
     QLineEdit   * value_;
 

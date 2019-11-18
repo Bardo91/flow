@@ -38,7 +38,6 @@ ParameterWidget::ParameterWidget(   const std::string _label,
 
 //---------------------------------------------------------------------------------------------------------------------
 ParameterWidget::~ParameterWidget(){
-    delete layout_;
     delete label_;
     delete value_;
 }
