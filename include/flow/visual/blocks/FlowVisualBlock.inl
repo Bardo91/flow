@@ -23,6 +23,8 @@
 
 #include <flow/visual/data_types/StreamerPipeInfo.h>
 #include <QJsonArray>
+#include <QIcon>
+
 
 namespace flow{
 
@@ -38,11 +40,19 @@ namespace flow{
                 configParams_.push_back(new ParameterWidget(param.c_str(), ""));
                 configsLayout_->addLayout(configParams_.back());
             }
-            configButton_ = new QPushButton("Configure");
+            configButton_ = new QToolButton();
+            configButton_->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+            configButton_->setLayoutDirection(Qt::RightToLeft);
+            configButton_->setIcon(QIcon("/usr/share/icons/Humanity/actions/128/help-contents.svg"));
+            configButton_->setText("Configure");
             configsLayout_->addWidget(configButton_);
             connect(configButton_, &QPushButton::clicked, this, [this]() {
                 this->configure();
             });
+            //Configure configure states
+            configStateIcon_ = new QIcon();
+
+
 
             if(HasAutoLoop_){
                 streamActionButton_ = new QCheckBox("Run");
@@ -130,9 +140,9 @@ namespace flow{
     template<typename Block_, bool HasAutoLoop_>
     inline void FlowVisualBlock<Block_,HasAutoLoop_>::configure(){
         if(flowBlock_->configure(this->extractParamsGui())){
-            std::cout << "Configured block: " << flowBlock_->name() << std::endl;
+            configButton_->setIcon(QIcon("/usr/share/icons/Humanity/actions/48/dialog-apply.svg"));
         }else{
-            std::cout << "Error configuring block: " << flowBlock_->name() << std::endl;
+            configButton_->setIcon(QIcon("/usr/share/icons/Humanity/actions/64/process-stop.svg"));
         }
     }
 

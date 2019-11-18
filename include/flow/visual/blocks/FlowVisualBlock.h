@@ -36,6 +36,7 @@
 #include <QVBoxLayout>
 #include <QPushButton>
 #include <QCheckBox>
+#include <QToolButton>
 
 #include <iostream>
 
@@ -46,8 +47,8 @@ using QtNodes::PortIndex;
 using QtNodes::PortType;
 using QtNodes::Connection;
 
-namespace flow{
 
+namespace flow{
     /// Forward declaration
     class OutPipe;
 
@@ -105,9 +106,9 @@ namespace flow{
         std::vector<ParameterWidget*> configParams_;
         QVBoxLayout *configsLayout_  = nullptr;
         QGroupBox *configBox_ = nullptr;
-        QPushButton *configButton_  = nullptr;
+        QToolButton *configButton_  = nullptr;
+        QIcon   *configStateIcon_ = nullptr;
         QCheckBox *streamActionButton_ = nullptr;
-
     };
 }
 
