@@ -140,9 +140,11 @@ namespace flow{
     template<typename Block_, bool HasAutoLoop_>
     inline void FlowVisualBlock<Block_,HasAutoLoop_>::configure(){
         if(flowBlock_->configure(this->extractParamsGui())){
-            configButton_->setIcon(QIcon("/usr/share/icons/Humanity/actions/48/dialog-apply.svg"));
+            if(configButton_) 
+                configButton_->setIcon(QIcon("/usr/share/icons/Humanity/actions/48/dialog-apply.svg"));
         }else{
-            configButton_->setIcon(QIcon("/usr/share/icons/Humanity/actions/64/process-stop.svg"));
+            if(configButton_)
+                configButton_->setIcon(QIcon("/usr/share/icons/Humanity/actions/64/process-stop.svg"));
         }
     }
 
