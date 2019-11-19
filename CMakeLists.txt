@@ -26,8 +26,9 @@ PROJECT(flow VERSION 0.0.1)
 #########################################
 ######			General config	   ######
 #########################################
-option(BUILD_EXAMPLES "Compile examples" ON)
-option(BUILD_TESTS "Prepare tests" OFF)
+option(BUILD_EXAMPLES "Compile examples"              ON)
+option(BUILD_TESTS    "Prepare tests"                 OFF)
+option(FLOW_USE_ROS	  "Compile ROS dependent modules"	OFF)
 
 set(CMAKE_AUTOMOC ON)
 
@@ -58,6 +59,34 @@ if(${NodeEditor_FOUND})
   target_link_libraries(${PROJECT_NAME} LINK_PUBLIC ${NodeEditor_LIBRARIES})
   target_compile_definitions(${PROJECT_NAME} PUBLIC HAS_QTNODEEDITOR)
 endif()
+find_package(PCL QUIET REQUIRED)
+if(${PCL_FOUND})
+target_include_directories(${PROJECT_NAME} PUBLIC ${PCL_INCLUDE_DIRS})
+target_link_libraries(${PROJECT_NAME} LINK_PRIVATE ${PCL_LIBRARIES})
+target_compile_definitions(${PROJECT_NAME} PUBLIC "ENABLE_PCL" "DISABLE_PCAP" "DISABLE_PNG" "DISABLE_LIBUSB_1_0")
+endif()
+
+find_package(Eigen3 REQUIRED)
+if(${Eigen3_FOUND})
+target_include_directories(${PROJECT_NAME} PUBLIC "/usr/include/eigen3")
+endif()
+
+
+if(${FLOW_USE_ROS})
+	find_package(catkin COMPONENTS roscpp tf rosbag cv_bridge image_transport sensor_msgs geometry_msgs)
+	if(${catkin_FOUND})
+		catkin_package(
+			CATKIN_DEPENDS roscpp tf rosbag cv_bridge image_transport sensor_msgs geometry_msgs
+			INCLUDE_DIRS include
+		)
+		target_compile_definitions(${PROJECT_NAME} PUBLIC "FLOW_USE_ROS")
+		target_link_libraries(${PROJECT_NAME} LINK_PRIVATE ${catkin_LIBRARIES} ${rosbag_LIBRARIES})
+		target_include_directories(${PROJECT_NAME}  PUBLIC ${catkin_INCLUDE_DIRS} ${rosbag_INCLUDE_DIRS})
+		add_dependencies(${PROJECT_NAME} ${catkin_EXPORTED_TARGETS})
+	else()
+		set(FLOW_USE_ROS OFF)
+	endif()
+endif(${FLOW_USE_ROS})
 
 #########################################
 ######			Documentation	   ######
