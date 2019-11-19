@@ -17,10 +17,14 @@ matrix:
             - libyaml-dev
             - libboost-all-dev
             - libomp-dev
+            - libpcl-dev 
+            - libeigen3-dev
+            - libopencv-dev
+            - libopencv-contrib-dev
 
 before_install:
   - eval "${MATRIX_EVAL}"
-  - sudo apt-get -y install qt5-qmake qt5-default libqt5opengl5-dev qtbase5-dev libqwt-qt5-dev libsndfile1-dev librtlsdr-dev librtlsdr0 libfftw3-dev portaudio19-dev libfaad-dev zlib1g-dev rtl-sdr libusb-1.0-0-dev mesa-common-dev libgl1-mesa-dev libsamplerate-dev libpcl-dev libeigen3-dev
+  - sudo apt-get -y install qt5-qmake qt5-default libqt5opengl5-dev qtbase5-dev libqwt-qt5-dev libsndfile1-dev librtlsdr-dev librtlsdr0 libfftw3-dev portaudio19-dev libfaad-dev zlib1g-dev rtl-sdr libusb-1.0-0-dev mesa-common-dev libgl1-mesa-dev libsamplerate-dev
 
 install: 
   - bash ./scripts/install_dependencies_ci.sh
