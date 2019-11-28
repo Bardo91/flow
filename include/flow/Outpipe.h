@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------------------------------------------
 //  FLOW
 //---------------------------------------------------------------------------------------------------------------------
-//  Copyright 2019 Pablo Ramon Soria (a.k.a. Bardo91) pabramsor@gmail.com
+//  Copyright 2018 Pablo Ramon Soria (a.k.a. Bardo91) pabramsor@gmail.com
 //---------------------------------------------------------------------------------------------------------------------
 //  Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 //  and associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -20,8 +20,8 @@
 //---------------------------------------------------------------------------------------------------------------------
 
 
-#ifndef FLOW_POLICY_H_
-#define FLOW_POLICY_H_
+#ifndef FLOW_OUTPIPE_H_
+#define FLOW_OUTPIPE_H_
 
 #include <vector>
 #include <cstdlib>
@@ -32,36 +32,34 @@
 #include <chrono>
 #include <iostream>
 #include <functional>
+#include <string>
 
-#include <flow/DataFlow.h>
+#include <mutex>
+
+#include <map>
 
 namespace flow{
-    class Outpipe;
-
-    class Policy{
-        public:
-            typedef std::vector<std::string> PolicyMask;
-            typedef std::function<void(DataFlow _f)> PolicyCallback;
-
-            Policy(std::vector<std::pair<std::string, std::string>> _inputs);
-            bool registerCallback(PolicyMask _mask, PolicyCallback _callback);
-            void update(std::string _tag, std::any _data);
+    class Policy;
     
-            int nInputs();
-            std::vector<std::string> inputTags();
+    class Outpipe{
+        public:
+            Outpipe(std::string _tag, std::string _type);
 
-            std::string type(std::string _tag);
+            bool registerPolicy(Policy * _pol, std::string _policyTag);
+            void unregisterPolicy(Policy* _pol);
+            int registrations();
 
-            void associatePipe(std::string _tag, Outpipe* _pipe);
+            void flush(std::any _data);
 
-            void disconnect(std::string _tag);
-
-        private:
-            std::map<std::string, std::string> inputs_;
-            std::vector<DataFlow*> flows_;
-            std::vector<std::string>                    tags_;
+            std::string tag() const;
             
-            std::unordered_map<std::string, Outpipe*>   connetedPipes_; 
+
+        protected:
+            std::mutex policiesGuard;
+            std::vector<Policy*> registeredPolicies_;
+            std::map<Policy*, std::string> tagTranslators_;
+            std::string tag_, type_;
+            
     };
 }
 

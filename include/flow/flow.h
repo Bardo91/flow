@@ -21,6 +21,6 @@
 
 // Base classes
 #include <flow/Block.h>
-#include <flow/OutPipe.h>
+#include <flow/Outpipe.h>
 #include <flow/Policy.h>
 

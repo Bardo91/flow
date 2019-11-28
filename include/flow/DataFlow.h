@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------------------------------------------
 //  FLOW
 //---------------------------------------------------------------------------------------------------------------------
-//  Copyright 2018 Pablo Ramon Soria (a.k.a. Bardo91) pabramsor@gmail.com
+//  Copyright 2019 Pablo Ramon Soria (a.k.a. Bardo91) pabramsor@gmail.com
 //---------------------------------------------------------------------------------------------------------------------
 //  Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 //  and associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -20,48 +20,46 @@
 //---------------------------------------------------------------------------------------------------------------------
 
 
-#ifndef FLOW_OUTPIPE_H_
-#define FLOW_OUTPIPE_H_
+#ifndef FLOW_DATAFLOW_H_
+#define FLOW_DATAFLOW_H_
 
 #include <vector>
 #include <cstdlib>
 
 #include <any>
-#include <unordered_map>
-#include <thread>
-#include <chrono>
-#include <iostream>
 #include <functional>
-
-#include <mutex>
-
-
+#include <map>
 
 namespace flow{
-    class Policy;
-    
-    class OutPipe{
-        public:
-            OutPipe(std::string _tag);
+        
+    class DataFlow{
+    public:
+        DataFlow(std::vector<std::pair<std::string, std::string>> _flows, std::function<void(DataFlow _f)> _callback);
 
-            std::string tag() const;
-            
-            bool registerPolicy(Policy* _pol);
+        void update(std::string _tag, std::any _data);
 
-            void unregisterPolicy(Policy* _pol);
+        void checkData();
 
-            void flush(std::any _data);
+        template<typename T_>
+        T_ get(std::string _tag);
 
-            int registrations();
-
-        protected:
-            std::mutex policiesGuard;
-            std::string tag_;
-            std::vector<Policy*> registeredPolicies_;   // Policy registered, ID of stream and index in policy;
-            
+        std::map<std::string, std::string>  types_;
+        std::map<std::string, std::any>     data_;
+        std::map<std::string, bool>         updated_;
+        std::function<void(DataFlow _f)> callback_;
     };
 }
 
 
+#define FLOW_TYPE_REGISTER(tagType_, Type_)                                                     \
+    namespace flow{                                                                             \
+        template<>                                                                              \
+        Type_ DataFlow::get<Type_>(std::string _tag){                                           \
+            if(types_.find(_tag) == types_.end() || types_[_tag] != tagType_ ){                 \
+                throw std::invalid_argument("Bad tag type when getting data from DataFlow");    \
+            }                                                                                   \
+            return std::any_cast<Type_>(data_[_tag]);                                           \
+        }                                                                                       \
+    }                                                                                           \
 
 #endif

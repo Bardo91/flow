@@ -34,7 +34,7 @@ class FloatStreamerBlock: public Block{
 public:
     static std::string name() {return "Float streamer";}
         FloatStreamerBlock(){
-            opipes_["float"] = new flow::OutPipe("float");
+            opipes_["float"] = new flow::Outpipe("float");
         }
 
         virtual void loopCallback() override{

@@ -50,7 +50,7 @@ using QtNodes::Connection;
 
 namespace flow{
     /// Forward declaration
-    class OutPipe;
+    class Outpipe;
 
     /// Interface to allow static cast of MicoBlocks.
     class ConfigurableBlock{
@@ -102,7 +102,7 @@ namespace flow{
 
     private:
         Block_ *flowBlock_;
-        //std::unordered_map<std::string, OutPipe*> connectedPipes_;
+        //std::unordered_map<std::string, Outpipe*> connectedPipes_;
         std::vector<ParameterWidget*> configParams_;
         QVBoxLayout *configsLayout_  = nullptr;
         QGroupBox *configBox_ = nullptr;

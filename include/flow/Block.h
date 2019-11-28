@@ -32,7 +32,7 @@
 #include <flow/Policy.h>
 
 namespace flow{
-    class OutPipe;
+    class Outpipe;
 
     class Block{
     public:
@@ -44,7 +44,7 @@ namespace flow{
         virtual bool configure(std::unordered_map<std::string, std::string> _params) { return false; };
         virtual std::vector<std::string> parameters(){ return {}; };
 
-        std::unordered_map<std::string, OutPipe*> getPipes();
+        std::unordered_map<std::string, Outpipe*> getPipes();
 
         void start();
         void stop();
@@ -69,14 +69,14 @@ namespace flow{
         // void setPolicy(Policy* _pol);
 
 
-        // void connect(OutPipe *_pipe, std::vector<std::string> _tags);
+        // void connect(Outpipe *_pipe, std::vector<std::string> _tags);
 
     protected:
         virtual void loopCallback() {};
 
     protected:
         Policy *iPolicy_ = nullptr;
-        std::unordered_map<std::string, OutPipe*> opipes_;
+        std::unordered_map<std::string, Outpipe*> opipes_;
         std::thread loopThread_;
         bool runLoop_ = false;
     };

@@ -21,7 +21,7 @@
 
 #include <flow/Policy.h>
 
-#include <flow/OutPipe.h>
+#include <flow/Outpipe.h>
 
 #include <cassert>
 #include <stdexcept>
@@ -29,40 +29,36 @@
 
 namespace flow{
 
-    Policy::Policy(std::vector<std::string> _inPipes){
-        if(_inPipes.size() == 0){
+    Policy::Policy(std::vector<std::pair<std::string, std::string>> _inputs){
+        if(_inputs.size() == 0){
             throw std::invalid_argument( "A Policy cannot be constructed with an empty list of input pipe tags." );
         }
 
-        tags_ = _inPipes;
-        for(auto &tag: _inPipes){
-            dataFlow_[tag] = std::any();
-            validData_[tag] = false;
+        for(auto &input:_inputs){
+            if(input.first == "" || input.second == ""){
+                throw std::invalid_argument( "A Policy cannot be constructed with an empty list of input pipe tags." );
+            }
+            inputs_[input.first] = input.second;
+            tags_.push_back(input.first);
         }
     }
 
     bool Policy::registerCallback(PolicyMask _mask, PolicyCallback _callback){
-        int existingTags = 0;
-        for(auto t0: _mask){
-            auto iter = std::find(tags_.begin(), tags_.end(), t0);
-            if(iter != tags_.end()){
-                existingTags++;
+        std::vector<std::pair<std::string, std::string>> flows;
+        for(auto &m:_mask){
+            // auto iter = std::find_if(inputs_.begin(), inputs_.end(), [&](const std::pair<std::string, std::string>& _in){return _in.first == m;});
+            auto iter = inputs_.find(m);
+            if(iter != inputs_.end()){
+                flows.push_back(*iter);
             }
         }
-        
-        if(existingTags == _mask.size()){    // All tags are in the policy
-            callbacks_.push_back({_mask, _callback});
-            return true;
-        }else{
-            return false;
-        }
-
+        flows_.push_back(new DataFlow(flows, _callback));
     }
 
-    void Policy::update(std::string _tag, std::any _val){
-        dataFlow_[_tag] = _val;
-        validData_[_tag] = true;
-        checkMasks();
+    void Policy::update(std::string _tag, std::any _data){
+        for(auto flow:flows_){
+            flow->update(_tag, _data);
+        }
     }
 
     int Policy::nInputs(){
@@ -73,34 +69,16 @@ namespace flow{
         return tags_;
     }
 
-    void Policy::associatePipe(std::string _tag, OutPipe* _pipe){
+    std::string Policy::type(std::string _tag){
+        return inputs_[_tag];
+    }
+
+    void Policy::associatePipe(std::string _tag, Outpipe* _pipe){
         connetedPipes_[_tag] = _pipe;
     }
 
     void Policy::disconnect(std::string _tag){
         connetedPipes_[_tag]->unregisterPolicy(this);
-    }
-
-    void Policy::checkMasks(){
-        for(auto &pairCb: callbacks_){  // Check all pairs mask-cb
-            auto maskTags = pairCb.first;
-            unsigned counter = 0;
-            for(auto &tag: maskTags){   // Check all tags in mask
-                for(auto iter = validData_.begin(); iter != validData_.end(); iter++){
-                    if(iter->first == tag && validData_[tag]){
-                        counter++;
-                        break;
-                    }
-                }
-            }
-            if(counter ==  maskTags.size()){
-                for(auto&tag:maskTags){ // uff... For more complex pipelines with shared data might not work... need conditions per callback.
-                    validData_[tag] = false;
-                }
-                std::thread(pairCb.second, dataFlow_).detach(); // 666 Smthg is not completelly thread safe and produces crash
-                // pairCb.second(dataFlow_);
-            }
-        }
     }
 
 }

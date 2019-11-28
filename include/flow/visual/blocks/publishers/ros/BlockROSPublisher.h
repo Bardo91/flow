@@ -23,7 +23,7 @@
 #define FLOW_BLOCKS_PUBLISHERS_ROS_BLOCKROSPUBLISHER_H_
 
 #include <flow/Block.h>
-#include <flow/OutPipe.h>
+#include <flow/Outpipe.h>
 
 #ifdef FLOW_USE_ROS
 	#include <ros/ros.h>

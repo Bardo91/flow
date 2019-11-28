@@ -19,52 +19,40 @@
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
 
-
-#ifndef FLOW_POLICY_H_
-#define FLOW_POLICY_H_
-
-#include <vector>
-#include <cstdlib>
-
-#include <any>
-#include <unordered_map>
-#include <thread>
-#include <chrono>
-#include <iostream>
-#include <functional>
-
 #include <flow/DataFlow.h>
+#include <thread>
+
+FLOW_TYPE_REGISTER("int", int)
 
 namespace flow{
-    class Outpipe;
+    DataFlow::DataFlow(std::vector<std::pair<std::string, std::string>> _flows, std::function<void(DataFlow _f)> _callback){
+        callback_ = _callback;
+        for(auto &f:_flows){
+            types_[f.first] = f.second;
+            data_[f.first] = std::any();
+            updated_[f.first] = false;
+        }
+    }
 
-    class Policy{
-        public:
-            typedef std::vector<std::string> PolicyMask;
-            typedef std::function<void(DataFlow _f)> PolicyCallback;
+    void DataFlow::update(std::string _tag, std::any _data){
+        if(data_.find(_tag)!= data_.end()){
+            // Can we check here the type?
+            data_[_tag] = _data;
+            updated_[_tag] = true;
+            checkData();
+        }else{
+            std::invalid_argument("Bad tag type while updating Dataflow");
+        }
+    }
 
-            Policy(std::vector<std::pair<std::string, std::string>> _inputs);
-            bool registerCallback(PolicyMask _mask, PolicyCallback _callback);
-            void update(std::string _tag, std::any _data);
-    
-            int nInputs();
-            std::vector<std::string> inputTags();
-
-            std::string type(std::string _tag);
-
-            void associatePipe(std::string _tag, Outpipe* _pipe);
-
-            void disconnect(std::string _tag);
-
-        private:
-            std::map<std::string, std::string> inputs_;
-            std::vector<DataFlow*> flows_;
-            std::vector<std::string>                    tags_;
-            
-            std::unordered_map<std::string, Outpipe*>   connetedPipes_; 
-    };
+    void DataFlow::checkData(){
+        int flagCounter = 0;
+        for(auto flag = updated_.begin(); flag != updated_.end(); flag++){
+            if(flag->second) flagCounter++;
+        }
+        if(flagCounter == updated_.size()){
+            callback_(*this);
+            // std::thread(callback_, *this).detach(); // 666 Smthg is not completelly thread safe and produces crash
+        }
+    }
 }
-
-
-
-#endif

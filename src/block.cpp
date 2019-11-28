@@ -20,7 +20,7 @@
 //---------------------------------------------------------------------------------------------------------------------
 
 #include <flow/Block.h>
-#include <flow/OutPipe.h>
+#include <flow/Outpipe.h>
 
 #include <cassert>
 
@@ -28,7 +28,7 @@ namespace flow{
     // BASE METHODS
 
 
-    std::unordered_map<std::string, OutPipe*> Block::getPipes(){
+    std::unordered_map<std::string, Outpipe*> Block::getPipes(){
         return opipes_;
     }
 
@@ -76,9 +76,9 @@ namespace flow{
     }
 
     void Block::connect(std::string _pipeTag, Block &_otherBlock){
-        if(opipes_[_pipeTag] != nullptr){
-            opipes_[_pipeTag]->registerPolicy(_otherBlock.getPolicy());
-        }
+        // if(opipes_[_pipeTag] != nullptr){
+        //     opipes_[_pipeTag]->registerPolicy(_otherBlock.getPolicy());
+        // }
     }
 
     void Block::disconnect(std::string _pipeTag) {
