@@ -56,10 +56,6 @@ namespace flow{
     class ConfigurableBlock{
     public:
         virtual void configure() = 0;
-
-        void julluar(){
-            std::cout << "I am a configurable block" << std::endl;
-        }
     };
 
     /// 

@@ -59,17 +59,9 @@ namespace flow{
 
         Policy* getPolicy();
 
-        void connect(std::string _pipeTag, Block& _otherBlock);
+        void connect(std::string _pipeTag, std::string _policyTag, Block& _otherBlock);
 
         void disconnect(std::string _pipeTag);
-
-        // DYNAMIC CREATION METHODS
-        // void registerCallback(std::function<void(std::unordered_map<std::string,std::any> _data, std::unordered_map<std::string,bool> _valid)> _callback);
-        
-        // void setPolicy(Policy* _pol);
-
-
-        // void connect(Outpipe *_pipe, std::vector<std::string> _tags);
 
     protected:
         virtual void loopCallback() {};

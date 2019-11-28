@@ -209,7 +209,7 @@ namespace flow{
         if(data){
             auto pipeInfo = std::dynamic_pointer_cast<StreamerPipeInfo>(data)->info();
             if(pipeInfo.otherBlock_ != nullptr){
-                pipeInfo.otherBlock_->connect(pipeInfo.pipeName_, *flowBlock_);
+                pipeInfo.otherBlock_->connect(pipeInfo.pipeName_, flowBlock_->inputTags()[port], *flowBlock_);
             }
         }
     }

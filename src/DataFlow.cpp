@@ -23,6 +23,7 @@
 #include <thread>
 
 FLOW_TYPE_REGISTER("int", int)
+FLOW_TYPE_REGISTER("float", float)
 
 namespace flow{
     DataFlow::DataFlow(std::vector<std::pair<std::string, std::string>> _flows, std::function<void(DataFlow _f)> _callback){
@@ -51,8 +52,8 @@ namespace flow{
             if(flag->second) flagCounter++;
         }
         if(flagCounter == updated_.size()){
-            callback_(*this);
-            // std::thread(callback_, *this).detach(); // 666 Smthg is not completelly thread safe and produces crash
+            // callback_(*this);
+            std::thread(callback_, *this).detach(); // 666 Smthg is not completelly thread safe and produces crash
         }
     }
 }

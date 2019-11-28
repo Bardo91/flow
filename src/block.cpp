@@ -75,10 +75,10 @@ namespace flow{
         return iPolicy_;
     }
 
-    void Block::connect(std::string _pipeTag, Block &_otherBlock){
-        // if(opipes_[_pipeTag] != nullptr){
-        //     opipes_[_pipeTag]->registerPolicy(_otherBlock.getPolicy());
-        // }
+    void Block::connect(std::string _pipeTag, std::string _policyTag, Block& _otherBlock){
+        if(opipes_[_pipeTag] != nullptr){
+            opipes_[_pipeTag]->registerPolicy(_otherBlock.getPolicy(), _policyTag);
+        }
     }
 
     void Block::disconnect(std::string _pipeTag) {

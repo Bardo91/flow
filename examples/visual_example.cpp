@@ -22,6 +22,7 @@
 
 #include <flow/visual/FlowVisualInterface.h>
 #include <flow/visual/blocks/FlowVisualBlock.h>
+#include <flow/DataFlow.h>
 
 #include <flow/flow.h>
 #include <string>
@@ -34,13 +35,15 @@ class FloatStreamerBlock: public Block{
 public:
     static std::string name() {return "Float streamer";}
         FloatStreamerBlock(){
-            opipes_["float"] = new flow::Outpipe("float");
+            opipes_["time"] = new flow::Outpipe("time", "float");
         }
 
         virtual void loopCallback() override{
+            auto t0 = std::chrono::high_resolution_clock::now();
             while(runLoop_){
-                counter_*=1.23687;
-                opipes_["float"]->flush(counter_);
+                auto t1 = std::chrono::high_resolution_clock::now();
+                float diff = counter_ + std::chrono::duration_cast<std::chrono::milliseconds>(t1-t0).count()/1000.0f;
+                opipes_["time"]->flush(diff);
                 std::this_thread::sleep_for(std::chrono::milliseconds(500));
             }      
         }
@@ -63,12 +66,11 @@ class FloatCouterBlock: public Block{
 public:
     static std::string name() {return "Float Couter";}
     FloatCouterBlock(){
-        iPolicy_ = new flow::Policy({"float"});
-        iPolicy_->registerCallback({"float"}, 
-                            [&](std::unordered_map<std::string,std::any> _data){
-                                float data = std::any_cast<float>(_data["float"]);
+        iPolicy_ = new flow::Policy({{{"clock", "float"}}});
+        iPolicy_->registerCallback({"clock"}, 
+                            [&](DataFlow _data){
+                                float data = _data.get<float>("clock");
                                 std::cout << data << std::endl;
-                            
                             }
         );
     }
