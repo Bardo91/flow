@@ -38,15 +38,15 @@ namespace flow{
 	#ifdef FLOW_USE_ROS
 	    struct TraitPoseStampedPublisher{
 	    	static std::string blockName_;
-	    	static std::string input_;
-	    	static geometry_msgs::PoseStamped conversion_(std::unordered_map<std::string,std::any> _data);
+	    	static std::pair<std::string, std::string> input_;
+	    	static geometry_msgs::PoseStamped conversion_(DataFlow _data);
 	    	typedef geometry_msgs::PoseStamped ROSType_;
 	    };
 
         struct TraitPointCloudPublisher{
 	    	static std::string blockName_;
-	    	static std::string input_;
-	    	static sensor_msgs::PointCloud2 conversion_(std::unordered_map<std::string,std::any> _data);
+	    	static std::pair<std::string, std::string> input_;
+	    	static sensor_msgs::PointCloud2 conversion_(DataFlow _data);
 	    	typedef sensor_msgs::PointCloud2 ROSType_;
 	    };
     
