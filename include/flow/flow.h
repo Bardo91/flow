@@ -24,3 +24,12 @@
 #include <flow/Outpipe.h>
 #include <flow/Policy.h>
 
+#include <flow/visual/FlowVisualInterface.h>
+
+#ifdef FLOW_USE_ROS
+    #include <flow/visual/blocks/FlowVisualBlock.h>
+    #include <flow/visual/blocks/publishers/ros/BlockROSPublisher.h>
+    #include <flow/visual/blocks/publishers/ros/ROSPublishers.h>
+    #include <flow/visual/blocks/streamers/ros/BlockROSSuscriber.h>
+    #include <flow/visual/blocks/streamers/ros/ROSStreamers.h>
+#endif
