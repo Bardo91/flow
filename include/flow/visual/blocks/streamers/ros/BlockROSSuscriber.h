@@ -35,7 +35,7 @@ namespace flow{
     public:
 		BlockROSSuscriber(){
             for (auto tag : _Trait::output_)
-		        opipes_[tag] = new flow::Outpipe(tag);
+		        opipes_[tag.first] = new flow::Outpipe(tag.first, tag.second);
 			}
 		
 		// ~BlockROSSuscriber(){};
@@ -56,8 +56,8 @@ namespace flow{
     private:
         void subsCallback(const typename _Trait::ROSType_::ConstPtr &_msg){
 			for (auto tag : _Trait::output_){
-				if(opipes_[tag]->registrations() !=0 ){
-               		opipes_[tag]->flush(_Trait::conversion_(tag , _msg));
+				if(opipes_[tag.first]->registrations() !=0 ){
+               		opipes_[tag.first]->flush(_Trait::conversion_(tag.first , _msg));
 				}
 			}
         }

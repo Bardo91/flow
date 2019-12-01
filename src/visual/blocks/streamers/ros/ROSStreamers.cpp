@@ -27,9 +27,10 @@ namespace flow{
 	#ifdef FLOW_USE_ROS
 	
 		//-------------------------------------------------------------------------------------------------------------
-		std::string  TraitPoseStampedSuscriber::blockName_ = "ROS Subscriber Pose";
-		std::vector<std::string>  TraitPoseStampedSuscriber::output_ = {"pose"};
+		template<> std::string TraitPoseStampedSuscriber::blockName_ = "ROS Subscriber Pose";
+		template<> std::vector<std::pair<std::string, std::string>> TraitPoseStampedSuscriber::output_ = {{{"Pose", "mat44"}}};
 
+		template<> 
 		std::any  TraitPoseStampedSuscriber::conversion_(std::string _tag, const geometry_msgs::PoseStamped::ConstPtr &_msg){
 			Eigen::Matrix4f pose = Eigen::Matrix4f::Identity();
 			pose.block<3,1>(0,3) = Eigen::Vector3f(_msg->pose.position.x, _msg->pose.position.y, _msg->pose.position.z);
@@ -41,14 +42,15 @@ namespace flow{
 		}
 
 		//-------------------------------------------------------------------------------------------------------------
-		std::string TraitImu::blockName_ = "ROS Subscriber Imu";
-		std::vector<std::string> TraitImu::output_ = {"orientation" , "acceleration"};
-
+		template<> std::string TraitImu::blockName_ = "ROS Subscriber Imu";
+		template<> std::vector<std::pair<std::string, std::string>> TraitImu::output_ = {{	{"Orientation", "vec4"},
+																				{"Acceleration", "vec3"}}};
+		template<> 
 		std::any TraitImu::conversion_(std::string _tag, const sensor_msgs::Imu::ConstPtr &_msg){
-			if (_tag == "orientation"){
+			if (_tag == "Orientation"){
 				Eigen::Quaternionf q = Eigen::Quaternionf(_msg->orientation.w, _msg->orientation.x, _msg->orientation.y, _msg->orientation.z);
 				return q;
-			}else if (_tag == "acceleration"){
+			}else if (_tag == "Acceleration"){
 				Eigen::Vector3f acc = Eigen::Vector3f(_msg->linear_acceleration.x, _msg->linear_acceleration.y, _msg->linear_acceleration.z);	
 				return acc;
 			}else{
@@ -57,17 +59,19 @@ namespace flow{
 		}
 		
 		//-------------------------------------------------------------------------------------------------------------
-		std::string TraitGPS::blockName_ = "ROS Subscriber GPS";
-		std::vector<std::string> TraitGPS::output_ = {"latitude" , "longitude","altitude"};
-
+		template<> std::string TraitGPS::blockName_ = "ROS Subscriber GPS";
+		template<> std::vector<std::pair<std::string, std::string>> TraitGPS::output_ = {{	{"Latitude", "float"} , 
+																				{"Longitude", "float"},
+																				{"Altitude", "float"}}};
+		template<> 
 		std::any TraitGPS::conversion_(std::string _tag, const sensor_msgs::NavSatFix::ConstPtr &_msg){
-			if (_tag == "latitude"){
+			if (_tag == "Latitude"){
 				float lat = float(_msg->latitude);
 				return lat;
-			}else if (_tag == "longitude"){
+			}else if (_tag == "Longitude"){
 				float lon = float(_msg->longitude);
 				return lon;
-			}else if (_tag == "altitude"){
+			}else if (_tag == "Altitude"){
 				float alt = float(_msg->altitude);
 				return alt;
 			}
@@ -75,17 +79,19 @@ namespace flow{
 		}
 
 		//-------------------------------------------------------------------------------------------------------------
-		std::string TraitImage::blockName_ = "ROS Subscriber Image";
-		std::vector<std::string> TraitImage::output_ = {"color"};
+		template<> std::string TraitImage::blockName_ = "ROS Subscriber Image";
+		template<> std::vector<std::pair<std::string, std::string>> TraitImage::output_ = {{{"Color Image", "image"}}};
 
+		template<> 
 		std::any TraitImage::conversion_(std::string _tag, const sensor_msgs::Image::ConstPtr &_msg){
 			return cv_bridge::toCvCopy(_msg, "bgr8")->image;;
 		}
 
 		//-------------------------------------------------------------------------------------------------------------
-		std::string TraitCloud::blockName_ = "ROS Subscriber PointCloud";
-		std::vector<std::string> TraitCloud::output_ = {"cloud"};
+		template<> std::string TraitCloud::blockName_ = "ROS Subscriber PointCloud";
+		template<> std::vector<std::pair<std::string, std::string>> TraitCloud::output_ = {{{"Point cloud", "cloud"}}};
 
+		template<> 
 		std::any TraitCloud::conversion_(std::string _tag, const sensor_msgs::PointCloud2::ConstPtr &_msg){
 			pcl::PointCloud<pcl::PointXYZRGBNormal>::Ptr cloud (new pcl::PointCloud<pcl::PointXYZRGBNormal>);
     		pcl::fromROSMsg(*_msg, *cloud);

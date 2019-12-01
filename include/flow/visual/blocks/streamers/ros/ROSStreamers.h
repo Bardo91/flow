@@ -41,42 +41,27 @@
 
 namespace flow{
 	#ifdef FLOW_USE_ROS
-	struct  TraitPoseStampedSuscriber{
+
+	template<typename T_>
+	struct TraitRosSubscriber{
 		static std::string blockName_;
-		static std::vector<std::string> output_;
-		static std::any conversion_(std::string _tag, const geometry_msgs::PoseStamped::ConstPtr &_msg);
-		typedef geometry_msgs::PoseStamped ROSType_;
+		static std::vector<std::pair<std::string, std::string>> output_;
+		static std::any conversion_(std::string _tag, const typename T_::ConstPtr &_msg);
+		typedef T_ ROSType_;
 	};
-	struct TraitImu{
-		static std::string blockName_;
-		static std::vector<std::string> output_ ;
-		typedef sensor_msgs::Imu ROSType_;
-		static std::any conversion_(std::string _tag, const sensor_msgs::Imu::ConstPtr &_msg);
-	};
-	struct TraitGPS{
-		static std::string blockName_;
-		static std::vector<std::string> output_ ;
-		typedef sensor_msgs::NavSatFix ROSType_;
-		static std::any conversion_(std::string _tag, const sensor_msgs::NavSatFix::ConstPtr &_msg);
-	};
-	struct TraitImage{
-		static std::string blockName_;
-		static std::vector<std::string> output_;
-		typedef sensor_msgs::Image ROSType_;
-		static std::any conversion_(std::string _tag, const sensor_msgs::Image::ConstPtr &_msg);
-	};
-	struct TraitCloud{
-		static std::string blockName_;
-		static std::vector<std::string> output_;
-		typedef sensor_msgs::PointCloud2 ROSType_;
-		static std::any conversion_(std::string _tag, const sensor_msgs::PointCloud2::ConstPtr &_msg);
-	};
+
+	typedef TraitRosSubscriber<geometry_msgs::PoseStamped> 	TraitPoseStampedSuscriber;
+	typedef TraitRosSubscriber<sensor_msgs::Imu> 			TraitImu;
+	typedef TraitRosSubscriber<sensor_msgs::NavSatFix> 		TraitGPS;
+	typedef TraitRosSubscriber<sensor_msgs::Image> 			TraitImage;
+	typedef TraitRosSubscriber<sensor_msgs::PointCloud2> 	TraitCloud;
+
 	
-	typedef BlockROSSuscriber< TraitPoseStampedSuscriber > BlockROSSuscriberPoseStamped;
-	typedef BlockROSSuscriber< TraitCloud       > BlockROSSuscriberCloud;
-	typedef BlockROSSuscriber< TraitImu         > BlockROSSuscriberImu;
-	typedef BlockROSSuscriber< TraitGPS         > BlockROSSuscriberGPS;
-	typedef BlockROSSuscriber< TraitImage       > BlockROSSuscriberImage;			
+	typedef BlockROSSuscriber< TraitPoseStampedSuscriber > 	BlockROSSuscriberPoseStamped;
+	typedef BlockROSSuscriber< TraitCloud       > 			BlockROSSuscriberCloud;
+	typedef BlockROSSuscriber< TraitImu         > 			BlockROSSuscriberImu;
+	typedef BlockROSSuscriber< TraitGPS         > 			BlockROSSuscriberGPS;
+	typedef BlockROSSuscriber< TraitImage       > 			BlockROSSuscriberImage;			
 
 	#endif
 }

@@ -25,3 +25,10 @@ target_link_libraries(policy_stream LINK_PRIVATE flow)
 target_link_libraries(policy_stream LINK_PRIVATE gtest gtest_main)
 add_test(test_policy_stream policy_stream)
 
+if(${FLOW_USE_ROS})
+    ### Add test with input file
+    add_executable(ros_sub_pub ros_sub_pub.cpp)
+    target_link_libraries(ros_sub_pub LINK_PRIVATE flow)
+    target_link_libraries(ros_sub_pub LINK_PRIVATE gtest gtest_main)
+    add_test(test_ros_sub_pub ros_sub_pub)
+endif()
