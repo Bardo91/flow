@@ -40,8 +40,8 @@ namespace flow{
 
             iPolicy_ = new flow::Policy({_Trait::input_});
 
-            iPolicy_->registerCallback({_Trait::input_}, 
-                                    [&](std::unordered_map<std::string,std::any> _data){
+            iPolicy_->registerCallback({_Trait::input_.first}, 
+                                    [&](DataFlow _data){
                                         typename _Trait::ROSType_ topicContent = _Trait::conversion_(_data);
                                         #ifdef FLOW_USE_ROS
                                             pubROS_.publish(topicContent);

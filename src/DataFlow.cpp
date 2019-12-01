@@ -28,7 +28,7 @@
 
 FLOW_TYPE_REGISTER("int", int)
 FLOW_TYPE_REGISTER("float", float)
-FLOW_TYPE_REGISTER("cloud", std::shared_ptr<pcl::PointCloud<pcl::PointXYZRGBNormal>>)
+FLOW_TYPE_REGISTER("cloud", pcl::PointCloud<pcl::PointXYZRGBNormal>::Ptr)
 FLOW_TYPE_REGISTER("mat44", Eigen::Matrix4f)
 FLOW_TYPE_REGISTER("vec3", Eigen::Vector3f)
 FLOW_TYPE_REGISTER("vec4", Eigen::Vector4f)

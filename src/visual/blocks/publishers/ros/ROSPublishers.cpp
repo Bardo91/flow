@@ -49,7 +49,7 @@ namespace flow{
         std::pair<std::string, std::string> TraitPointCloudPublisher::input_("Point Cloud", "cloud");
         sensor_msgs::PointCloud2 TraitPointCloudPublisher::conversion_(DataFlow _data){
 
-            auto cloud = _data.get<std::shared_ptr<pcl::PointCloud<pcl::PointXYZRGBNormal>>>("Cloud");
+            auto cloud = _data.get<pcl::PointCloud<pcl::PointXYZRGBNormal>::Ptr>("Cloud");
             sensor_msgs::PointCloud2 ROScloud;
             
     		pcl::toROSMsg(*cloud, ROScloud);
