@@ -30,6 +30,10 @@
     #include <flow/visual/blocks/FlowVisualBlock.h>
     #include <flow/visual/blocks/publishers/ros/BlockROSPublisher.h>
     #include <flow/visual/blocks/publishers/ros/ROSPublishers.h>
-    #include <flow/visual/blocks/streamers/ros/BlockROSSuscriber.h>
+    #include <flow/visual/blocks/streamers/ros/BlockROSSubscriber.h>
     #include <flow/visual/blocks/streamers/ros/ROSStreamers.h>
 #endif
+
+#include <flow/visual/blocks/publishers/fastcom/BlockFastcomPublisher.h>
+
+#include <flow/visual/blocks/streamers/fastcom/BlockFastcomSubscriber.h>

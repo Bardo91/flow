@@ -23,7 +23,7 @@
 #include <flow/Outpipe.h>
 #include <flow/DataFlow.h>
 
-#include <flow/visual/blocks/streamers/ros/BlockROSSuscriber.h>
+#include <flow/visual/blocks/streamers/ros/BlockROSSubscriber.h>
 #include <flow/visual/blocks/streamers/ros/ROSStreamers.h>
 
 #include <gtest/gtest.h>
@@ -32,19 +32,19 @@
 using namespace flow;
 
 TEST(streamers_creation, streamers)  {
-    BlockROSSuscriberPoseStamped block1;
-    BlockROSSuscriberCloud block2;
-    BlockROSSuscriberImu block3;
-    BlockROSSuscriberGPS block4;
-    BlockROSSuscriberImage block5;	
+    BlockROSSubscriberPoseStamped block1;
+    BlockROSSubscriberCloud block2;
+    BlockROSSubscriberImu block3;
+    BlockROSSubscriberGPS block4;
+    BlockROSSubscriberImage block5;	
 }
 
 TEST(publishers_creation, publisher)  {
-    BlockROSSuscriberPoseStamped block1;
-    BlockROSSuscriberCloud block2;
-    BlockROSSuscriberImu block3;
-    BlockROSSuscriberGPS block4;
-    BlockROSSuscriberImage block5;	
+    BlockROSSubscriberPoseStamped block1;
+    BlockROSSubscriberCloud block2;
+    BlockROSSubscriberImu block3;
+    BlockROSSubscriberGPS block4;
+    BlockROSSubscriberImage block5;	
 }
 
 

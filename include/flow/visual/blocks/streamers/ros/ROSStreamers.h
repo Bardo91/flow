@@ -22,7 +22,7 @@
 #ifndef FLOW_BLOCKS_STREAMERS_ROS_ROSSTREAMERS_H_
 #define FLOW_BLOCKS_STREAMERS_ROS_ROSSTREAMERS_H_
 
-#include <flow/visual/blocks/streamers/ros/BlockROSSuscriber.h>
+#include <flow/visual/blocks/streamers/ros/BlockROSSubscriber.h>
 #include <opencv2/opencv.hpp>
 #include <Eigen/Eigen>
 #include <pcl/point_cloud.h>
@@ -50,18 +50,18 @@ namespace flow{
 		typedef T_ ROSType_;
 	};
 
-	typedef TraitRosSubscriber<geometry_msgs::PoseStamped> 	TraitPoseStampedSuscriber;
+	typedef TraitRosSubscriber<geometry_msgs::PoseStamped> 	TraitPoseStampedSubscriber;
 	typedef TraitRosSubscriber<sensor_msgs::Imu> 			TraitImu;
 	typedef TraitRosSubscriber<sensor_msgs::NavSatFix> 		TraitGPS;
 	typedef TraitRosSubscriber<sensor_msgs::Image> 			TraitImage;
 	typedef TraitRosSubscriber<sensor_msgs::PointCloud2> 	TraitCloud;
 
 	
-	typedef BlockROSSuscriber< TraitPoseStampedSuscriber > 	BlockROSSuscriberPoseStamped;
-	typedef BlockROSSuscriber< TraitCloud       > 			BlockROSSuscriberCloud;
-	typedef BlockROSSuscriber< TraitImu         > 			BlockROSSuscriberImu;
-	typedef BlockROSSuscriber< TraitGPS         > 			BlockROSSuscriberGPS;
-	typedef BlockROSSuscriber< TraitImage       > 			BlockROSSuscriberImage;			
+	typedef BlockROSSubscriber< TraitPoseStampedSubscriber > 	BlockROSSubscriberPoseStamped;
+	typedef BlockROSSubscriber< TraitCloud       > 			BlockROSSubscriberCloud;
+	typedef BlockROSSubscriber< TraitImu         > 			BlockROSSubscriberImu;
+	typedef BlockROSSubscriber< TraitGPS         > 			BlockROSSubscriberGPS;
+	typedef BlockROSSubscriber< TraitImage       > 			BlockROSSubscriberImage;			
 
 	#endif
 }

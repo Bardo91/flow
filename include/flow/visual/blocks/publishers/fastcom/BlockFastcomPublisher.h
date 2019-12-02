@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------------------------------------------------
-//  FLOW
+//  flow
 //---------------------------------------------------------------------------------------------------------------------
 //  Copyright 2019 Pablo Ramon Soria (a.k.a. Bardo91) pabramsor@gmail.com
 //---------------------------------------------------------------------------------------------------------------------
@@ -19,52 +19,54 @@
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
 
-#include <flow/DataFlow.h>
-#include <thread>
+#ifndef FLOW_BLOCKS_PUBLISHERS_FASTCOM_BLOCKFASTCOMPUBLISHERS_H_
+#define FLOW_BLOCKS_PUBLISHERS_FASTCOM_BLOCKFASTCOMPUBLISHERS_H_
 
-#include <pcl/point_cloud.h>
-#include <pcl/point_types.h>
-#include <Eigen/Eigen>
+#include <fastcom/fastcom.h>
 #include <opencv2/opencv.hpp>
 
-FLOW_TYPE_REGISTER("int", int)
-FLOW_TYPE_REGISTER("float", float)
-FLOW_TYPE_REGISTER("cloud", pcl::PointCloud<pcl::PointXYZRGBNormal>::Ptr)
-FLOW_TYPE_REGISTER("mat44", Eigen::Matrix4f)
-FLOW_TYPE_REGISTER("vec3", Eigen::Vector3f)
-FLOW_TYPE_REGISTER("vec4", Eigen::Vector4f)
-FLOW_TYPE_REGISTER("quat", Eigen::Quaternionf)
-FLOW_TYPE_REGISTER("image", cv::Mat)
-
 namespace flow{
-    DataFlow::DataFlow(std::vector<std::pair<std::string, std::string>> _flows, std::function<void(DataFlow _f)> _callback){
-        callback_ = _callback;
-        for(auto &f:_flows){
-            types_[f.first] = f.second;
-            data_[f.first] = std::any();
-            updated_[f.first] = false;
-        }
-    }
+    template<typename _Trait >
+    class BlockFastcomPublisher : public flow::Block{
+    public:
+        static std::string name() {return _Trait::blockName_; }
 
-    void DataFlow::update(std::string _tag, std::any _data){
-        if(data_.find(_tag)!= data_.end()){
-            // Can we check here the type?
-            data_[_tag] = _data;
-            updated_[_tag] = true;
-            checkData();
-        }else{
-            std::invalid_argument("Bad tag type while updating Dataflow");
-        }
-    }
+		BlockFastcomPublisher(){
 
-    void DataFlow::checkData(){
-        int flagCounter = 0;
-        for(auto flag = updated_.begin(); flag != updated_.end(); flag++){
-            if(flag->second) flagCounter++;
+            iPolicy_ = new flow::Policy({_Trait::input_});
+
+            iPolicy_->registerCallback({_Trait::input_.first}, 
+                                    [&](DataFlow _data){
+                                        auto data = _data.get<typename _Trait::DataType_>(_Trait::input_.first);
+                                        pub_.publish(data);  
+                                    }
+            );
+        };
+
+        virtual bool configure(std::unordered_map<std::string, std::string> _params) override{
+            
+                int portNumber = std::stoi(_params["port"]);
+                pub_ = fastcom::Publisher<typename _Trait::DataType_>(portNumber);
+			
+            return true;
         }
-        if(flagCounter == updated_.size()){
-            // callback_(*this);
-            std::thread(callback_, *this).detach(); // 666 Smthg is not completelly thread safe and produces crash
-        }
-    }
+        std::vector<std::string> parameters() override {return {"port"};}
+
+    private:
+        fastcom::Publisher<typename _Trait::DataType_> pub_;
+    };
+
+    struct TraitFastcomImagePublisher{
+        static std::string blockName_;
+	    static std::pair<std::string, std::string> input_;
+	    typedef cv::Mat DataType_;
+    }; 
+
+	std::string TraitFastcomImagePublisher::blockName_ = "Fastcom Publisher image";
+	std::pair<std::string, std::string> TraitFastcomImagePublisher::input_ = std::make_pair("Image", "image");
+
+    typedef BlockFastcomPublisher< TraitFastcomImagePublisher > BlockFastcomImagePublisher;
+
 }
+
+#endif

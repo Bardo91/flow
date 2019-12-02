@@ -19,8 +19,8 @@
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef FLOW_BLOCKS_STREAMERS_ROS_ROSSUSCRIBER_H_
-#define FLOW_BLOCKS_STREAMERS_ROS_ROSSUSCRIBER_H_
+#ifndef FLOW_BLOCKS_STREAMERS_ROS_ROSSUBSCRIBER_H_
+#define FLOW_BLOCKS_STREAMERS_ROS_ROSSUBSCRIBER_H_
 
 #include <flow/Block.h>
 #include <flow/Outpipe.h>
@@ -31,14 +31,14 @@
 
 namespace flow{
 	template<typename _Trait >
-    class BlockROSSuscriber : public flow::Block{
+    class BlockROSSubscriber : public flow::Block{
     public:
-		BlockROSSuscriber(){
+		BlockROSSubscriber(){
             for (auto tag : _Trait::output_)
 		        opipes_[tag.first] = new flow::Outpipe(tag.first, tag.second);
 			}
 		
-		// ~BlockROSSuscriber(){};
+		// ~BlockROSSubscriber(){};
 
         static std::string name() { 
 			return _Trait::blockName_;
@@ -46,7 +46,7 @@ namespace flow{
 
         virtual bool configure(std::unordered_map<std::string, std::string> _params) override{
 			#ifdef FLOW_USE_ROS
-            	subROS_ = nh_.subscribe<typename _Trait::ROSType_>(_params["topic"], 1 , &BlockROSSuscriber::subsCallback, this);
+            	subROS_ = nh_.subscribe<typename _Trait::ROSType_>(_params["topic"], 1 , &BlockROSSubscriber::subsCallback, this);
 			#endif
 	    	return true;
 	    }

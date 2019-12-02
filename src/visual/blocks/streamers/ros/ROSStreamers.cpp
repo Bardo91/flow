@@ -27,11 +27,11 @@ namespace flow{
 	#ifdef FLOW_USE_ROS
 	
 		//-------------------------------------------------------------------------------------------------------------
-		template<> std::string TraitPoseStampedSuscriber::blockName_ = "ROS Subscriber Pose";
-		template<> std::vector<std::pair<std::string, std::string>> TraitPoseStampedSuscriber::output_ = {{{"Pose", "mat44"}}};
+		template<> std::string TraitPoseStampedSubscriber::blockName_ = "ROS Subscriber Pose";
+		template<> std::vector<std::pair<std::string, std::string>> TraitPoseStampedSubscriber::output_ = {{{"Pose", "mat44"}}};
 
 		template<> 
-		std::any  TraitPoseStampedSuscriber::conversion_(std::string _tag, const geometry_msgs::PoseStamped::ConstPtr &_msg){
+		std::any  TraitPoseStampedSubscriber::conversion_(std::string _tag, const geometry_msgs::PoseStamped::ConstPtr &_msg){
 			Eigen::Matrix4f pose = Eigen::Matrix4f::Identity();
 			pose.block<3,1>(0,3) = Eigen::Vector3f(_msg->pose.position.x, _msg->pose.position.y, _msg->pose.position.z);
 

@@ -26,9 +26,10 @@ PROJECT(flow VERSION 0.0.1)
 #########################################
 ######			General config	   ######
 #########################################
-option(BUILD_EXAMPLES "Compile examples"              ON)
-option(BUILD_TESTS    "Prepare tests"                 ON)
-option(FLOW_USE_ROS	  "Compile ROS dependent modules"	ON)
+option(BUILD_EXAMPLES   "Compile examples"                  ON)
+option(BUILD_TESTS      "Prepare tests"                     ON)
+option(FLOW_USE_ROS	    "Compile ROS dependent modules"	    ON)
+option(FLOW_USE_FASTCOM	"Compile FASTCOM dependent modules"	ON)
 
 set(CMAKE_AUTOMOC ON)
 
@@ -98,6 +99,18 @@ if(${FLOW_USE_ROS})
 		set(FLOW_USE_ROS OFF)
 	endif()
 endif(${FLOW_USE_ROS})
+
+
+if(${FLOW_USE_FASTCOM})
+  find_package(fastcom)
+  if(${fastcom_FOUND})
+    target_include_directories(${PROJECT_NAME} PUBLIC ${fastcom_INCLUDE_DIRS})
+    target_link_libraries(${PROJECT_NAME} LINK_PUBLIC ${fastcom_LIBRARIES})
+    target_compile_definitions(${PROJECT_NAME} PUBLIC HAS_FASTCOM)
+  else()
+    set(FLOW_USE_FASTCOM OFF)
+  endif()
+endif(${FLOW_USE_FASTCOM})
 
 #########################################
 ######			Documentation	   ######
