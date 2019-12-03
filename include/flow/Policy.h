@@ -54,7 +54,7 @@ namespace flow{
 
             void associatePipe(std::string _tag, Outpipe* _pipe);
 
-            void disconnect(std::string _tag);
+            bool disconnect(std::string _tag);
 
         private:
             std::map<std::string, std::string> inputs_;

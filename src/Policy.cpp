@@ -77,8 +77,13 @@ namespace flow{
         connetedPipes_[_tag] = _pipe;
     }
 
-    void Policy::disconnect(std::string _tag){
-        connetedPipes_[_tag]->unregisterPolicy(this);
+    bool Policy::disconnect(std::string _tag){
+        if(auto pipe = connetedPipes_[_tag]; pipe != nullptr){
+            pipe->unregisterPolicy(this);
+            return true;
+        }else{
+            return false;
+        }
     }
 
 }
