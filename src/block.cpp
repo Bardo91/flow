@@ -90,7 +90,7 @@ namespace flow{
     }
 
     bool Block::createPipe(std::string _pipeTag, std::string _tagType){
-        if(opipes_[_pipeTag] != nullptr){
+        if(opipes_[_pipeTag] == nullptr){
             opipes_[_pipeTag] = std::shared_ptr<Outpipe>(new flow::Outpipe(_pipeTag, _tagType));
             return true;
         }else{
