@@ -27,9 +27,13 @@
 namespace flow{
     // BASE METHODS
 
-
-    std::unordered_map<std::string, Outpipe*> Block::getPipes(){
+    
+    std::unordered_map<std::string, std::shared_ptr<Outpipe>> Block::getPipes(){
         return opipes_;
+    }
+
+    std::shared_ptr<Outpipe> Block::getPipe(std::string _tag){
+        return opipes_[_tag];
     }
 
     void Block::start(){
@@ -83,6 +87,38 @@ namespace flow{
 
     void Block::disconnect(std::string _pipeTag) {
         iPolicy_->disconnect(_pipeTag);
+    }
+
+    bool Block::createPipe(std::string _pipeTag, std::string _tagType){
+        if(opipes_[_pipeTag] != nullptr){
+            opipes_[_pipeTag] = std::shared_ptr<Outpipe>(new flow::Outpipe(_pipeTag, _tagType));
+            return true;
+        }else{
+            throw std::invalid_argument("Pipe with tag " + _pipeTag + " already defined.");
+            return false;
+        }
+    }
+
+    bool Block::isRunningLoop() const{
+        return runLoop_;
+    }
+
+    bool Block::createPolicy(std::vector<std::pair<std::string, std::string>> _inputs){
+        if(iPolicy_){
+            return false;
+        }else{
+            iPolicy_ = new flow::Policy(_inputs);
+            return true;
+        }
+    }
+
+    bool Block::registerCallback(Policy::PolicyMask _mask, Policy::PolicyCallback _callback){
+        if(iPolicy_){
+            iPolicy_->registerCallback( _mask,  _callback );
+            return true;
+        }else{
+            return false;
+        }
     }
 
 }
