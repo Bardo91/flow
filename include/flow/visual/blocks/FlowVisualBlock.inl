@@ -191,8 +191,19 @@ namespace flow{
         
         auto iter = tags.begin() + index;
         std::string tag = *iter;
+
+        // In NodeEditor, NodeDataType is just a pair of string indicating type and name of type. So faking it.
+        //return StreamerPipeInfo(nullptr, tag).type();
         
-        return StreamerPipeInfo(nullptr, tag).type();
+        if(portType == PortType::In){
+            auto type = flowBlock_->getPolicy()->type(tag);
+            // std::cout << Block_::name() << ". " << index << ": " << type << std::endl;
+            return NodeDataType{type.c_str(),tag.c_str()};
+        }else{
+            auto type = flowBlock_->getPipe(tag)->type();
+            // std::cout << Block_::name() << ". " << index << ": " << type << std::endl;
+            return NodeDataType{type.c_str(),tag.c_str()};
+        }
     }
 
     template<typename Block_, bool HasAutoLoop_>

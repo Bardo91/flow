@@ -35,6 +35,7 @@ namespace flow{
     };
 
     std::string Outpipe::tag() const {return tag_;};
+    std::string Outpipe::type() const{return type_;};
     
     bool Outpipe::registerPolicy(Policy * _pol, std::string _policyTag){
         // Check that policy has the output tag

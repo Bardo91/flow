@@ -29,6 +29,7 @@
 #include <nodes/Node>
 #include <nodes/FlowScene>
 #include <nodes/FlowView>
+#include <nodes/ConnectionStyle>
 
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QVBoxLayout>
@@ -55,6 +56,22 @@
 
 using QtNodes::FlowView;
 using QtNodes::FlowScene;
+using QtNodes::ConnectionStyle;
+
+
+static
+void
+setStyle()
+{
+  ConnectionStyle::setConnectionStyle(
+    R"(
+  {
+    "ConnectionStyle": {
+      "UseDataDefinedColors": true
+    }
+  }
+  )");
+}
 
 namespace flow{
     int FlowVisualInterface::init(int _argc, char** _argv){
@@ -77,6 +94,9 @@ namespace flow{
         l->addWidget(menuBar);
 
         if(registerFn_ != nullptr){
+
+            setStyle();
+
             auto scene = new FlowScene(     registerDataModels(), 
                                             &mainWidget
                                             );
