@@ -53,6 +53,7 @@
 #include <flow/visual/blocks/FlowVisualBlock.h>
 #include <flow/visual/code_generation/CodeGenerator.h>
 
+#include <X11/Xlib.h>   
 
 using QtNodes::FlowView;
 using QtNodes::FlowScene;
@@ -75,6 +76,8 @@ setStyle()
 
 namespace flow{
     int FlowVisualInterface::init(int _argc, char** _argv){
+        XInitThreads();	
+
         kids_app = new QApplication(_argc, _argv);
 
         #ifdef FLOW_USE_ROS
