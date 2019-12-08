@@ -46,6 +46,7 @@ namespace flow{
 
         [[deprecated("This function gives the map with all pipes, please use getPipe method and get just the needed")]]
         std::unordered_map<std::string, std::shared_ptr<Outpipe>> getPipes();
+        
         std::shared_ptr<Outpipe> getPipe(std::string _tag);
 
         void start();

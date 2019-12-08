@@ -52,6 +52,7 @@ namespace flow{
             void flush(std::any _data);
 
             std::string tag() const;
+            std::string type() const;
             
 
         protected:
