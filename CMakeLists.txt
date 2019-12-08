@@ -27,7 +27,7 @@ PROJECT(flow VERSION 0.0.1)
 ######			General config	   ######
 #########################################
 option(BUILD_EXAMPLES   "Compile examples"                  ON)
-option(BUILD_TESTS      "Prepare tests"                     ON)
+option(BUILD_TESTS      "Prepare tests"                     OFF)
 option(FLOW_USE_ROS	    "Compile ROS dependent modules"	    ON)
 option(FLOW_USE_FASTCOM	"Compile FASTCOM dependent modules"	ON)
 

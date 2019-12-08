@@ -37,17 +37,17 @@ namespace flow{
         static std::string name() {return _Trait::blockName_; }
 
 		BlockROSPublisher(){
-
-            createPolicy({_Trait::input_});
-
-            registerCallback({_Trait::input_.first}, 
+            createPolicy(_Trait::input_);
+            for (auto tag : _Trait::input_){
+                registerCallback({tag.first}, 
                                     [&](DataFlow _data){
-                                        typename _Trait::ROSType_ topicContent = _Trait::conversion_(_data);
+                                        auto topicContent =std::any_cast<typename _Trait::ROSType_>(_Trait::conversion_(_data));
                                         #ifdef FLOW_USE_ROS
                                             pubROS_.publish(topicContent);
                                         #endif
                                     }
-            );
+                );
+            }    
         };
 
         virtual bool configure(std::unordered_map<std::string, std::string> _params) override{

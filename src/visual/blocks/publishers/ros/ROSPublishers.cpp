@@ -28,9 +28,9 @@ namespace flow{
 	#ifdef FLOW_USE_ROS
 
         //-------------------------------------------------------------------------------------------------------------
-        std::string TraitPoseStampedPublisher::blockName_ = "ROS Publisher Pose";
-        std::pair<std::string, std::string> TraitPoseStampedPublisher::input_("Pose", "mat44");
-        geometry_msgs::PoseStamped TraitPoseStampedPublisher::conversion_(DataFlow _data){
+        template<> std::string TraitPoseStampedPublisher::blockName_ = "ROS Publisher Pose";
+        template<> std::map<std::string, std::string> TraitPoseStampedPublisher::input_ = {{{"Pose", "mat44"}}};
+        template<> std::any TraitPoseStampedPublisher::conversion_(DataFlow _data){
 
             auto pose = _data.get<Eigen::Matrix4f>("Pose");
             geometry_msgs::PoseStamped ROSpose;
@@ -45,9 +45,9 @@ namespace flow{
         }
 
         //-------------------------------------------------------------------------------------------------------------
-        std::string TraitPointCloudPublisher::blockName_ = "ROS Publisher PointCloud";
-        std::pair<std::string, std::string> TraitPointCloudPublisher::input_("Point Cloud", "cloud");
-        sensor_msgs::PointCloud2 TraitPointCloudPublisher::conversion_(DataFlow _data){
+        template<> std::string TraitPointCloudPublisher::blockName_ = "ROS Publisher PointCloud";
+        template<> std::map<std::string, std::string> TraitPointCloudPublisher::input_ = {{{"Point cloud", "cloud"}}};
+        template<> std::any TraitPointCloudPublisher::conversion_(DataFlow _data){
 
             auto cloud = _data.get<pcl::PointCloud<pcl::PointXYZRGBNormal>::Ptr>("Cloud");
             sensor_msgs::PointCloud2 ROScloud;
@@ -57,6 +57,20 @@ namespace flow{
             ROScloud.header.frame_id = "map"; 
 
             return ROScloud;
+        }
+
+        //-------------------------------------------------------------------------------------------------------------
+        template<> std::string TraitImagePublisher::blockName_ = "ROS Publisher Image";
+        template<> std::map<std::string, std::string> TraitImagePublisher::input_ = {{{"Color Image", "image"}}};
+        template<> std::any TraitImagePublisher::conversion_(DataFlow _data){
+
+            cv::Mat image = _data.get<cv::Mat>("Image");
+            sensor_msgs::ImagePtr ROSimage;
+            ROSimage = cv_bridge::CvImage(std_msgs::Header(), sensor_msgs::image_encodings::BGR8, image).toImageMsg();
+            ROSimage->header.frame_id = "map";
+            ROSimage->header.stamp=ros::Time::now();
+
+            return ROSimage;
         }
 
     #endif

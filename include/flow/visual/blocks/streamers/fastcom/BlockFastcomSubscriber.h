@@ -34,7 +34,7 @@ namespace flow{
     public:
 		BlockFastcomSubscriber(){
             for (auto tag : _Trait::output_)
-		        opipes_[tag.first] = new flow::Outpipe(tag.first, tag.second);
+		        createPipe(tag.first, tag.second);
 			}
 
         static std::string name() { 
@@ -45,11 +45,14 @@ namespace flow{
 			
 			std::string ipAdress = _params["ip"];
 			int portNumber = std::stoi(_params["port"]);
-			
-			sub_ = fastcom::Subscriber<typename _Trait::DataType_>(ipAdress , portNumber);
-
-			sub_->attachCallback(subsCallback);
-	    	return true;
+			#ifdef FLOW_USE_FASTCOM
+				sub_ = fastcom::ImageSubscriber(ipAdress , portNumber);
+				sub_.attachCallback(std::bind(&subsCallback, this, _1));
+				
+	    		return true;
+			#else
+				return false;
+			#endif
 	    }
 
         std::vector<std::string> parameters() override {return {"ip" , "port"};} 
@@ -57,24 +60,26 @@ namespace flow{
     private:
         void subsCallback(typename _Trait::DataType_ &_msg){
 			for (auto tag : _Trait::output_){
-				if(opipes_[tag.first]->registrations() !=0 ){
-               		opipes_[tag.first]->flush(_msg);
+				if(getPipe(tag.first)->registrations() !=0 ){
+               		getPipe(tag.first)->flush(_msg);
 				}
 			}
         }
 
     private:
-		fastcom::Subscriber<typename _Trait::DataType_> sub_;
+		#ifdef FLOW_USE_FASTCOM
+			fastcom::ImageSubscriber sub_("127.0.0.1",8888); //666
+		#endif
     };
 
     struct TraitFastcomImageSubscriber{
         static std::string blockName_;
-	    static std::pair<std::string, std::string> input_;
+	    static std::map<std::string, std::string> output_;
 	    typedef cv::Mat DataType_;
     }; 
 
 	std::string TraitFastcomImageSubscriber::blockName_ = "Fastcom Subscriber image";
-	std::pair<std::string, std::string> TraitFastcomImageSubscriber::input_ = std::make_pair("Image", "image");
+	std::map<std::string, std::string> TraitFastcomImageSubscriber::output_ = {{{"Color Image", "image"}}};
 
     typedef BlockFastcomSubscriber< TraitFastcomImageSubscriber > BlockFastcomImageSubscriber;
 

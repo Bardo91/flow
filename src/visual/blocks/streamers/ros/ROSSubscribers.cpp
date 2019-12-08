@@ -19,7 +19,7 @@
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
 
-#include <flow/visual/blocks/streamers/ros/ROSStreamers.h>
+#include <flow/visual/blocks/streamers/ros/ROSSubscribers.h>
 
 namespace flow{
 
@@ -27,8 +27,8 @@ namespace flow{
 	#ifdef FLOW_USE_ROS
 	
 		//-------------------------------------------------------------------------------------------------------------
-		template<> std::string TraitPoseStampedSuscriber::blockName_ = "ROS Subscriber Pose";
-		template<> std::map<std::string, std::string> TraitPoseStampedSuscriber::output_ = {{{"Pose", "mat44"}}};
+		template<> std::string TraitPoseStampedSubscriber::blockName_ = "ROS Subscriber Pose";
+		template<> std::map<std::string, std::string> TraitPoseStampedSubscriber::output_ = {{{"Pose", "mat44"}}};
 
 		template<> 
 		std::any  TraitPoseStampedSubscriber::conversion_(std::string _tag, const geometry_msgs::PoseStamped::ConstPtr &_msg){

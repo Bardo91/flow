@@ -26,32 +26,33 @@
 #include <Eigen/Eigen>
 #include <pcl/point_cloud.h>
 #include <pcl/point_types.h>
+#include <opencv2/opencv.hpp>
 
 #ifdef FLOW_USE_ROS
 	#include <tf2_eigen/tf2_eigen.h>
 	#include <geometry_msgs/PoseStamped.h>
 	#include <sensor_msgs/Image.h>
 	#include <pcl_conversions/pcl_conversions.h>
+	#include <cv_bridge/cv_bridge.h>
 #endif
 
 namespace flow{
 	#ifdef FLOW_USE_ROS
-	    struct TraitPoseStampedPublisher{
+		template<typename _T>
+		struct TraitRosPublisher{
 	    	static std::string blockName_;
-	    	static std::pair<std::string, std::string> input_;
-	    	static geometry_msgs::PoseStamped conversion_(DataFlow _data);
-	    	typedef geometry_msgs::PoseStamped ROSType_;
-	    };
+	    	static std::map<std::string, std::string> input_;
+	    	static std::any conversion_(DataFlow _data);
+	    	typedef _T ROSType_;
+		};
 
-        struct TraitPointCloudPublisher{
-	    	static std::string blockName_;
-	    	static std::pair<std::string, std::string> input_;
-	    	static sensor_msgs::PointCloud2 conversion_(DataFlow _data);
-	    	typedef sensor_msgs::PointCloud2 ROSType_;
-	    };
-    
-    typedef BlockROSPublisher< TraitPoseStampedPublisher > BlockROSPublisherPoseStamped;
-	typedef BlockROSPublisher< TraitPointCloudPublisher  > BlockROSPublisherPointCloud;
+		typedef TraitRosPublisher<geometry_msgs::PoseStamped> TraitPoseStampedPublisher;
+		typedef TraitRosPublisher<sensor_msgs::PointCloud2> TraitPointCloudPublisher;
+		typedef TraitRosPublisher<sensor_msgs::Image> TraitImagePublisher;
+
+		typedef BlockROSPublisher< TraitPoseStampedPublisher > BlockROSPublisherPoseStamped;
+		typedef BlockROSPublisher< TraitPointCloudPublisher  > BlockROSPublisherPointCloud;
+		typedef BlockROSPublisher< TraitImagePublisher       > BlockROSPublisherImage;
     #endif
 }
 #endif

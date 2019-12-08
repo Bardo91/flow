@@ -33,37 +33,46 @@ namespace flow{
 
 		BlockFastcomPublisher(){
 
-            iPolicy_ = new flow::Policy({_Trait::input_});
-
-            iPolicy_->registerCallback({_Trait::input_.first}, 
-                                    [&](DataFlow _data){
-                                        auto data = _data.get<typename _Trait::DataType_>(_Trait::input_.first);
-                                        pub_.publish(data);  
-                                    }
-            );
+            createPolicy({_Trait::input_});
+            for (auto tag : _Trait::input_){
+                registerCallback({tag.first}, 
+                                        [&](DataFlow _data){
+                                            auto data = _data.get<typename _Trait::DataType_>(tag.first);
+                                            #ifdef FLOW_USE_FASTCOM
+                                                pub_.publish(data);
+                                            #endif  
+                                        }
+                );
+            }        
         };
 
         virtual bool configure(std::unordered_map<std::string, std::string> _params) override{
             
-                int portNumber = std::stoi(_params["port"]);
-                pub_ = fastcom::Publisher<typename _Trait::DataType_>(portNumber);
+            int portNumber = std::stoi(_params["port"]);
+            #ifdef FLOW_USE_FASTCOM
+                // pub_ = fastcom::ImagePublisher(portNumber);
+                return true;
+            #else
+                return false;
+            #endif
 			
-            return true;
         }
         std::vector<std::string> parameters() override {return {"port"};}
 
     private:
-        fastcom::Publisher<typename _Trait::DataType_> pub_;
+        #ifdef FLOW_USE_FASTCOM
+            fastcom::ImagePublisher pub_(8888); // 666
+        #endif
     };
 
     struct TraitFastcomImagePublisher{
         static std::string blockName_;
-	    static std::pair<std::string, std::string> input_;
+	    static std::map<std::string, std::string> input_;
 	    typedef cv::Mat DataType_;
     }; 
 
 	std::string TraitFastcomImagePublisher::blockName_ = "Fastcom Publisher image";
-	std::pair<std::string, std::string> TraitFastcomImagePublisher::input_ = std::make_pair("Image", "image");
+	std::map<std::string, std::string> TraitFastcomImagePublisher::input_ = {{{"Color Image", "image"}}};
 
     typedef BlockFastcomPublisher< TraitFastcomImagePublisher > BlockFastcomImagePublisher;
 
