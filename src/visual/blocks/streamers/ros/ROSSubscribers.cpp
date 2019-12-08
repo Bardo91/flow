@@ -84,7 +84,7 @@ namespace flow{
 
 		template<> 
 		std::any TraitImage::conversion_(std::string _tag, const sensor_msgs::Image::ConstPtr &_msg){
-			return cv_bridge::toCvCopy(_msg, "bgr8")->image;;
+			return cv_bridge::toCvCopy(_msg, "bgr8")->image;
 		}
 
 		//-------------------------------------------------------------------------------------------------------------

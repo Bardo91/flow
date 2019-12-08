@@ -29,7 +29,7 @@ PROJECT(flow VERSION 0.1.0)
 option(BUILD_EXAMPLES   "Compile examples"                  ON)
 option(BUILD_TESTS      "Prepare tests"                     OFF)
 option(FLOW_USE_ROS	    "Compile ROS dependent modules"	    ON)
-option(FLOW_USE_FASTCOM	"Compile FASTCOM dependent modules"	ON)
+option(FLOW_USE_FASTCOM	"Compile FASTCOM dependent modules"	OFF)
 
 set(CMAKE_AUTOMOC ON)
 

@@ -49,7 +49,7 @@ namespace flow{
         template<> std::map<std::string, std::string> TraitPointCloudPublisher::input_ = {{{"Point cloud", "cloud"}}};
         template<> std::any TraitPointCloudPublisher::conversion_(DataFlow _data){
 
-            auto cloud = _data.get<pcl::PointCloud<pcl::PointXYZRGBNormal>::Ptr>("Cloud");
+            auto cloud = _data.get<pcl::PointCloud<pcl::PointXYZRGBNormal>::Ptr>("Point cloud");
             sensor_msgs::PointCloud2 ROScloud;
             
     		pcl::toROSMsg(*cloud, ROScloud);
@@ -64,13 +64,13 @@ namespace flow{
         template<> std::map<std::string, std::string> TraitImagePublisher::input_ = {{{"Color Image", "image"}}};
         template<> std::any TraitImagePublisher::conversion_(DataFlow _data){
 
-            cv::Mat image = _data.get<cv::Mat>("Image");
+            auto image = _data.get<cv::Mat>("Color Image");
             sensor_msgs::ImagePtr ROSimage;
             ROSimage = cv_bridge::CvImage(std_msgs::Header(), sensor_msgs::image_encodings::BGR8, image).toImageMsg();
             ROSimage->header.frame_id = "map";
             ROSimage->header.stamp=ros::Time::now();
 
-            return ROSimage;
+            return *ROSimage;
         }
 
     #endif
