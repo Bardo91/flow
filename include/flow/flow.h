@@ -32,6 +32,7 @@
     #include <flow/visual/blocks/streamers/ros/ROSSubscribers.h>
 #endif
 
-#include <flow/visual/blocks/publishers/fastcom/BlockFastcomPublisher.h>
-
-#include <flow/visual/blocks/streamers/fastcom/BlockFastcomSubscriber.h>
+#ifdef FLOW_USE_FASTCOM
+    #include <flow/visual/blocks/publishers/fastcom/BlockFastcomPublisher.h>
+    #include <flow/visual/blocks/streamers/fastcom/BlockFastcomSubscriber.h>
+#endif

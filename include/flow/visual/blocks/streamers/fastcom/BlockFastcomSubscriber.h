@@ -24,9 +24,10 @@
 
 #include <flow/Block.h>
 #include <flow/Outpipe.h>
-
-#include <fastcom/fastcom.h>
 #include <opencv2/opencv.hpp>
+#ifdef FLOW_USE_FASTCOM
+	#include <fastcom/fastcom.h>
+#endif
 
 namespace flow{
 	template<typename _Trait >

@@ -22,8 +22,10 @@
 #ifndef FLOW_BLOCKS_PUBLISHERS_FASTCOM_BLOCKFASTCOMPUBLISHERS_H_
 #define FLOW_BLOCKS_PUBLISHERS_FASTCOM_BLOCKFASTCOMPUBLISHERS_H_
 
-#include <fastcom/fastcom.h>
 #include <opencv2/opencv.hpp>
+#ifdef FLOW_USE_FASTCOM
+	#include <fastcom/fastcom.h>
+#endif
 
 namespace flow{
     template<typename _Trait >
