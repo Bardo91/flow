@@ -32,27 +32,27 @@ namespace flow{
     inline FlowVisualBlock<Block_,HasAutoLoop_>::FlowVisualBlock() {
         flowBlock_ = new Block_();
 
-        if(flowBlock_->parameters().size() > 0){
+        if(flowBlock_->parameters().size() > 0 || HasAutoLoop_){
             configsLayout_ = new QVBoxLayout();
             configBox_ = new QGroupBox("Configuration");
             configBox_->setLayout(configsLayout_);
-            for(auto &param: flowBlock_->parameters()){
-                configParams_.push_back(new ParameterWidget(param.c_str(), ""));
-                configsLayout_->addLayout(configParams_.back());
+            if(flowBlock_->parameters().size() > 0){
+                for(auto &param: flowBlock_->parameters()){
+                    configParams_.push_back(new ParameterWidget(param.c_str(), ""));
+                    configsLayout_->addLayout(configParams_.back());
+                }
+                configButton_ = new QToolButton();
+                configButton_->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+                configButton_->setLayoutDirection(Qt::RightToLeft);
+                configButton_->setIcon(QIcon("/usr/share/icons/Humanity/actions/128/help-contents.svg"));
+                configButton_->setText("Configure");
+                configsLayout_->addWidget(configButton_);
+                connect(configButton_, &QPushButton::clicked, this, [this]() {
+                    this->configure();
+                });
+                //Configure configure states
+                configStateIcon_ = new QIcon();
             }
-            configButton_ = new QToolButton();
-            configButton_->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-            configButton_->setLayoutDirection(Qt::RightToLeft);
-            configButton_->setIcon(QIcon("/usr/share/icons/Humanity/actions/128/help-contents.svg"));
-            configButton_->setText("Configure");
-            configsLayout_->addWidget(configButton_);
-            connect(configButton_, &QPushButton::clicked, this, [this]() {
-                this->configure();
-            });
-            //Configure configure states
-            configStateIcon_ = new QIcon();
-
-
 
             if(HasAutoLoop_){
                 streamActionButton_ = new QCheckBox("Run");
