@@ -35,7 +35,7 @@ FLOW_TYPE_REGISTER("vec4", Eigen::Vector4f)
 FLOW_TYPE_REGISTER("quat", Eigen::Quaternionf)
 
 namespace flow{
-    DataFlow::DataFlow(std::vector<std::pair<std::string, std::string>> _flows, std::function<void(DataFlow _f)> _callback){
+    DataFlow::DataFlow(std::map<std::string, std::string> _flows, std::function<void(DataFlow _f)> _callback){
         callback_ = _callback;
         for(auto &f:_flows){
             types_[f.first] = f.second;

@@ -29,7 +29,7 @@
 
 namespace flow{
 
-    Policy::Policy(std::vector<std::pair<std::string, std::string>> _inputs){
+    Policy::Policy(std::map<std::string, std::string> _inputs){
         if(_inputs.size() == 0){
             throw std::invalid_argument( "A Policy cannot be constructed with an empty list of input pipe tags." );
         }
@@ -44,12 +44,12 @@ namespace flow{
     }
 
     bool Policy::registerCallback(PolicyMask _mask, PolicyCallback _callback){
-        std::vector<std::pair<std::string, std::string>> flows;
+        std::map<std::string, std::string> flows;
         for(auto &m:_mask){
             // auto iter = std::find_if(inputs_.begin(), inputs_.end(), [&](const std::pair<std::string, std::string>& _in){return _in.first == m;});
             auto iter = inputs_.find(m);
             if(iter != inputs_.end()){
-                flows.push_back(*iter);
+                flows[iter->first] = iter->second;
             }
         }
         flows_.push_back(new DataFlow(flows, _callback));

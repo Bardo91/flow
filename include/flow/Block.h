@@ -69,7 +69,7 @@ namespace flow{
         bool createPipe(std::string _pipeTag, std::string _tagType);
         bool isRunningLoop() const;
 
-        bool createPolicy(std::vector<std::pair<std::string, std::string>> _inputs);
+        bool createPolicy(std::map<std::string, std::string> _inputs);
         bool registerCallback(Policy::PolicyMask _mask, Policy::PolicyCallback _callback);
 
     protected:

@@ -43,7 +43,7 @@ namespace flow{
             typedef std::vector<std::string> PolicyMask;
             typedef std::function<void(DataFlow _f)> PolicyCallback;
 
-            Policy(std::vector<std::pair<std::string, std::string>> _inputs);
+            Policy(std::map<std::string, std::string> _inputs);
             bool registerCallback(PolicyMask _mask, PolicyCallback _callback);
             void update(std::string _tag, std::any _data);
     

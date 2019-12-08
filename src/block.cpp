@@ -103,7 +103,7 @@ namespace flow{
         return runLoop_;
     }
 
-    bool Block::createPolicy(std::vector<std::pair<std::string, std::string>> _inputs){
+    bool Block::createPolicy(std::map<std::string, std::string> _inputs){
         if(iPolicy_){
             return false;
         }else{
