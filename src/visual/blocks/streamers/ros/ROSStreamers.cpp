@@ -27,8 +27,8 @@ namespace flow{
 	#ifdef FLOW_USE_ROS
 	
 		//-------------------------------------------------------------------------------------------------------------
-		template<> std::string TraitPoseStampedSubscriber::blockName_ = "ROS Subscriber Pose";
-		template<> std::vector<std::pair<std::string, std::string>> TraitPoseStampedSubscriber::output_ = {{{"Pose", "mat44"}}};
+		template<> std::string TraitPoseStampedSuscriber::blockName_ = "ROS Subscriber Pose";
+		template<> std::map<std::string, std::string> TraitPoseStampedSuscriber::output_ = {{{"Pose", "mat44"}}};
 
 		template<> 
 		std::any  TraitPoseStampedSubscriber::conversion_(std::string _tag, const geometry_msgs::PoseStamped::ConstPtr &_msg){
@@ -43,7 +43,7 @@ namespace flow{
 
 		//-------------------------------------------------------------------------------------------------------------
 		template<> std::string TraitImu::blockName_ = "ROS Subscriber Imu";
-		template<> std::vector<std::pair<std::string, std::string>> TraitImu::output_ = {{	{"Orientation", "vec4"},
+		template<> std::map<std::string, std::string> TraitImu::output_ = {{	{"Orientation", "vec4"},
 																				{"Acceleration", "vec3"}}};
 		template<> 
 		std::any TraitImu::conversion_(std::string _tag, const sensor_msgs::Imu::ConstPtr &_msg){
@@ -60,7 +60,7 @@ namespace flow{
 		
 		//-------------------------------------------------------------------------------------------------------------
 		template<> std::string TraitGPS::blockName_ = "ROS Subscriber GPS";
-		template<> std::vector<std::pair<std::string, std::string>> TraitGPS::output_ = {{	{"Latitude", "float"} , 
+		template<> std::map<std::string, std::string> TraitGPS::output_ = {{	{"Latitude", "float"} , 
 																				{"Longitude", "float"},
 																				{"Altitude", "float"}}};
 		template<> 
@@ -80,7 +80,7 @@ namespace flow{
 
 		//-------------------------------------------------------------------------------------------------------------
 		template<> std::string TraitImage::blockName_ = "ROS Subscriber Image";
-		template<> std::vector<std::pair<std::string, std::string>> TraitImage::output_ = {{{"Color Image", "image"}}};
+		template<> std::map<std::string, std::string> TraitImage::output_ = {{{"Color Image", "image"}}};
 
 		template<> 
 		std::any TraitImage::conversion_(std::string _tag, const sensor_msgs::Image::ConstPtr &_msg){
@@ -89,7 +89,7 @@ namespace flow{
 
 		//-------------------------------------------------------------------------------------------------------------
 		template<> std::string TraitCloud::blockName_ = "ROS Subscriber PointCloud";
-		template<> std::vector<std::pair<std::string, std::string>> TraitCloud::output_ = {{{"Point cloud", "cloud"}}};
+		template<> std::map<std::string, std::string> TraitCloud::output_ = {{{"Point cloud", "cloud"}}};
 
 		template<> 
 		std::any TraitCloud::conversion_(std::string _tag, const sensor_msgs::PointCloud2::ConstPtr &_msg){

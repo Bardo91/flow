@@ -45,7 +45,7 @@ namespace flow{
 	template<typename T_>
 	struct TraitRosSubscriber{
 		static std::string blockName_;
-		static std::vector<std::pair<std::string, std::string>> output_;
+		static std::map<std::string, std::string> output_;
 		static std::any conversion_(std::string _tag, const typename T_::ConstPtr &_msg);
 		typedef T_ ROSType_;
 	};

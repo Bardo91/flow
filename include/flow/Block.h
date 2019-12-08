@@ -44,7 +44,9 @@ namespace flow{
         virtual bool configure(std::unordered_map<std::string, std::string> _params) { return false; };
         virtual std::vector<std::string> parameters(){ return {}; };
 
-        std::unordered_map<std::string, Outpipe*> getPipes();
+        [[deprecated("This function gives the map with all pipes, please use getPipe method and get just the needed")]]
+        std::unordered_map<std::string, std::shared_ptr<Outpipe>> getPipes();
+        std::shared_ptr<Outpipe> getPipe(std::string _tag);
 
         void start();
         void stop();
@@ -64,11 +66,18 @@ namespace flow{
         void disconnect(std::string _pipeTag);
 
     protected:
-        virtual void loopCallback() {};
+        bool createPipe(std::string _pipeTag, std::string _tagType);
+        bool isRunningLoop() const;
+
+        bool createPolicy(std::map<std::string, std::string> _inputs);
+        bool registerCallback(Policy::PolicyMask _mask, Policy::PolicyCallback _callback);
 
     protected:
+        virtual void loopCallback() {};
+
+    private:
         Policy *iPolicy_ = nullptr;
-        std::unordered_map<std::string, Outpipe*> opipes_;
+        std::unordered_map<std::string, std::shared_ptr<Outpipe>> opipes_;
         std::thread loopThread_;
         bool runLoop_ = false;
     };

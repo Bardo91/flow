@@ -38,9 +38,9 @@ namespace flow{
 
 		BlockROSPublisher(){
 
-            iPolicy_ = new flow::Policy({_Trait::input_});
+            createPolicy({_Trait::input_});
 
-            iPolicy_->registerCallback({_Trait::input_.first}, 
+            registerCallback({_Trait::input_.first}, 
                                     [&](DataFlow _data){
                                         typename _Trait::ROSType_ topicContent = _Trait::conversion_(_data);
                                         #ifdef FLOW_USE_ROS

@@ -34,7 +34,7 @@ namespace flow{
         
     class DataFlow{
     public:
-        DataFlow(std::vector<std::pair<std::string, std::string>> _flows, std::function<void(DataFlow _f)> _callback);
+        DataFlow(std::map<std::string, std::string> _flows, std::function<void(DataFlow _f)> _callback);
 
         void update(std::string _tag, std::any _data);
 
