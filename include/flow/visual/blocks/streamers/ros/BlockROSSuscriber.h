@@ -23,7 +23,7 @@
 #define FLOW_BLOCKS_STREAMERS_ROS_ROSSUSCRIBER_H_
 
 #include <flow/Block.h>
-#include <flow/OutPipe.h>
+#include <flow/Outpipe.h>
 
 #ifdef FLOW_USE_ROS
 	#include <ros/ros.h>
@@ -35,7 +35,7 @@ namespace flow{
     public:
 		BlockROSSuscriber(){
             for (auto tag : _Trait::output_)
-		        opipes_[tag] = new flow::OutPipe(tag);
+				createPipe(tag.first, tag.second);
 			}
 		
 		// ~BlockROSSuscriber(){};
@@ -56,8 +56,8 @@ namespace flow{
     private:
         void subsCallback(const typename _Trait::ROSType_::ConstPtr &_msg){
 			for (auto tag : _Trait::output_){
-				if(opipes_[tag]->registrations() !=0 ){
-               		opipes_[tag]->flush(_Trait::conversion_(tag , _msg));
+				if(getPipe(tag.first)->registrations() !=0 ){
+               		getPipe(tag.first)->flush(_Trait::conversion_(tag.first , _msg));
 				}
 			}
         }

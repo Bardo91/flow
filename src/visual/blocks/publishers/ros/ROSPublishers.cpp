@@ -21,6 +21,7 @@
 
 #include <flow/visual/blocks/publishers/ros/ROSPublishers.h>
 
+
 namespace flow{
 
     // Declaration of Trait structs
@@ -28,10 +29,10 @@ namespace flow{
 
         //-------------------------------------------------------------------------------------------------------------
         std::string TraitPoseStampedPublisher::blockName_ = "ROS Publisher Pose";
-        std::string TraitPoseStampedPublisher::input_ = "pose";
-        geometry_msgs::PoseStamped TraitPoseStampedPublisher::conversion_(std::unordered_map<std::string,std::any> _data){
+        std::pair<std::string, std::string> TraitPoseStampedPublisher::input_("Pose", "mat44");
+        geometry_msgs::PoseStamped TraitPoseStampedPublisher::conversion_(DataFlow _data){
 
-            Eigen::Matrix4f pose = std::any_cast<Eigen::Matrix4f>(_data["pose"]);
+            auto pose = _data.get<Eigen::Matrix4f>("Pose");
             geometry_msgs::PoseStamped ROSpose;
 
             Eigen::Affine3d poseAffine;
@@ -45,13 +46,13 @@ namespace flow{
 
         //-------------------------------------------------------------------------------------------------------------
         std::string TraitPointCloudPublisher::blockName_ = "ROS Publisher PointCloud";
-        std::string TraitPointCloudPublisher::input_ = "cloud";
-        sensor_msgs::PointCloud2 TraitPointCloudPublisher::conversion_(std::unordered_map<std::string,std::any> _data){
+        std::pair<std::string, std::string> TraitPointCloudPublisher::input_("Point Cloud", "cloud");
+        sensor_msgs::PointCloud2 TraitPointCloudPublisher::conversion_(DataFlow _data){
 
-            pcl::PointCloud<pcl::PointXYZRGBNormal> cloud = std::any_cast<pcl::PointCloud<pcl::PointXYZRGBNormal>>(_data["cloud"]);
+            auto cloud = _data.get<pcl::PointCloud<pcl::PointXYZRGBNormal>::Ptr>("Cloud");
             sensor_msgs::PointCloud2 ROScloud;
             
-    		pcl::toROSMsg(cloud, ROScloud);
+    		pcl::toROSMsg(*cloud, ROScloud);
             ROScloud.header.stamp    = ros::Time::now();
             ROScloud.header.frame_id = "map"; 
 

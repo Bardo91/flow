@@ -33,35 +33,35 @@
 #include <iostream>
 #include <functional>
 
+#include <flow/DataFlow.h>
+
 namespace flow{
-    class OutPipe;
+    class Outpipe;
 
     class Policy{
         public:
             typedef std::vector<std::string> PolicyMask;
-            typedef std::function<void(std::unordered_map<std::string,std::any>)> PolicyCallback;
+            typedef std::function<void(DataFlow _f)> PolicyCallback;
 
-            Policy(std::vector<std::string> _inPipes);
-
+            Policy(std::map<std::string, std::string> _inputs);
             bool registerCallback(PolicyMask _mask, PolicyCallback _callback);
-
-            void update(std::string _tag, std::any _val);
+            void update(std::string _tag, std::any _data);
     
             int nInputs();
             std::vector<std::string> inputTags();
 
-            void associatePipe(std::string _tag, OutPipe* _pipe);
+            std::string type(std::string _tag);
 
-            void disconnect(std::string _tag);
-        private:
-            void checkMasks();
+            void associatePipe(std::string _tag, Outpipe* _pipe);
+
+            bool disconnect(std::string _tag);
 
         private:
-            std::unordered_map<std::string, std::any>   dataFlow_;
-            std::unordered_map<std::string, bool>       validData_; 
-            std::unordered_map<std::string, OutPipe*>   connetedPipes_; 
+            std::map<std::string, std::string> inputs_;
+            std::vector<DataFlow*> flows_;
             std::vector<std::string>                    tags_;
-            std::vector<std::pair<PolicyMask, PolicyCallback>> callbacks_;
+            
+            std::unordered_map<std::string, Outpipe*>   connetedPipes_; 
     };
 }
 

@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------------------------------------------
-//  flow
+//  FLOW
 //---------------------------------------------------------------------------------------------------------------------
-//  Copyright 2019 Pablo Ramon Soria (a.k.a. Bardo91) pabramsor@gmail.com
+//  Copyright 2018 Pablo Ramon Soria (a.k.a. Bardo91) pabramsor@gmail.com
 //---------------------------------------------------------------------------------------------------------------------
 //  Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 //  and associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -19,53 +19,51 @@
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef FLOW_BLOCKS_PUBLISHERS_ROS_BLOCKROSPUBLISHER_H_
-#define FLOW_BLOCKS_PUBLISHERS_ROS_BLOCKROSPUBLISHER_H_
 
-#include <flow/Block.h>
-#include <flow/Outpipe.h>
+#ifndef FLOW_OUTPIPE_H_
+#define FLOW_OUTPIPE_H_
 
-#ifdef FLOW_USE_ROS
-	#include <ros/ros.h>
-#endif
+#include <vector>
+#include <cstdlib>
+
+#include <any>
+#include <unordered_map>
+#include <thread>
+#include <chrono>
+#include <iostream>
+#include <functional>
+#include <string>
+
+#include <mutex>
+
+#include <map>
 
 namespace flow{
+    class Policy;
+    
+    class Outpipe{
+        public:
+            Outpipe(std::string _tag, std::string _type);
 
-    template<typename _Trait >
-    class BlockROSPublisher : public flow::Block{
-    public:
-        static std::string name() {return _Trait::blockName_; }
+            bool registerPolicy(Policy * _pol, std::string _policyTag);
+            void unregisterPolicy(Policy* _pol);
+            int registrations();
 
-		BlockROSPublisher(){
+            void flush(std::any _data);
 
-            createPolicy({_Trait::input_});
+            std::string tag() const;
+            std::string type() const;
+            
 
-            registerCallback({_Trait::input_.first}, 
-                                    [&](DataFlow _data){
-                                        typename _Trait::ROSType_ topicContent = _Trait::conversion_(_data);
-                                        #ifdef FLOW_USE_ROS
-                                            pubROS_.publish(topicContent);
-                                        #endif
-                                    }
-            );
-        };
-
-        virtual bool configure(std::unordered_map<std::string, std::string> _params) override{
-            #ifdef FLOW_USE_ROS
-                std::string topicPublish = _params["topic"];
-                pubROS_ = nh_.advertise< typename _Trait::ROSType_ >(topicPublish, 1 );
-			#endif
-            return true;
-        }
-        std::vector<std::string> parameters() override {return {"topic"};}
-
-    private:
-		#ifdef FLOW_USE_ROS
-			ros::NodeHandle nh_;
-			ros::Publisher pubROS_;
-		#endif
+        protected:
+            std::mutex policiesGuard;
+            std::vector<Policy*> registeredPolicies_;
+            std::map<Policy*, std::string> tagTranslators_;
+            std::string tag_, type_;
+            
     };
 }
+
 
 
 #endif

@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------------------------------------------------
-//  flow
+//  FLOW
 //---------------------------------------------------------------------------------------------------------------------
 //  Copyright 2019 Pablo Ramon Soria (a.k.a. Bardo91) pabramsor@gmail.com
 //---------------------------------------------------------------------------------------------------------------------
@@ -19,53 +19,47 @@
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef FLOW_BLOCKS_PUBLISHERS_ROS_BLOCKROSPUBLISHER_H_
-#define FLOW_BLOCKS_PUBLISHERS_ROS_BLOCKROSPUBLISHER_H_
 
-#include <flow/Block.h>
-#include <flow/Outpipe.h>
+#ifndef FLOW_DATAFLOW_H_
+#define FLOW_DATAFLOW_H_
 
-#ifdef FLOW_USE_ROS
-	#include <ros/ros.h>
-#endif
+#include <vector>
+#include <cstdlib>
+
+#include <any>
+#include <functional>
+#include <map>
 
 namespace flow{
-
-    template<typename _Trait >
-    class BlockROSPublisher : public flow::Block{
+        
+    class DataFlow{
     public:
-        static std::string name() {return _Trait::blockName_; }
+        DataFlow(std::map<std::string, std::string> _flows, std::function<void(DataFlow _f)> _callback);
 
-		BlockROSPublisher(){
+        void update(std::string _tag, std::any _data);
 
-            createPolicy({_Trait::input_});
+        void checkData();
 
-            registerCallback({_Trait::input_.first}, 
-                                    [&](DataFlow _data){
-                                        typename _Trait::ROSType_ topicContent = _Trait::conversion_(_data);
-                                        #ifdef FLOW_USE_ROS
-                                            pubROS_.publish(topicContent);
-                                        #endif
-                                    }
-            );
-        };
+        template<typename T_>
+        T_ get(std::string _tag);
 
-        virtual bool configure(std::unordered_map<std::string, std::string> _params) override{
-            #ifdef FLOW_USE_ROS
-                std::string topicPublish = _params["topic"];
-                pubROS_ = nh_.advertise< typename _Trait::ROSType_ >(topicPublish, 1 );
-			#endif
-            return true;
-        }
-        std::vector<std::string> parameters() override {return {"topic"};}
-
-    private:
-		#ifdef FLOW_USE_ROS
-			ros::NodeHandle nh_;
-			ros::Publisher pubROS_;
-		#endif
+        std::map<std::string, std::string>  types_;
+        std::map<std::string, std::any>     data_;
+        std::map<std::string, bool>         updated_;
+        std::function<void(DataFlow _f)> callback_;
     };
 }
 
+
+#define FLOW_TYPE_REGISTER(tagType_, Type_)                                                     \
+    namespace flow{                                                                             \
+        template<>                                                                              \
+        Type_ DataFlow::get<Type_>(std::string _tag){                                           \
+            if(types_.find(_tag) == types_.end() || types_[_tag] != tagType_ ){                 \
+                throw std::invalid_argument("Bad tag type when getting data from DataFlow");    \
+            }                                                                                   \
+            return std::any_cast<Type_>(data_[_tag]);                                           \
+        }                                                                                       \
+    }                                                                                           \
 
 #endif

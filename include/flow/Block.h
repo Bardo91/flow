@@ -32,7 +32,7 @@
 #include <flow/Policy.h>
 
 namespace flow{
-    class OutPipe;
+    class Outpipe;
 
     class Block{
     public:
@@ -44,7 +44,10 @@ namespace flow{
         virtual bool configure(std::unordered_map<std::string, std::string> _params) { return false; };
         virtual std::vector<std::string> parameters(){ return {}; };
 
-        std::unordered_map<std::string, OutPipe*> getPipes();
+        [[deprecated("This function gives the map with all pipes, please use getPipe method and get just the needed")]]
+        std::unordered_map<std::string, std::shared_ptr<Outpipe>> getPipes();
+        
+        std::shared_ptr<Outpipe> getPipe(std::string _tag);
 
         void start();
         void stop();
@@ -59,24 +62,23 @@ namespace flow{
 
         Policy* getPolicy();
 
-        void connect(std::string _pipeTag, Block& _otherBlock);
+        void connect(std::string _pipeTag, std::string _policyTag, Block& _otherBlock);
 
         void disconnect(std::string _pipeTag);
 
-        // DYNAMIC CREATION METHODS
-        // void registerCallback(std::function<void(std::unordered_map<std::string,std::any> _data, std::unordered_map<std::string,bool> _valid)> _callback);
-        
-        // void setPolicy(Policy* _pol);
+    protected:
+        bool createPipe(std::string _pipeTag, std::string _tagType);
+        bool isRunningLoop() const;
 
-
-        // void connect(OutPipe *_pipe, std::vector<std::string> _tags);
+        bool createPolicy(std::map<std::string, std::string> _inputs);
+        bool registerCallback(Policy::PolicyMask _mask, Policy::PolicyCallback _callback);
 
     protected:
         virtual void loopCallback() {};
 
-    protected:
+    private:
         Policy *iPolicy_ = nullptr;
-        std::unordered_map<std::string, OutPipe*> opipes_;
+        std::unordered_map<std::string, std::shared_ptr<Outpipe>> opipes_;
         std::thread loopThread_;
         bool runLoop_ = false;
     };

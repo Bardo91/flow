@@ -27,8 +27,8 @@ PROJECT(flow VERSION 0.0.1)
 ######			General config	   ######
 #########################################
 option(BUILD_EXAMPLES "Compile examples"              ON)
-option(BUILD_TESTS    "Prepare tests"                 OFF)
-option(FLOW_USE_ROS	  "Compile ROS dependent modules"	OFF)
+option(BUILD_TESTS    "Prepare tests"                 ON)
+option(FLOW_USE_ROS	  "Compile ROS dependent modules"	ON)
 
 set(CMAKE_AUTOMOC ON)
 
@@ -81,6 +81,7 @@ if(${OpenCV_FOUND})
 endif()
 
 if(${FLOW_USE_ROS})
+  find_package(Boost COMPONENTS system)
 	find_package(catkin COMPONENTS roscpp tf rosbag cv_bridge image_transport sensor_msgs geometry_msgs)
 	if(${catkin_FOUND})
 		catkin_package(
@@ -88,8 +89,10 @@ if(${FLOW_USE_ROS})
 			INCLUDE_DIRS include
 		)
 		target_compile_definitions(${PROJECT_NAME} PUBLIC "FLOW_USE_ROS")
-		target_link_libraries(${PROJECT_NAME} LINK_PRIVATE ${catkin_LIBRARIES} ${rosbag_LIBRARIES})
+		target_link_libraries(${PROJECT_NAME} LINK_PUBLIC ${catkin_LIBRARIES} ${rosbag_LIBRARIES})
 		target_include_directories(${PROJECT_NAME}  PUBLIC ${catkin_INCLUDE_DIRS} ${rosbag_INCLUDE_DIRS})
+		target_include_directories(${PROJECT_NAME}  PUBLIC ${Boost_INCLUDE_DIRS} )
+		target_link_libraries(${PROJECT_NAME} LINK_PUBLIC ${Boost_LIBRARIES})
 		add_dependencies(${PROJECT_NAME} ${catkin_EXPORTED_TARGETS})
 	else()
 		set(FLOW_USE_ROS OFF)

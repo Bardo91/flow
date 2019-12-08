@@ -19,7 +19,7 @@
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
 
-#include <flow/OutPipe.h>
+#include <flow/Outpipe.h>
 
 #include <flow/Policy.h>
 
@@ -28,37 +28,38 @@
 #include <stdexcept>
 
 namespace flow{
-    OutPipe::OutPipe(std::string _tag):tag_(_tag){
-        if(_tag == ""){
+    Outpipe::Outpipe(std::string _tag, std::string _type):tag_(_tag), type_(_type){
+        if(_tag == "" || _type == ""){
             throw std::invalid_argument( "Tag cannot be an empty string" );
         }
     };
 
-    std::string OutPipe::tag() const {return tag_;};
+    std::string Outpipe::tag() const {return tag_;};
+    std::string Outpipe::type() const{return type_;};
     
-    bool OutPipe::registerPolicy(Policy* _pol){
+    bool Outpipe::registerPolicy(Policy * _pol, std::string _policyTag){
         // Check that policy has the output tag
         auto tags = _pol->inputTags();
-        auto iter = std::find(tags.begin(), tags.end(), tag_);
-        if(iter == tags.end()){
-            return false;
-        }else{
+        auto iter = std::find(tags.begin(), tags.end(), _policyTag);
+        if(iter != tags.end()) {
             // Check if policy has ven already registered
             auto iterPol = std::find(registeredPolicies_.begin(), registeredPolicies_.end(), _pol);
             if(iterPol == registeredPolicies_.end()){
-                policiesGuard.lock();
-                registeredPolicies_.push_back(_pol);
-                _pol->associatePipe(tag_, this);
-                policiesGuard.unlock();
-                return true;
-            }else{
-                return false;
+                // Check that types are compatible
+                if(type_ == _pol->type(_policyTag)){   // 666 TODO
+                    policiesGuard.lock();
+                    registeredPolicies_.push_back(_pol);
+                    tagTranslators_[_pol] = _policyTag;
+                    _pol->associatePipe(tagTranslators_[_pol], this);
+                    policiesGuard.unlock();
+                    return true;
+                }
             }
         }
-
+        return false;
     }
     
-    void OutPipe::unregisterPolicy(Policy* _pol){
+    void Outpipe::unregisterPolicy(Policy* _pol){
         auto iter = std::find(registeredPolicies_.begin(), registeredPolicies_.end(), _pol);
         if(iter != registeredPolicies_.end()){
             policiesGuard.lock();
@@ -68,15 +69,15 @@ namespace flow{
         }
     }
 
-    void OutPipe::flush(std::any _data){
+    void Outpipe::flush(std::any _data){
         policiesGuard.lock();
-        for(auto &pol: registeredPolicies_){
-            pol->update(tag_, _data);
+        for(auto p:registeredPolicies_){
+            p->update(tagTranslators_[p], _data);
         }
         policiesGuard.unlock();
     }
 
-    int OutPipe::registrations(){
+    int Outpipe::registrations(){
         return registeredPolicies_.size();
     }
 

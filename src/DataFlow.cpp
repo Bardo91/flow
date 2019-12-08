@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------------------------------------------
 //  FLOW
 //---------------------------------------------------------------------------------------------------------------------
-//  Copyright 2018 Pablo Ramon Soria (a.k.a. Bardo91) pabramsor@gmail.com
+//  Copyright 2019 Pablo Ramon Soria (a.k.a. Bardo91) pabramsor@gmail.com
 //---------------------------------------------------------------------------------------------------------------------
 //  Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 //  and associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -19,49 +19,50 @@
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
 
-
-#ifndef FLOW_OUTPIPE_H_
-#define FLOW_OUTPIPE_H_
-
-#include <vector>
-#include <cstdlib>
-
-#include <any>
-#include <unordered_map>
+#include <flow/DataFlow.h>
 #include <thread>
-#include <chrono>
-#include <iostream>
-#include <functional>
 
-#include <mutex>
+#include <pcl/point_cloud.h>
+#include <pcl/point_types.h>
+#include <Eigen/Eigen>
 
-
+FLOW_TYPE_REGISTER("int", int)
+FLOW_TYPE_REGISTER("float", float)
+FLOW_TYPE_REGISTER("cloud", pcl::PointCloud<pcl::PointXYZRGBNormal>::Ptr)
+FLOW_TYPE_REGISTER("mat44", Eigen::Matrix4f)
+FLOW_TYPE_REGISTER("vec3", Eigen::Vector3f)
+FLOW_TYPE_REGISTER("vec4", Eigen::Vector4f)
+FLOW_TYPE_REGISTER("quat", Eigen::Quaternionf)
 
 namespace flow{
-    class Policy;
-    
-    class OutPipe{
-        public:
-            OutPipe(std::string _tag);
+    DataFlow::DataFlow(std::map<std::string, std::string> _flows, std::function<void(DataFlow _f)> _callback){
+        callback_ = _callback;
+        for(auto &f:_flows){
+            types_[f.first] = f.second;
+            data_[f.first] = std::any();
+            updated_[f.first] = false;
+        }
+    }
 
-            std::string tag() const;
-            
-            bool registerPolicy(Policy* _pol);
+    void DataFlow::update(std::string _tag, std::any _data){
+        if(data_.find(_tag)!= data_.end()){
+            // Can we check here the type?
+            data_[_tag] = _data;
+            updated_[_tag] = true;
+            checkData();
+        }else{
+            std::invalid_argument("Bad tag type while updating Dataflow");
+        }
+    }
 
-            void unregisterPolicy(Policy* _pol);
-
-            void flush(std::any _data);
-
-            int registrations();
-
-        protected:
-            std::mutex policiesGuard;
-            std::string tag_;
-            std::vector<Policy*> registeredPolicies_;   // Policy registered, ID of stream and index in policy;
-            
-    };
+    void DataFlow::checkData(){
+        int flagCounter = 0;
+        for(auto flag = updated_.begin(); flag != updated_.end(); flag++){
+            if(flag->second) flagCounter++;
+        }
+        if(flagCounter == updated_.size()){
+            // callback_(*this);
+            std::thread(callback_, *this).detach(); // 666 Smthg is not completelly thread safe and produces crash
+        }
+    }
 }
-
-
-
-#endif

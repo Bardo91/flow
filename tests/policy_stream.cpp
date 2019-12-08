@@ -20,63 +20,76 @@
 //---------------------------------------------------------------------------------------------------------------------
 
 #include <flow/Policy.h>
-#include <flow/OutPipe.h>
+#include <flow/Outpipe.h>
+
+#include <flow/DataFlow.h>
 
 #include <gtest/gtest.h>
 #include <condition_variable> 
 
 using namespace flow;
 
-TEST(stream_creation, stream_creation)  {
-    Policy pol1({"i1"});
-    Policy pol2({"i1","i2"});
-    Policy pol3({"i1","i2","i3"});
-    Policy pol4({""});
-    EXPECT_THROW(Policy pol5({}), std::invalid_argument);
+TEST(policy_creation, policy_creation)  {
+    Policy pol1({{"time", "float"}});
+    Policy pol2({{"time", "float"}, {"counter", "int"}});
+    EXPECT_THROW(Policy pol3({{"", ""}}), std::invalid_argument);
+    EXPECT_THROW(Policy pol4({{"", "int"}}), std::invalid_argument);
+    EXPECT_THROW(Policy pol5({{"time", ""}}), std::invalid_argument);
 }
 
 TEST(pipe_creation, pipe_creation)  {
-    
-    OutPipe op1("int");
-    OutPipe op2("float");
-    Policy pol({"int"});
 
-    ASSERT_TRUE(op1.registerPolicy(&pol));
-    ASSERT_FALSE(op2.registerPolicy(&pol));
+    EXPECT_THROW(Outpipe op("", ""), std::invalid_argument);
+    
+    Outpipe op1("A","int");
+    Outpipe op2("B","float");
+    Outpipe op3("A","float");
+    Policy pol({{"A","int"},{"B","float"}});
 
 }
 
 TEST(registration, registration)  {
     // Invalid creation
-    EXPECT_THROW(OutPipe op(""), std::invalid_argument);
 
     // Valid creation
-    OutPipe op("o1");
+    Outpipe op("o1", "int");
     ASSERT_STREQ("o1", op.tag().c_str());
     ASSERT_EQ(0, op.registrations());
 
-    Policy pol({"o1"});
-    ASSERT_TRUE(op.registerPolicy(&pol));
-    ASSERT_FALSE(op.registerPolicy(&pol));
+    Policy pol({{"o1", "int"}});
+    ASSERT_TRUE(op.registerPolicy(&pol, "o1"));
+    ASSERT_FALSE(op.registerPolicy(&pol, "o"));
     ASSERT_EQ(1, op.registrations());
+
+    //
+    Outpipe op1("A","int");
+    Outpipe op2("B","float");
+    Outpipe op3("A","float");
+    Policy pol1({{"A","int"},{"B","float"}});
+
+    ASSERT_TRUE(op1.registerPolicy(&pol1, "A"));
+    ASSERT_TRUE(op2.registerPolicy(&pol1, "B"));
+
+    ASSERT_FALSE(op2.registerPolicy(&pol1, "C"));
+    ASSERT_FALSE(op3.registerPolicy(&pol1, "A"));
 
 }
 
 TEST(transmission_int_1, transmission_int)  {
-    OutPipe op("int");
+    Outpipe op("counter", "int");
 
-    Policy pol({"int"});
+    Policy pol({{"counter", "int"}});
 
     int res = 0;
-    pol.registerCallback({"int"}, [&](std::unordered_map<std::string,std::any> _data){
-        res = std::any_cast<int>(_data["int"]);
+    pol.registerCallback({"counter"}, [&](DataFlow _f){
+        res = _f.get<int>("counter");
     });
 
-    op.registerPolicy(&pol);
+    op.registerPolicy(&pol, "counter");
 
     // Good type flush
     op.flush(1);
-    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
     ASSERT_EQ(res, 1);
 
     // Bad type flush
@@ -88,43 +101,41 @@ TEST(transmission_int_1, transmission_int)  {
 
 
 TEST(disconnect, disconnect)  {
-    OutPipe op("int");
-    Policy pol({"int"});
+    Outpipe op("counter","int");
+    Policy pol({{"counter","int"}});
 
     int res = 0;
-    bool goodCallback = pol.registerCallback({"int"}, [&](std::unordered_map<std::string,std::any> _data){
-        res = std::any_cast<int>(_data["int"]);
+    bool goodCallback = pol.registerCallback({"counter"}, [&](DataFlow _f){
+        res = _f.get<int>("counter");
     });
     ASSERT_TRUE(goodCallback);
 
-    bool badCallback = pol.registerCallback({"float"}, [&](std::unordered_map<std::string,std::any> _data){ });
+    bool badCallback = pol.registerCallback({"float"}, [&](DataFlow _f){ });
     ASSERT_FALSE(badCallback);
     
-    op.registerPolicy(&pol);
+    op.registerPolicy(&pol, "counter");
     
     op.flush(1);
     std::this_thread::sleep_for(std::chrono::milliseconds(10));
     ASSERT_EQ(res, 1);
 
-    pol.disconnect("int");
+    pol.disconnect("counter");
 
     op.flush(2);
     std::this_thread::sleep_for(std::chrono::milliseconds(10));
     ASSERT_EQ(res, 1);
     ASSERT_EQ(0, op.registrations());
-
-
 }
 
 TEST(transmission_int_2, transmission_int)  {
-    OutPipe op("int");
+    Outpipe op("counter","int");
 
-    Policy pol1({"int"});
-    Policy pol2({"int"});
+    Policy pol1({{"counter","int"}});
+    Policy pol2({{"counter","int"}});
 
     int counterCall1 = 0;
     std::mutex guardCall1;
-    pol1.registerCallback({"int"}, [&](std::unordered_map<std::string,std::any> _data){
+    pol1.registerCallback({"counter"}, [&](DataFlow _f){
         guardCall1.lock();
         counterCall1++;
         guardCall1.unlock();    
@@ -132,14 +143,14 @@ TEST(transmission_int_2, transmission_int)  {
     
     int counterCall2 = 0;
     std::mutex guardCall2;
-    pol2.registerCallback({"int"}, [&](std::unordered_map<std::string,std::any> _data){
+    pol2.registerCallback({"counter"}, [&](DataFlow _f){
         guardCall2.lock();
         counterCall2++;
         guardCall2.unlock();
     });
 
-    op.registerPolicy(&pol1);
-    op.registerPolicy(&pol2);
+    op.registerPolicy(&pol1, "counter");
+    op.registerPolicy(&pol2, "counter");
 
     // Good type flush
     op.flush(1);
@@ -154,27 +165,27 @@ TEST(transmission_int_2, transmission_int)  {
 
 
 TEST(sync_policy, sync_policy)  {
-    OutPipe op1("int");
-    OutPipe op2("float");
+    Outpipe op1("counter", "int");
+    Outpipe op2("clock", "float");
 
-    Policy pol({"int", "float"});
+    Policy pol({{"counter", "int"}, {"clock", "float"}});
 
     int counterCallInt = 0;
     int counterCallFloat = 0;
     int counterCallSync = 0;
     std::mutex guardCall1;
-    pol.registerCallback({"int"}, [&](std::unordered_map<std::string,std::any> _data){
+    pol.registerCallback({"counter"}, [&](DataFlow _f){
         counterCallInt++;    
     });
-    pol.registerCallback({"float"}, [&](std::unordered_map<std::string,std::any> _data){
+    pol.registerCallback({"clock"}, [&](DataFlow _f){
         counterCallFloat++;    
     });
-    pol.registerCallback({"int", "float"}, [&](std::unordered_map<std::string,std::any> _data){
+    pol.registerCallback({"counter", "clock"}, [&](DataFlow _f){
         counterCallSync++;    
     });
     
-    op1.registerPolicy(&pol);
-    op2.registerPolicy(&pol);
+    op1.registerPolicy(&pol,"counter");
+    op2.registerPolicy(&pol,"clock");
 
     // Good type flush
     op1.flush(1);
@@ -190,34 +201,34 @@ TEST(sync_policy, sync_policy)  {
 
 
 TEST(deep_chain, deep_chain)  {
-    OutPipe op("int");
-    Policy pol({"int"});
-    op.registerPolicy(&pol);
+    Outpipe op("counter", "int");
+    Policy pol({{"ticks", "int"}});
+    op.registerPolicy(&pol, "ticks");
 
-    OutPipe op2("int");
-    Policy pol2({"int"});
-    op2.registerPolicy(&pol2);
+    Outpipe op2("accum", "int");
+    Policy pol2({{"subs", "int"}});
+    op2.registerPolicy(&pol2, "subs");
 
-    OutPipe op3("int");
-    Policy pol3({"int"});
-    op3.registerPolicy(&pol3);
+    Outpipe op3("josua", "int");
+    Policy pol3({{"johny", "int"}});
+    op3.registerPolicy(&pol3, "johny");
 
 
-    pol.registerCallback({"int"}, [&](std::unordered_map<std::string,std::any> _data){
-        int res = 2 * std::any_cast<int>(_data["int"]);
+    pol.registerCallback({"ticks"}, [&](DataFlow _f){
+        int res = 2 * _f.get<int>("ticks");
         ASSERT_EQ(res, 4);
         op2.flush(res);
     });
 
-    pol2.registerCallback({"int"}, [&](std::unordered_map<std::string,std::any> _data){
-        int res = 2 * std::any_cast<int>(_data["int"]);
+    pol2.registerCallback({"subs"}, [&](DataFlow _f){
+        int res = 2 * _f.get<int>("subs");
         ASSERT_EQ(res, 8);
         op3.flush(res);
     });
 
     bool called = false;
-    pol3.registerCallback({"int"}, [&](std::unordered_map<std::string,std::any> _data){
-        int res = 2 * std::any_cast<int>(_data["int"]);
+    pol3.registerCallback({"johny"}, [&](DataFlow _f){
+        int res = 2 * _f.get<int>("johny");
         ASSERT_EQ(res, 16);
         called = true;  
     });
@@ -237,54 +248,54 @@ TEST(deep_chain_split, deep_chain_split)  {
     //
     //  2------4--------------8----------------16------------32------Check here
 
-    std::vector<OutPipe*> pipes;
+    std::vector<Outpipe*> pipes;
     std::vector<Policy*> policies;
 
     for(unsigned i = 0; i < 7; i++){
-        pipes.push_back(new OutPipe("int"));
-        policies.push_back(new Policy({"int"}));
-        pipes.back()->registerPolicy(policies.back());
+        pipes.push_back(new Outpipe("counter", "int"));
+        policies.push_back(new Policy({{"counter", "int"}}));
+        pipes.back()->registerPolicy(policies.back(), "counter");
     }
 
 
-    policies[0]->registerCallback({"int"}, [&](std::unordered_map<std::string,std::any> _data){
-        int res = 2 * std::any_cast<int>(_data["int"]);
+    policies[0]->registerCallback({"counter"}, [&](DataFlow _f){
+        int res = 2 * _f.get<int>("counter");
         pipes[1]->flush(res);
     });
 
-    policies[1]->registerCallback({"int"}, [&](std::unordered_map<std::string,std::any> _data){
-        int res = 2 * std::any_cast<int>(_data["int"]);
+    policies[1]->registerCallback({"counter"}, [&](DataFlow _f){
+        int res = 2 * _f.get<int>("counter");
         pipes[2]->flush(res);
         pipes[3]->flush(res);
     });
 
     // Branch 1
-    policies[2]->registerCallback({"int"}, [&](std::unordered_map<std::string,std::any> _data){
-        int res = 2 * std::any_cast<int>(_data["int"]);
+    policies[2]->registerCallback({"counter"}, [&](DataFlow _f){
+        int res = 2 * _f.get<int>("counter");
         pipes[4]->flush(res);
     });
 
     int nCounterB1 = 0;
     std::mutex lockerB1;
-    policies[4]->registerCallback({"int"}, [&](std::unordered_map<std::string,std::any> _data){
+    policies[4]->registerCallback({"counter"}, [&](DataFlow _f){
         lockerB1.lock();
-        int res = 2 * std::any_cast<int>(_data["int"]);
+        int res = 2 * _f.get<int>("counter");
         ASSERT_EQ(res, 32);
         nCounterB1++;
         lockerB1.unlock();
     });
 
     // Branch 2
-    policies[3]->registerCallback({"int"}, [&](std::unordered_map<std::string,std::any> _data){
-        int res = 2 * std::any_cast<int>(_data["int"]);
+    policies[3]->registerCallback({"counter"}, [&](DataFlow _f){
+        int res = 2 * _f.get<int>("counter");
         pipes[5]->flush(res);
     });
 
     int nCounterB2 = 0;
     std::mutex lockerB2;
-    policies[5]->registerCallback({"int"}, [&](std::unordered_map<std::string,std::any> _data){
+    policies[5]->registerCallback({"counter"}, [&](DataFlow _f){
         lockerB2.lock();
-        int res = 2 * std::any_cast<int>(_data["int"]);
+        int res = 2 * _f.get<int>("counter");
         ASSERT_EQ(res, 32);
         nCounterB2++;
         lockerB2.unlock();
@@ -307,27 +318,27 @@ TEST(loop_chain_split, loop_chain_split)  {
     //                           |--> o4 --> p4
 
     // Create pipes and connections
-    OutPipe o0("int");
-    Policy p0({"int", "string"});
-    o0.registerPolicy(&p0);
+    Outpipe o0("counter","int");
+    Policy p0({{"counter","int"}, {"msg","string"}});
+    o0.registerPolicy(&p0, "counter");
 
-    OutPipe o1("int");
-    Policy p1({"int"});
-    o1.registerPolicy(&p1);
+    Outpipe o1("ticks","int");
+    Policy p1({{"tocks","int"}});
+    o1.registerPolicy(&p1, "tocks");
 
-    OutPipe o3("string");
-    Policy p3({"string"});
-    o3.registerPolicy(&p0);
-    o3.registerPolicy(&p3);
+    Outpipe o3("msg","string");
+    Policy p3({{"message","string"}});
+    o3.registerPolicy(&p0, "msg");
+    o3.registerPolicy(&p3, "message");
 
-    OutPipe o4("int");
-    Policy p4({"int"});
-    o4.registerPolicy(&p4);
+    Outpipe o4("cnt", "int");
+    Policy p4({{"counter", "int"}});
+    o4.registerPolicy(&p4, "counter");
 
     // Set callbacks
     bool calledOnce0a = true;
     std::mutex guard0a;
-    p0.registerCallback({"int"}, [&](std::unordered_map<std::string,std::any> _data){
+    p0.registerCallback({"counter"}, [&](DataFlow _f){
         guard0a.lock();
         o1.flush(1);
         ASSERT_TRUE(calledOnce0a);
@@ -337,21 +348,21 @@ TEST(loop_chain_split, loop_chain_split)  {
 
     bool calledOnce0b = true;
     std::mutex guard0b;
-    p0.registerCallback({"string"}, [&](std::unordered_map<std::string,std::any> _data){
+    p0.registerCallback({"msg"}, [&](DataFlow _f){
         guard0b.lock();
         ASSERT_TRUE(calledOnce0b);
         calledOnce0b = false;
         guard0b.unlock();
     });
 
-    p1.registerCallback({"int"}, [&](std::unordered_map<std::string,std::any> _data){
+    p1.registerCallback({"tocks"}, [&](DataFlow _f){
         o3.flush("pepe");
         o4.flush(1);
     });
 
     bool calledOnce4 = true;
     std::mutex guard4;
-    p4.registerCallback({"int"}, [&](std::unordered_map<std::string,std::any> _data){
+    p4.registerCallback({"counter"}, [&](DataFlow _f){
         guard4.lock();
         ASSERT_TRUE(calledOnce4);
         calledOnce4 = false;
@@ -368,13 +379,13 @@ TEST(loop_chain_split, loop_chain_split)  {
 
 
 TEST(concurrency_attack_test, concurrency_attack_test)  {
-    OutPipe op("int");
+    Outpipe op("counter","int");
 
-    Policy pol({"int"});
+    Policy pol({{"cnt", "int"}});
 
     int counterCall1 = 0;
     bool idle = true;
-    pol.registerCallback({"int"}, [&](std::unordered_map<std::string,std::any> _data){
+    pol.registerCallback({"cnt"}, [&](DataFlow _f){
         if(idle){
             idle=false;
             counterCall1++;
@@ -386,7 +397,7 @@ TEST(concurrency_attack_test, concurrency_attack_test)  {
         }
     });
 
-    op.registerPolicy(&pol);    
+    op.registerPolicy(&pol, "cnt");    
 
     std::mutex mtx;
     std::condition_variable cv;
@@ -398,8 +409,9 @@ TEST(concurrency_attack_test, concurrency_attack_test)  {
         op.flush(1);
     };
 
-    std::thread vThreads[100];
-    for (int i=0; i<100; ++i)
+    const int nThreads = 10;
+    std::thread vThreads[nThreads];
+    for (int i=0; i<nThreads; ++i)
         vThreads[i] = std::thread(print_id,i);
 
     {

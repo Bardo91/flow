@@ -22,6 +22,7 @@
 
 #include <flow/visual/FlowVisualInterface.h>
 #include <flow/visual/blocks/FlowVisualBlock.h>
+#include <flow/DataFlow.h>
 
 #include <flow/flow.h>
 #include <string>
@@ -34,13 +35,15 @@ class FloatStreamerBlock: public Block{
 public:
     static std::string name() {return "Float streamer";}
         FloatStreamerBlock(){
-            opipes_["float"] = new flow::OutPipe("float");
+            createPipe("time", "float");
         }
 
         virtual void loopCallback() override{
-            while(runLoop_){
-                counter_*=1.23687;
-                opipes_["float"]->flush(counter_);
+            auto t0 = std::chrono::high_resolution_clock::now();
+            while(isRunningLoop()){
+                auto t1 = std::chrono::high_resolution_clock::now();
+                float diff = counter_ + std::chrono::duration_cast<std::chrono::milliseconds>(t1-t0).count()/1000.0f;
+                getPipe("time")->flush(diff);
                 std::this_thread::sleep_for(std::chrono::milliseconds(500));
             }      
         }
@@ -63,17 +66,65 @@ class FloatCouterBlock: public Block{
 public:
     static std::string name() {return "Float Couter";}
     FloatCouterBlock(){
-        iPolicy_ = new flow::Policy({"float"});
-        iPolicy_->registerCallback({"float"}, 
-                            [&](std::unordered_map<std::string,std::any> _data){
-                                float data = std::any_cast<float>(_data["float"]);
+        createPolicy({{{"clock", "float"}}});
+        registerCallback({"clock"}, 
+                            [&](DataFlow _data){
+                                float data = _data.get<float>("clock");
                                 std::cout << data << std::endl;
-                            
                             }
-        );
+                            );
     }
     ~FloatCouterBlock(){ /*Nothing spetial*/}
 };
+
+
+class IntStreamerBlock: public Block{
+public:
+    static std::string name() {return "Int streamer";}
+        IntStreamerBlock(){
+            createPipe("time", "int");
+        }
+
+        virtual void loopCallback() override{
+            auto t0 = std::chrono::high_resolution_clock::now();
+            while(isRunningLoop()){
+                auto t1 = std::chrono::high_resolution_clock::now();
+                float diff = counter_ + std::chrono::duration_cast<std::chrono::milliseconds>(t1-t0).count()/1000.0f;
+                getPipe("time")->flush(diff);
+                std::this_thread::sleep_for(std::chrono::milliseconds(500));
+            }      
+        }
+
+        virtual bool configure(std::unordered_map<std::string, std::string> _params) override { 
+            if(_params["init_value"] != ""){
+                std::istringstream istr(_params["init_value"]);
+                istr >> counter_;
+                return true;
+            }else{
+                return false;
+            } 
+        };
+        virtual std::vector<std::string> parameters() override{ return {"init_value"}; };
+private:
+    int counter_  = 1;
+};
+
+class IntCouterBlock: public Block{
+public:
+    static std::string name() {return "Int Couter";}
+    IntCouterBlock(){
+        createPolicy({{{"clock", "int"}}});
+        registerCallback({"clock"}, 
+                            [&](DataFlow _data){
+                                int data = _data.get<int>("clock");
+                                std::cout << data << std::endl;
+                            }
+                            );
+    }
+    ~IntCouterBlock(){ /*Nothing spetial*/}
+};
+
+
 
 
 int main(int _argc, char **_argv){
@@ -81,6 +132,8 @@ int main(int _argc, char **_argv){
     FlowVisualInterface::RegistryFnType_ fn = [](FlowVisualInterface::RegistryType_ &_ret){
         _ret->registerModel<FlowVisualBlock<FloatStreamerBlock, true>>("streamer");
         _ret->registerModel<FlowVisualBlock<FloatCouterBlock>>("visualizer");
+        _ret->registerModel<FlowVisualBlock<IntStreamerBlock, true>>("streamer");
+        _ret->registerModel<FlowVisualBlock<IntCouterBlock>>("visualizer");
     };
 
 
