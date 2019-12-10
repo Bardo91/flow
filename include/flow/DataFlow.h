@@ -29,6 +29,7 @@
 #include <any>
 #include <functional>
 #include <map>
+#include <chrono>
 
 namespace flow{
         
@@ -43,10 +44,16 @@ namespace flow{
         template<typename T_>
         T_ get(std::string _tag);
 
+        float frequency() const;
+
+    private:
         std::map<std::string, std::string>  types_;
         std::map<std::string, std::any>     data_;
         std::map<std::string, bool>         updated_;
         std::function<void(DataFlow _f)> callback_;
+        
+        std::chrono::time_point<std::chrono::system_clock> lastUsageT_;
+        float usageFreq_ = 0;
     };
 }
 

@@ -42,6 +42,7 @@ namespace flow{
             data_[f.first] = std::any();
             updated_[f.first] = false;
         }
+        lastUsageT_ = std::chrono::system_clock::now();
     }
 
     void DataFlow::update(std::string _tag, std::any _data){
@@ -63,6 +64,15 @@ namespace flow{
         if(flagCounter == updated_.size()){
             // callback_(*this);
             std::thread(callback_, *this).detach(); // 666 Smthg is not completelly thread safe and produces crash
+            auto currT = std::chrono::system_clock::now();
+            float incT = std::chrono::duration_cast<std::chrono::microseconds>(currT-lastUsageT_).count();
+            lastUsageT_ = currT;
+            usageFreq_ = 1/(incT*1e-6);
         }
+    }
+
+
+    float DataFlow::frequency() const{
+        return usageFreq_;
     }
 }

@@ -56,6 +56,8 @@ namespace flow{
 
             bool disconnect(std::string _tag);
 
+            std::vector<float> masksFrequencies() const;
+
         private:
             std::map<std::string, std::string> inputs_;
             std::vector<DataFlow*> flows_;

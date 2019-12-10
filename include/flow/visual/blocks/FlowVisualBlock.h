@@ -101,6 +101,9 @@ namespace flow{
         //std::unordered_map<std::string, Outpipe*> connectedPipes_;
         std::vector<ParameterWidget*> configParams_;
         QVBoxLayout *configsLayout_  = nullptr;
+        QHBoxLayout *freqsLayout_  = nullptr;
+        std::vector<QLabel*> freqLabels_;
+        std::thread freqLabelUpdater_;
         QGroupBox *configBox_ = nullptr;
         QToolButton *configButton_  = nullptr;
         QIcon   *configStateIcon_ = nullptr;

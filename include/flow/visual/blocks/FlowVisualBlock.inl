@@ -32,10 +32,34 @@ namespace flow{
     inline FlowVisualBlock<Block_,HasAutoLoop_>::FlowVisualBlock() {
         flowBlock_ = new Block_();
 
+        // Configure group box
+        configsLayout_ = new QVBoxLayout();
+        configBox_ = new QGroupBox("");
+        configBox_->setLayout(configsLayout_);
+        // Configure frequencies
+        freqsLayout_ = new QHBoxLayout();
+        configsLayout_->addLayout(freqsLayout_);
+        if(flowBlock_->getPolicy()){
+            freqsLayout_->addWidget(new QLabel("Freqs: "));
+            for(unsigned i = 0; i < flowBlock_->getPolicy()->masksFrequencies().size(); i++){
+                freqLabels_.push_back(new QLabel("0"));
+                freqsLayout_->addWidget(freqLabels_.back());
+            }
+            if(freqLabels_.size() > 0){
+                freqLabelUpdater_ = std::thread([&](){
+                    while(flowBlock_){
+                        auto freqs = flowBlock_->getPolicy()->masksFrequencies();
+                        for(unsigned i = 0; i < freqs.size(); i++){
+                            freqLabels_[i]->setText(QString::number(freqs[i], 'f', 2));
+                        }
+                        std::this_thread::sleep_for(std::chrono::milliseconds(300));
+                    }
+                });
+            }
+        }
+        
         if(flowBlock_->parameters().size() > 0 || HasAutoLoop_){
-            configsLayout_ = new QVBoxLayout();
-            configBox_ = new QGroupBox("Configuration");
-            configBox_->setLayout(configsLayout_);
+            // configure parameters
             if(flowBlock_->parameters().size() > 0){
                 for(auto &param: flowBlock_->parameters()){
                     configParams_.push_back(new ParameterWidget(param.c_str(), ""));
@@ -44,7 +68,7 @@ namespace flow{
                 configButton_ = new QToolButton();
                 configButton_->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
                 configButton_->setLayoutDirection(Qt::RightToLeft);
-                configButton_->setIcon(QIcon("/usr/share/icons/Humanity/actions/128/help-contents.svg"));
+                configButton_->setIcon(QIcon("/usr/share;aa/icons/Humanity/actions/128/help-contents.svg"));
                 configButton_->setText("Configure");
                 configsLayout_->addWidget(configButton_);
                 connect(configButton_, &QPushButton::clicked, this, [this]() {
@@ -54,6 +78,7 @@ namespace flow{
                 configStateIcon_ = new QIcon();
             }
 
+            // Autoloop button
             if(HasAutoLoop_){
                 streamActionButton_ = new QCheckBox("Run");
                 configsLayout_->addWidget(streamActionButton_);
@@ -72,6 +97,9 @@ namespace flow{
     template<typename Block_, bool HasAutoLoop_>
     inline FlowVisualBlock<Block_,HasAutoLoop_>::~FlowVisualBlock(){
         delete flowBlock_;
+        flowBlock_ = nullptr;
+        if(freqLabelUpdater_.joinable())
+            freqLabelUpdater_.join();
     }
 
 
