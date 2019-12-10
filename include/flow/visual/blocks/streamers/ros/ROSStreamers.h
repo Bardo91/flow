@@ -63,7 +63,8 @@ namespace flow{
 	typedef BlockROSSuscriber< TraitCloud       > 			BlockROSSuscriberCloud;
 	typedef BlockROSSuscriber< TraitImu         > 			BlockROSSuscriberImu;
 	typedef BlockROSSuscriber< TraitGPS         > 			BlockROSSuscriberGPS;
-	typedef BlockROSSuscriber< TraitImage       > 			BlockROSSuscriberImage;			
+	typedef BlockROSSuscriber< TraitImage       > 			BlockROSSuscriberImage;	
+	typedef BlockROSSuscriber< TraitEvent       > 			BlockROSSuscriberEventArray;			
 
 	#endif
 }
