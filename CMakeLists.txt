@@ -80,10 +80,10 @@ if(${FLOW_USE_ROS})
   endif()
   
   find_package(Boost COMPONENTS system)
-	find_package(catkin COMPONENTS roscpp tf rosbag cv_bridge image_transport sensor_msgs geometry_msgs)
+	find_package(catkin COMPONENTS roscpp tf rosbag cv_bridge image_transport sensor_msgs geometry_msgs dvs_msgs)
 	if(${catkin_FOUND})
 		catkin_package(
-			CATKIN_DEPENDS roscpp tf rosbag cv_bridge image_transport sensor_msgs geometry_msgs
+			CATKIN_DEPENDS roscpp tf rosbag cv_bridge image_transport sensor_msgs geometry_msgs dvs_msgs
 			INCLUDE_DIRS include
 		)
 		target_compile_definitions(${PROJECT_NAME} PUBLIC "FLOW_USE_ROS")

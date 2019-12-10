@@ -37,6 +37,7 @@
 	#include <sensor_msgs/PointCloud2.h>
 	#include <pcl_conversions/pcl_conversions.h>
 	#include <cv_bridge/cv_bridge.h>
+	#include <dvs_msgs/EventArray.h>
 #endif
 
 namespace flow{
@@ -55,6 +56,7 @@ namespace flow{
 	typedef TraitRosSubscriber<sensor_msgs::NavSatFix> 		TraitGPS;
 	typedef TraitRosSubscriber<sensor_msgs::Image> 			TraitImage;
 	typedef TraitRosSubscriber<sensor_msgs::PointCloud2> 	TraitCloud;
+	typedef TraitRosSubscriber<dvs_msgs::EventArray> 		TraitEvent;
 
 	
 	typedef BlockROSSuscriber< TraitPoseStampedSuscriber > 	BlockROSSuscriberPoseStamped;

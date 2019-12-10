@@ -19,6 +19,11 @@ macro(install_ros_ethz)
     )
 
     execute_process (
+        COMMAND bash -c "cd ~/.flow/thirdparty/catkin_ethz && catkin_make"
+    )
+
+
+    execute_process (
         COMMAND bash -c "cd ~/.flow/thirdparty/catkin_ethz && source devel/setup.bash"
     )
 
