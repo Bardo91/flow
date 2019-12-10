@@ -68,7 +68,7 @@ namespace flow{
                 configButton_ = new QToolButton();
                 configButton_->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
                 configButton_->setLayoutDirection(Qt::RightToLeft);
-                configButton_->setIcon(QIcon("/usr/share;aa/icons/Humanity/actions/128/help-contents.svg"));
+                configButton_->setIcon(QIcon("/usr/share/icons/Humanity/actions/128/help-contents.svg"));
                 configButton_->setText("Configure");
                 configsLayout_->addWidget(configButton_);
                 connect(configButton_, &QPushButton::clicked, this, [this]() {
