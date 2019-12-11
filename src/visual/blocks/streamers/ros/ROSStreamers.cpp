@@ -98,6 +98,17 @@ namespace flow{
 
 			return cloud;
 		}
+
+
+		//-------------------------------------------------------------------------------------------------------------
+		template<> std::string TraitEvent::blockName_ = "ROS Subscriber Events";
+		template<> std::map<std::string, std::string> TraitEvent::output_ = {{{"Events", "v-event"}}};
+
+		template<> 
+		std::any TraitEvent::conversion_(std::string _tag, const dvs_msgs::EventArray::ConstPtr &_msg){
+			auto vec = *_msg;
+			return vec;
+		}
 	#endif
 
 

@@ -60,7 +60,6 @@ if(${NodeEditor_FOUND})
   target_compile_definitions(${PROJECT_NAME} PUBLIC HAS_QTNODEEDITOR)
 endif()
 
-
 find_package(Eigen3 REQUIRED)
 if(${Eigen3_FOUND})
   target_include_directories(${PROJECT_NAME} PUBLIC "/usr/include/eigen3")
@@ -74,11 +73,17 @@ if(${PCL_FOUND})
 endif()
 
 if(${FLOW_USE_ROS})
+  include(cmake/install_ros_macros.cmake)
+  
+  if(NOT EXISTS "~/.flow/thirdparty/catkin_ethz")
+    install_ros_ethz()
+  endif()
+  
   find_package(Boost COMPONENTS system)
-	find_package(catkin COMPONENTS roscpp tf rosbag cv_bridge image_transport sensor_msgs geometry_msgs)
+	find_package(catkin COMPONENTS roscpp tf rosbag cv_bridge image_transport sensor_msgs geometry_msgs dvs_msgs)
 	if(${catkin_FOUND})
 		catkin_package(
-			CATKIN_DEPENDS roscpp tf rosbag cv_bridge image_transport sensor_msgs geometry_msgs
+			CATKIN_DEPENDS roscpp tf rosbag cv_bridge image_transport sensor_msgs geometry_msgs dvs_msgs
 			INCLUDE_DIRS include
 		)
 		target_compile_definitions(${PROJECT_NAME} PUBLIC "FLOW_USE_ROS")
