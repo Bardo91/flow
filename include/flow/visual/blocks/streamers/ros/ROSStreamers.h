@@ -59,12 +59,12 @@ namespace flow{
 	typedef TraitRosSubscriber<dvs_msgs::EventArray> 		TraitEvent;
 
 	
-	typedef BlockROSSubscriber< TraitPoseStamped > BlockROSSubscriberPoseStamped;
+	typedef BlockROSSubscriber< TraitPoseStamped > 			BlockROSSubscriberPoseStamped;
 	typedef BlockROSSubscriber< TraitCloud       > 			BlockROSSubscriberCloud;
 	typedef BlockROSSubscriber< TraitImu         > 			BlockROSSubscriberImu;
 	typedef BlockROSSubscriber< TraitGPS         > 			BlockROSSubscriberGPS;
 	typedef BlockROSSubscriber< TraitImage       > 			BlockROSSubscriberImage;			
-	typedef BlockROSSuscriber< TraitEvent       > 			BlockROSSubscriberEventArray;			
+	typedef BlockROSSubscriber< TraitEvent       > 			BlockROSSubscriberEventArray;			
 
 	#endif
 }
