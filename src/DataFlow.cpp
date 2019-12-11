@@ -37,8 +37,8 @@ FLOW_TYPE_REGISTER("quat", Eigen::Quaternionf)
 #ifdef FLOW_USE_ROS
 	#include <dvs_msgs/EventArray.h>
 
-    FLOW_TYPE_REGISTER("event", dvs_msgs::EventArray)
-    FLOW_TYPE_REGISTER("v-event", dvs_msgs::Event)
+    FLOW_TYPE_REGISTER("v-event", dvs_msgs::EventArray)
+    FLOW_TYPE_REGISTER("event", dvs_msgs::Event)
 #endif
 
 namespace flow{
