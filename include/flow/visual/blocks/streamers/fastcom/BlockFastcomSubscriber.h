@@ -47,8 +47,8 @@ namespace flow{
 			std::string ipAdress = _params["ip"];
 			int portNumber = std::stoi(_params["port"]);
 			#ifdef FLOW_USE_FASTCOM
-				sub_ = fastcom::ImageSubscriber(ipAdress , portNumber);
-				sub_.attachCallback(std::bind(&subsCallback, this, _1));
+				sub_ = new fastcom::ImageSubscriber(ipAdress , portNumber);
+				sub_->attachCallback(std::bind(&subsCallback, this, _1));
 				
 	    		return true;
 			#else
@@ -69,7 +69,7 @@ namespace flow{
 
     private:
 		#ifdef FLOW_USE_FASTCOM
-			fastcom::ImageSubscriber sub_("127.0.0.1",8888); //666
+			std::shared_ptr<fastcom::ImageSubscriber> sub_;
 		#endif
     };
 

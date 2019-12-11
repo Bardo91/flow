@@ -41,7 +41,7 @@ namespace flow{
                                         [&](DataFlow _data){
                                             auto data = _data.get<typename _Trait::DataType_>(tag.first);
                                             #ifdef FLOW_USE_FASTCOM
-                                                pub_.publish(data);
+                                                pub_->publish(data);
                                             #endif  
                                         }
                 );
@@ -52,7 +52,7 @@ namespace flow{
             
             int portNumber = std::stoi(_params["port"]);
             #ifdef FLOW_USE_FASTCOM
-                // pub_ = fastcom::ImagePublisher(portNumber);
+                pub_ = new fastcom::ImagePublisher(portNumber);
                 return true;
             #else
                 return false;
@@ -63,7 +63,7 @@ namespace flow{
 
     private:
         #ifdef FLOW_USE_FASTCOM
-            fastcom::ImagePublisher pub_(8888); // 666
+            std::shared_ptr<fastcom::ImagePublisher> pub_; // 666
         #endif
     };
 
