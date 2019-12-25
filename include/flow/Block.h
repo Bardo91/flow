@@ -68,7 +68,7 @@ namespace flow{
 
         void disconnect(std::string _pipeTag);
 
-        virtual QWidget * customViewer() { return nullptr; };
+        virtual QWidget * customWidget() { return nullptr; };
 
     protected:
         bool createPipe(std::string _pipeTag, std::string _tagType);

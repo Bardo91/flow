@@ -58,40 +58,45 @@ namespace flow{
             }
         }
         
-        if(flowBlock_->parameters().size() > 0 || HasAutoLoop_){
-            // configure parameters
-            if(flowBlock_->parameters().size() > 0){
-                for(auto &param: flowBlock_->parameters()){
-                    configParams_.push_back(new ParameterWidget(param.c_str(), ""));
-                    configsLayout_->addLayout(configParams_.back());
-                }
-                configButton_ = new QToolButton();
-                configButton_->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-                configButton_->setLayoutDirection(Qt::RightToLeft);
-                configButton_->setIcon(QIcon("/usr/share/icons/Humanity/actions/128/help-contents.svg"));
-                configButton_->setText("Configure");
-                configsLayout_->addWidget(configButton_);
-                connect(configButton_, &QPushButton::clicked, this, [this]() {
-                    this->configure();
-                });
-                //Configure configure states
-                configStateIcon_ = new QIcon();
-            }
-
-            // Autoloop button
-            if(HasAutoLoop_){
-                streamActionButton_ = new QCheckBox("Run");
-                configsLayout_->addWidget(streamActionButton_);
-                connect(    streamActionButton_, &QCheckBox::toggled,
-                            [=](bool checked) { 
-                                    if(checked){
-                                        flowBlock_->start();
-                                    }else{
-                                        flowBlock_->stop();
-                                    }
-                                });
-            }
+        // custom visualizer
+        if(flowBlock_->customWidget() != nullptr){
+            configsLayout_->addWidget(flowBlock_->customWidget());
         }
+
+        // configure parameters
+        if(flowBlock_->parameters().size() > 0){
+            for(auto &param: flowBlock_->parameters()){
+                configParams_.push_back(new ParameterWidget(param.c_str(), ""));
+                configsLayout_->addLayout(configParams_.back());
+            }
+            configButton_ = new QToolButton();
+            configButton_->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+            configButton_->setLayoutDirection(Qt::RightToLeft);
+            configButton_->setIcon(QIcon("/usr/share/icons/Humanity/actions/128/help-contents.svg"));
+            configButton_->setText("Configure");
+            configsLayout_->addWidget(configButton_);
+            connect(configButton_, &QPushButton::clicked, this, [this]() {
+                this->configure();
+            });
+            //Configure configure states
+            configStateIcon_ = new QIcon();
+        }
+
+        // Autoloop button
+        if(HasAutoLoop_){
+            streamActionButton_ = new QCheckBox("Run");
+            configsLayout_->addWidget(streamActionButton_);
+            connect(    streamActionButton_, &QCheckBox::toggled,
+                        [=](bool checked) { 
+                                if(checked){
+                                    flowBlock_->start();
+                                }else{
+                                    flowBlock_->stop();
+                                }
+                            });
+        }
+
+
     }
 
     template<typename Block_, bool HasAutoLoop_>
