@@ -31,6 +31,8 @@
 #include <map>
 #include <chrono>
 
+#include <iostream>
+
 namespace flow{
         
     class DataFlow{
@@ -55,18 +57,46 @@ namespace flow{
         std::chrono::time_point<std::chrono::system_clock> lastUsageT_;
         float usageFreq_ = 0;
     };
+
+    class TypeLog{
+    public:
+
+        static void registerType(std::string _type){
+            registeredTypes_.push_back(_type);
+        }
+
+        static std::vector<std::string> registeredTypes(){
+            return registeredTypes_;
+        }
+
+    private:
+        TypeLog();
+
+    private:
+        static std::vector<std::string> registeredTypes_;
+    };
 }
 
 
-#define FLOW_TYPE_REGISTER(tagType_, Type_)                                                     \
-    namespace flow{                                                                             \
-        template<>                                                                              \
-        Type_ DataFlow::get<Type_>(std::string _tag){                                           \
-            if(types_.find(_tag) == types_.end() || types_[_tag] != tagType_ ){                 \
-                throw std::invalid_argument("Bad tag type when getting data from DataFlow");    \
-            }                                                                                   \
-            return std::any_cast<Type_>(data_[_tag]);                                           \
-        }                                                                                       \
-    }                                                                                           \
+#define FLOW_TYPE_REGISTER(tagType_, Type_)                                                             \
+    namespace flow{                                                                                     \
+        struct TypeLogTrait##tagType_{                                                                  \
+            TypeLogTrait##tagType_(){                                                                   \
+                TypeLog::registerType(#tagType_);                                                       \
+            }                                                                                           \
+            std::string string = #tagType_;                                                             \
+            typedef Type_ TraitType_;                                                                   \
+            static TypeLogTrait##tagType_ traitRegistrator_;                                            \
+        };                                                                                              \
+        TypeLogTrait##tagType_ TypeLogTrait##tagType_::traitRegistrator_ = TypeLogTrait##tagType_();    \
+                                                                                                        \
+        template<>                                                                                      \
+        Type_ DataFlow::get<Type_>(std::string _tag){                                                   \
+            if(types_.find(_tag) == types_.end() || types_[_tag] != #tagType_ ){                        \
+                throw std::invalid_argument("Bad tag type when getting data from DataFlow");            \
+            }                                                                                           \
+            return std::any_cast<Type_>(data_[_tag]);                                                   \
+        }                                                                                               \
+    }                                                                                                   \
 
 #endif

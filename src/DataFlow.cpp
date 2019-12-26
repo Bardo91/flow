@@ -26,22 +26,25 @@
 #include <pcl/point_types.h>
 #include <Eigen/Eigen>
 
-FLOW_TYPE_REGISTER("int", int)
-FLOW_TYPE_REGISTER("float", float)
-FLOW_TYPE_REGISTER("cloud", pcl::PointCloud<pcl::PointXYZRGBNormal>::Ptr)
-FLOW_TYPE_REGISTER("mat44", Eigen::Matrix4f)
-FLOW_TYPE_REGISTER("vec3", Eigen::Vector3f)
-FLOW_TYPE_REGISTER("vec4", Eigen::Vector4f)
-FLOW_TYPE_REGISTER("quat", Eigen::Quaternionf)
+std::vector<std::string> flow::TypeLog::registeredTypes_ = {};
+
+FLOW_TYPE_REGISTER(int, int)
+FLOW_TYPE_REGISTER(float, float)
+FLOW_TYPE_REGISTER(cloud, pcl::PointCloud<pcl::PointXYZRGBNormal>::Ptr)
+FLOW_TYPE_REGISTER(mat44, Eigen::Matrix4f)
+FLOW_TYPE_REGISTER(vec3, Eigen::Vector3f)
+FLOW_TYPE_REGISTER(vec4, Eigen::Vector4f)
+FLOW_TYPE_REGISTER(quat, Eigen::Quaternionf)
 
 #ifdef FLOW_USE_ROS
 	#include <dvs_msgs/EventArray.h>
 
-    FLOW_TYPE_REGISTER("v-event", dvs_msgs::EventArray)
-    FLOW_TYPE_REGISTER("event", dvs_msgs::Event)
+    FLOW_TYPE_REGISTER(v_event, dvs_msgs::EventArray)
+    FLOW_TYPE_REGISTER(event, dvs_msgs::Event)
 #endif
 
 namespace flow{
+
     DataFlow::DataFlow(std::map<std::string, std::string> _flows, std::function<void(DataFlow _f)> _callback){
         callback_ = _callback;
         for(auto &f:_flows){

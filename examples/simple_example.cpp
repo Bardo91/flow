@@ -19,7 +19,16 @@
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
 
+#include <flow/DataFlow.h>
+#include <iostream>
+
 int main(int _argc, char **_argv){
+
+    auto types = flow::TypeLog::registeredTypes();
+    std::cout << "size: " << types.size() << std::endl;
+    for(auto &type:types){
+        std::cout << type << std::endl;
+    }
 
 
 }
