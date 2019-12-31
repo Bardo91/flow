@@ -29,6 +29,7 @@
 std::vector<std::string> flow::TypeLog::registeredTypes_ = {};
 
 FLOW_TYPE_REGISTER(int, int)
+FLOW_TYPE_REGISTER(bool, bool)
 FLOW_TYPE_REGISTER(float, float)
 FLOW_TYPE_REGISTER(cloud, pcl::PointCloud<pcl::PointXYZRGBNormal>::Ptr)
 FLOW_TYPE_REGISTER(mat44, Eigen::Matrix4f)
