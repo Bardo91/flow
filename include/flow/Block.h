@@ -69,6 +69,7 @@ namespace flow{
         void disconnect(std::string _pipeTag);
 
         virtual QWidget * customWidget() { return nullptr; };
+        virtual bool resizable() const { return false; }
 
     protected:
         bool createPipe(std::string _pipeTag, std::string _tagType);

@@ -74,6 +74,9 @@ namespace flow{
         void configure() override;
 
         flow::Block * internalBlock() const; 
+
+        bool resizable() const override { return flowBlock_->resizable(); }
+    
     public:
         QString caption() const override { return Block_::name().c_str(); }
 
