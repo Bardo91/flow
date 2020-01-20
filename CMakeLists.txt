@@ -98,6 +98,15 @@ if(${FLOW_USE_ROS})
 	endif()
 endif()
 
+if(NOT ${FLOW_USE_ROS})
+  find_package(OpenCV REQUIRED)
+  if(${OpenCV_FOUND})
+    target_include_directories(${PROJECT_NAME} PUBLIC ${OpenCV_INCLUDE_DIRS})
+    target_link_libraries(${PROJECT_NAME} LINK_PRIVATE ${OpenCV_LIBS})
+    target_compile_definitions(${PROJECT_NAME} PUBLIC "HAS_OPENCV")
+  endif()
+endif()
+
 
 if(${FLOW_USE_FASTCOM})
   find_package(fastcom)
@@ -109,15 +118,6 @@ if(${FLOW_USE_FASTCOM})
     set(FLOW_USE_FASTCOM OFF)
   endif()
 endif(${FLOW_USE_FASTCOM})
-
-if(NOT ${FLOW_USE_ROS})
-  find_package(OpenCV REQUIRED)
-  if(${OpenCV_FOUND})
-    target_include_directories(${PROJECT_NAME} PUBLIC ${OpenCV_INCLUDE_DIRS})
-    target_link_libraries(${PROJECT_NAME} LINK_PRIVATE ${OpenCV_LIBS})
-    target_compile_definitions(${PROJECT_NAME} PUBLIC "HAS_OPENCV")
-  endif()
-endif()
 
 #########################################
 ######			Documentation	   ######
