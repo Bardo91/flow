@@ -30,6 +30,9 @@ option(BUILD_EXAMPLES   "Compile examples"                  ON)
 option(BUILD_TESTS      "Prepare tests"                     OFF)
 option(FLOW_USE_ROS	    "Compile ROS dependent modules"	    ON)
 option(FLOW_USE_FASTCOM	"Compile FASTCOM dependent modules"	ON)
+option(BUILD_EXAMPLES "Compile examples"              ON)
+option(BUILD_TESTS    "Prepare tests"                 OFF)
+option(FLOW_USE_ROS	  "Compile ROS dependent modules"	ON)
 
 set(CMAKE_AUTOMOC ON)
 
@@ -61,7 +64,6 @@ if(${NodeEditor_FOUND})
   target_compile_definitions(${PROJECT_NAME} PUBLIC HAS_QTNODEEDITOR)
 endif()
 
-
 find_package(Eigen3 REQUIRED)
 if(${Eigen3_FOUND})
   target_include_directories(${PROJECT_NAME} PUBLIC "/usr/include/eigen3")
@@ -74,19 +76,18 @@ if(${PCL_FOUND})
   target_compile_definitions(${PROJECT_NAME} PUBLIC "ENABLE_PCL" "DISABLE_PCAP" "DISABLE_PNG" "DISABLE_LIBUSB_1_0")
 endif()
 
-find_package(OpenCV REQUIRED)
-if(${OpenCV_FOUND})
-  target_include_directories(${PROJECT_NAME} PUBLIC ${OpenCV_INCLUDE_DIRS})
-  target_link_libraries(${PROJECT_NAME} LINK_PRIVATE ${OpenCV_LIBS})
-  target_compile_definitions(${PROJECT_NAME} PUBLIC "HAS_OPENCV")
-endif()
-
 if(${FLOW_USE_ROS})
+  include(cmake/install_ros_macros.cmake)
+  
+  if(NOT EXISTS "~/.flow/thirdparty/catkin_ethz")
+    install_ros_ethz()
+  endif()
+  
   find_package(Boost COMPONENTS system)
-	find_package(catkin COMPONENTS roscpp tf rosbag cv_bridge image_transport sensor_msgs geometry_msgs)
+	find_package(catkin COMPONENTS roscpp tf rosbag cv_bridge image_transport sensor_msgs geometry_msgs dvs_msgs)
 	if(${catkin_FOUND})
 		catkin_package(
-			CATKIN_DEPENDS roscpp tf rosbag cv_bridge image_transport sensor_msgs geometry_msgs
+			CATKIN_DEPENDS roscpp tf rosbag cv_bridge image_transport sensor_msgs geometry_msgs dvs_msgs
 			INCLUDE_DIRS include
 		)
 		target_compile_definitions(${PROJECT_NAME} PUBLIC FLOW_USE_ROS)
@@ -98,7 +99,7 @@ if(${FLOW_USE_ROS})
 	else()
 		set(FLOW_USE_ROS OFF)
 	endif()
-endif(${FLOW_USE_ROS})
+endif()
 
 
 if(${FLOW_USE_FASTCOM})
@@ -111,6 +112,15 @@ if(${FLOW_USE_FASTCOM})
     set(FLOW_USE_FASTCOM OFF)
   endif()
 endif(${FLOW_USE_FASTCOM})
+
+if(NOT ${FLOW_USE_ROS})
+  find_package(OpenCV REQUIRED)
+  if(${OpenCV_FOUND})
+    target_include_directories(${PROJECT_NAME} PUBLIC ${OpenCV_INCLUDE_DIRS})
+    target_link_libraries(${PROJECT_NAME} LINK_PRIVATE ${OpenCV_LIBS})
+    target_compile_definitions(${PROJECT_NAME} PUBLIC "HAS_OPENCV")
+  endif()
+endif()
 
 #########################################
 ######			Documentation	   ######

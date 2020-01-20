@@ -31,6 +31,8 @@
 #include <any>
 #include <flow/Policy.h>
 
+#include <QtCore/QObject>
+
 namespace flow{
     class Outpipe;
 
@@ -65,6 +67,9 @@ namespace flow{
         void connect(std::string _pipeTag, std::string _policyTag, Block& _otherBlock);
 
         void disconnect(std::string _pipeTag);
+
+        virtual QWidget * customWidget() { return nullptr; };
+        virtual bool resizable() const { return false; }
 
     protected:
         bool createPipe(std::string _pipeTag, std::string _tagType);

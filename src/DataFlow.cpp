@@ -27,16 +27,26 @@
 #include <Eigen/Eigen>
 #include <opencv2/opencv.hpp>
 
-FLOW_TYPE_REGISTER("int", int)
-FLOW_TYPE_REGISTER("float", float)
-FLOW_TYPE_REGISTER("cloud", pcl::PointCloud<pcl::PointXYZRGBNormal>::Ptr)
-FLOW_TYPE_REGISTER("mat44", Eigen::Matrix4f)
-FLOW_TYPE_REGISTER("vec3", Eigen::Vector3f)
-FLOW_TYPE_REGISTER("vec4", Eigen::Vector4f)
-FLOW_TYPE_REGISTER("quat", Eigen::Quaternionf)
-FLOW_TYPE_REGISTER("image", cv::Mat)
+std::vector<std::string> flow::TypeLog::registeredTypes_ = {};
+
+FLOW_TYPE_REGISTER(int, int)
+FLOW_TYPE_REGISTER(bool, bool)
+FLOW_TYPE_REGISTER(float, float)
+FLOW_TYPE_REGISTER(cloud, pcl::PointCloud<pcl::PointXYZRGBNormal>::Ptr)
+FLOW_TYPE_REGISTER(mat44, Eigen::Matrix4f)
+FLOW_TYPE_REGISTER(vec3, Eigen::Vector3f)
+FLOW_TYPE_REGISTER(vec4, Eigen::Vector4f)
+FLOW_TYPE_REGISTER(quat, Eigen::Quaternionf)
+
+#ifdef FLOW_USE_ROS
+	#include <dvs_msgs/EventArray.h>
+
+    FLOW_TYPE_REGISTER(v_event, dvs_msgs::EventArray)
+    FLOW_TYPE_REGISTER(event, dvs_msgs::Event)
+#endif
 
 namespace flow{
+
     DataFlow::DataFlow(std::map<std::string, std::string> _flows, std::function<void(DataFlow _f)> _callback){
         callback_ = _callback;
         for(auto &f:_flows){
@@ -44,6 +54,7 @@ namespace flow{
             data_[f.first] = std::any();
             updated_[f.first] = false;
         }
+        lastUsageT_ = std::chrono::system_clock::now();
     }
 
     void DataFlow::update(std::string _tag, std::any _data){
@@ -65,6 +76,15 @@ namespace flow{
         if(flagCounter == updated_.size()){
             // callback_(*this);
             std::thread(callback_, *this).detach(); // 666 Smthg is not completelly thread safe and produces crash
+            auto currT = std::chrono::system_clock::now();
+            float incT = std::chrono::duration_cast<std::chrono::microseconds>(currT-lastUsageT_).count();
+            lastUsageT_ = currT;
+            usageFreq_ = 1/(incT*1e-6);
         }
+    }
+
+
+    float DataFlow::frequency() const{
+        return usageFreq_;
     }
 }

@@ -49,7 +49,7 @@ namespace flow{
         template<> std::map<std::string, std::string> TraitPointCloudPublisher::input_ = {{{"Point cloud", "cloud"}}};
         template<> std::any TraitPointCloudPublisher::conversion_(DataFlow _data){
 
-            auto cloud = _data.get<pcl::PointCloud<pcl::PointXYZRGBNormal>::Ptr>("Point cloud");
+            auto cloud = _data.get<pcl::PointCloud<pcl::PointXYZRGBNormal>::Ptr>("Point Cloud");
             sensor_msgs::PointCloud2 ROScloud;
             
     		pcl::toROSMsg(*cloud, ROScloud);

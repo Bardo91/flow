@@ -86,4 +86,13 @@ namespace flow{
         }
     }
 
+
+    std::vector<float> Policy::masksFrequencies() const{
+        std::vector<float> freqs;
+        for(auto &flow: flows_){
+            freqs.push_back(flow->frequency());
+        }
+        return freqs;
+    }
+
 }

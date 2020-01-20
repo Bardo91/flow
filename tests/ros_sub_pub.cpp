@@ -23,7 +23,7 @@
 #include <flow/Outpipe.h>
 #include <flow/DataFlow.h>
 
-#include <flow/visual/blocks/streamers/ros/ROSSubscribers.h>
+#include <flow/visual/blocks/streamers/ros/ROSStreamers.h>
 
 #include <gtest/gtest.h>
 #include <condition_variable> 

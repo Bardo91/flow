@@ -29,7 +29,7 @@
 
 #ifdef FLOW_USE_ROS
     #include <flow/visual/blocks/publishers/ros/ROSPublishers.h>
-    #include <flow/visual/blocks/streamers/ros/ROSSubscribers.h>
+    #include <flow/visual/blocks/streamers/ros/ROSStreamers.h>
 #endif
 
 #ifdef FLOW_USE_FASTCOM
