@@ -63,7 +63,7 @@ namespace flow{
 
     private:
         #ifdef FLOW_USE_FASTCOM
-            std::shared_ptr<fastcom::ImagePublisher> pub_; // 666
+            fastcom::ImagePublisher *pub_; // 666
         #endif
     };
 

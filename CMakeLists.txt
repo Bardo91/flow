@@ -26,13 +26,10 @@ PROJECT(flow VERSION 0.1.0)
 #########################################
 ######			General config	   ######
 #########################################
-option(BUILD_EXAMPLES   "Compile examples"                  ON)
+option(BUILD_EXAMPLES   "Compile examples"                  OFF)
 option(BUILD_TESTS      "Prepare tests"                     OFF)
 option(FLOW_USE_ROS	    "Compile ROS dependent modules"	    ON)
 option(FLOW_USE_FASTCOM	"Compile FASTCOM dependent modules"	ON)
-option(BUILD_EXAMPLES "Compile examples"              ON)
-option(BUILD_TESTS    "Prepare tests"                 OFF)
-option(FLOW_USE_ROS	  "Compile ROS dependent modules"	ON)
 
 set(CMAKE_AUTOMOC ON)
 

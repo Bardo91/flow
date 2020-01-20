@@ -48,8 +48,16 @@ namespace flow{
 			int portNumber = std::stoi(_params["port"]);
 			#ifdef FLOW_USE_FASTCOM
 				sub_ = new fastcom::ImageSubscriber(ipAdress , portNumber);
-				sub_->attachCallback(std::bind(&subsCallback, this, _1));
 				
+				callback = [&](typename _Trait::DataType_ &_msg){
+    				    for (auto tag : _Trait::output_){
+							if(getPipe(tag.first)->registrations() !=0 ){
+               					getPipe(tag.first)->flush(_msg);
+							}
+						}
+    				};
+
+				sub_->attachCallback(callback_);
 	    		return true;
 			#else
 				return false;
@@ -59,20 +67,13 @@ namespace flow{
         std::vector<std::string> parameters() override {return {"ip" , "port"};} 
 
     private:
-        void subsCallback(typename _Trait::DataType_ &_msg){
-			for (auto tag : _Trait::output_){
-				if(getPipe(tag.first)->registrations() !=0 ){
-               		getPipe(tag.first)->flush(_msg);
-				}
-			}
-        }
-
-    private:
 		#ifdef FLOW_USE_FASTCOM
-			std::shared_ptr<fastcom::ImageSubscriber> sub_;
+			fastcom::ImageSubscriber *sub_;
+			std::function<void(_Trait::DataType_ &)> callback_;
 		#endif
     };
 
+	// Fastcom suscribers type traits
     struct TraitFastcomImageSubscriber{
         static std::string blockName_;
 	    static std::map<std::string, std::string> output_;
