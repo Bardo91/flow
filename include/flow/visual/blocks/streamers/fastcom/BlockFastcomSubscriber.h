@@ -49,7 +49,7 @@ namespace flow{
 			#ifdef FLOW_USE_FASTCOM
 				sub_ = new fastcom::ImageSubscriber(ipAdress , portNumber);
 				
-				callback = [&](typename _Trait::DataType_ &_msg){
+				callback_ = [&](typename _Trait::DataType_ &_msg){
     				    for (auto tag : _Trait::output_){
 							if(getPipe(tag.first)->registrations() !=0 ){
                					getPipe(tag.first)->flush(_msg);
@@ -69,7 +69,7 @@ namespace flow{
     private:
 		#ifdef FLOW_USE_FASTCOM
 			fastcom::ImageSubscriber *sub_;
-			std::function<void(_Trait::DataType_ &)> callback_;
+			std::function<void(typename _Trait::DataType_ &)> callback_;
 		#endif
     };
 
