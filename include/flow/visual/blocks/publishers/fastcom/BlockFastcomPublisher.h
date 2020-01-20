@@ -19,53 +19,65 @@
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef FLOW_BLOCKS_PUBLISHERS_ROS_BLOCKROSPUBLISHER_H_
-#define FLOW_BLOCKS_PUBLISHERS_ROS_BLOCKROSPUBLISHER_H_
+#ifndef FLOW_BLOCKS_PUBLISHERS_FASTCOM_BLOCKFASTCOMPUBLISHERS_H_
+#define FLOW_BLOCKS_PUBLISHERS_FASTCOM_BLOCKFASTCOMPUBLISHERS_H_
 
-#include <flow/Block.h>
-#include <flow/Outpipe.h>
-
-#ifdef FLOW_USE_ROS
-	#include <ros/ros.h>
+#include <opencv2/opencv.hpp>
+#ifdef FLOW_USE_FASTCOM
+	#include <fastcom/fastcom.h>
 #endif
 
 namespace flow{
-
     template<typename _Trait >
-    class BlockROSPublisher : public flow::Block{
+    class BlockFastcomPublisher : public flow::Block{
     public:
         static std::string name() {return _Trait::blockName_; }
 
-		BlockROSPublisher(){
-            createPolicy(_Trait::input_);
+		BlockFastcomPublisher(){
+
+            createPolicy({_Trait::input_});
             for (auto tag : _Trait::input_){
                 registerCallback({tag.first}, 
-                                    [&](DataFlow _data){
-                                        auto topicContent =std::any_cast<typename _Trait::ROSType_>(_Trait::conversion_(_data));
-                                        #ifdef FLOW_USE_ROS
-                                            pubROS_.publish(topicContent);
-                                        #endif
-                                    }
+                                        [&](DataFlow _data){
+                                            auto data = _data.get<typename _Trait::DataType_>(tag.first);
+                                            #ifdef FLOW_USE_FASTCOM
+                                                pub_->publish(data);
+                                            #endif  
+                                        }
                 );
-            }    
+            }        
         };
 
         virtual bool configure(std::unordered_map<std::string, std::string> _params) override{
-            #ifdef FLOW_USE_ROS
-                std::string topicPublish = _params["topic"];
-                pubROS_ = nh_.advertise< typename _Trait::ROSType_ >(topicPublish, 1 );
-			#endif
-            return true;
+            
+            int portNumber = std::stoi(_params["port"]);
+            #ifdef FLOW_USE_FASTCOM
+                pub_ = new fastcom::ImagePublisher(portNumber);
+                return true;
+            #else
+                return false;
+            #endif
+			
         }
-        std::vector<std::string> parameters() override {return {"topic"};}
+        std::vector<std::string> parameters() override {return {"port"};}
 
     private:
-		#ifdef FLOW_USE_ROS
-			ros::NodeHandle nh_;
-			ros::Publisher pubROS_;
-		#endif
+        #ifdef FLOW_USE_FASTCOM
+            fastcom::ImagePublisher *pub_; // 666
+        #endif
     };
-}
 
+    struct TraitFastcomImagePublisher{
+        static std::string blockName_;
+	    static std::map<std::string, std::string> input_;
+	    typedef cv::Mat DataType_;
+    }; 
+
+	std::string TraitFastcomImagePublisher::blockName_ = "Fastcom Publisher image";
+	std::map<std::string, std::string> TraitFastcomImagePublisher::input_ = {{{"Color Image", "image"}}};
+
+    typedef BlockFastcomPublisher< TraitFastcomImagePublisher > BlockFastcomImagePublisher;
+
+}
 
 #endif

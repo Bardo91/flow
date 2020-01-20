@@ -25,6 +25,7 @@
 #include <pcl/point_cloud.h>
 #include <pcl/point_types.h>
 #include <Eigen/Eigen>
+#include <opencv2/opencv.hpp>
 
 std::vector<std::string> flow::TypeLog::registeredTypes_ = {};
 

@@ -26,9 +26,10 @@ PROJECT(flow VERSION 0.1.0)
 #########################################
 ######			General config	   ######
 #########################################
-option(BUILD_EXAMPLES "Compile examples"              ON)
-option(BUILD_TESTS    "Prepare tests"                 OFF)
-option(FLOW_USE_ROS	  "Compile ROS dependent modules"	ON)
+option(BUILD_EXAMPLES   "Compile examples"                  OFF)
+option(BUILD_TESTS      "Prepare tests"                     OFF)
+option(FLOW_USE_ROS	    "Compile ROS dependent modules"	    ON)
+option(FLOW_USE_FASTCOM	"Compile FASTCOM dependent modules"	ON)
 
 set(CMAKE_AUTOMOC ON)
 
@@ -86,7 +87,7 @@ if(${FLOW_USE_ROS})
 			CATKIN_DEPENDS roscpp tf rosbag cv_bridge image_transport sensor_msgs geometry_msgs dvs_msgs
 			INCLUDE_DIRS include
 		)
-		target_compile_definitions(${PROJECT_NAME} PUBLIC "FLOW_USE_ROS")
+		target_compile_definitions(${PROJECT_NAME} PUBLIC FLOW_USE_ROS)
 		target_link_libraries(${PROJECT_NAME} LINK_PUBLIC ${catkin_LIBRARIES} ${rosbag_LIBRARIES})
 		target_include_directories(${PROJECT_NAME}  PUBLIC ${catkin_INCLUDE_DIRS} ${rosbag_INCLUDE_DIRS})
 		target_include_directories(${PROJECT_NAME}  PUBLIC ${Boost_INCLUDE_DIRS} )
@@ -105,6 +106,18 @@ if(NOT ${FLOW_USE_ROS})
     target_compile_definitions(${PROJECT_NAME} PUBLIC "HAS_OPENCV")
   endif()
 endif()
+
+
+if(${FLOW_USE_FASTCOM})
+  find_package(fastcom)
+  if(${fastcom_FOUND})
+    target_include_directories(${PROJECT_NAME} PUBLIC ${fastcom_INCLUDE_DIRS})
+    target_link_libraries(${PROJECT_NAME} LINK_PUBLIC ${fastcom_LIBRARIES})
+    target_compile_definitions(${PROJECT_NAME} PUBLIC FLOW_USE_FASTCOM FASTCOM_HAS_OPENCV)
+  else()
+    set(FLOW_USE_FASTCOM OFF)
+  endif()
+endif(${FLOW_USE_FASTCOM})
 
 #########################################
 ######			Documentation	   ######

@@ -31,3 +31,8 @@
     #include <flow/visual/blocks/publishers/ros/ROSPublishers.h>
     #include <flow/visual/blocks/streamers/ros/ROSStreamers.h>
 #endif
+
+#ifdef FLOW_USE_FASTCOM
+    #include <flow/visual/blocks/publishers/fastcom/BlockFastcomPublisher.h>
+    #include <flow/visual/blocks/streamers/fastcom/BlockFastcomSubscriber.h>
+#endif
