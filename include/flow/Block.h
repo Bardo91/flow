@@ -71,6 +71,8 @@ namespace flow{
         virtual QWidget * customWidget() { return nullptr; };
         virtual bool resizable() const { return false; }
 
+        virtual std::string description() const {return "Flow block without description";};
+
     protected:
         bool createPipe(std::string _pipeTag, std::string _tagType);
         bool isRunningLoop() const;

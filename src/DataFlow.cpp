@@ -37,6 +37,7 @@ FLOW_TYPE_REGISTER(mat44, Eigen::Matrix4f)
 FLOW_TYPE_REGISTER(vec3, Eigen::Vector3f)
 FLOW_TYPE_REGISTER(vec4, Eigen::Vector4f)
 FLOW_TYPE_REGISTER(quat, Eigen::Quaternionf)
+FLOW_TYPE_REGISTER(image, cv::Mat)
 
 #ifdef FLOW_USE_ROS
 	#include <dvs_msgs/EventArray.h>
