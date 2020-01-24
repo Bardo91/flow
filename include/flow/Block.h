@@ -38,7 +38,7 @@ namespace flow{
 
     class Block{
     public:
-        static std::string name() {return "Unnammed";}
+        virtual std::string name() {return "Unnammed";}
         
         virtual ~Block(){};
 

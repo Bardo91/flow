@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------------------------------------------
-//  mico
+//  FLOW
 //---------------------------------------------------------------------------------------------------------------------
-//  Copyright 2019 Pablo Ramon Soria (a.k.a. Bardo91) pabramsor@gmail.com
+//  Copyright 2018 Pablo Ramon Soria (a.k.a. Bardo91) pabramsor@gmail.com
 //---------------------------------------------------------------------------------------------------------------------
 //  Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 //  and associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -19,55 +19,28 @@
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef FLOW_BLOCKS_STREAMERS_ROS_ROSSUBSCRIBER_H_
-#define FLOW_BLOCKS_STREAMERS_ROS_ROSSUBSCRIBER_H_
+
+#ifndef FLOW_PLUGINS_BLOCKPLUGIN_H_
+#define FLOW_PLUGINS_BLOCKPLUGIN_H_
 
 #include <flow/Block.h>
-#include <flow/Outpipe.h>
-
-#ifdef FLOW_USE_ROS
-	#include <ros/ros.h>
-#endif
 
 namespace flow{
-	template<typename _Trait >
-    class BlockROSSubscriber : public flow::Block{
+
+    class PluginNodeCreator{
     public:
-		BlockROSSubscriber(){
-            for (auto tag : _Trait::output_)
-				createPipe(tag.first, tag.second);
-			}
-		
-		// ~BlockROSSubscriber(){};
+        using RegistryItemPtr     = std::unique_ptr<QtNodes::NodeDataModel>;
+        using RegistryItemCreator = std::function<RegistryItemPtr()>;
 
-        std::string name() {  return _Trait::blockName_; }
-
-        virtual bool configure(std::unordered_map<std::string, std::string> _params) override{
-			#ifdef FLOW_USE_ROS
-            	subROS_ = nh_.subscribe<typename _Trait::ROSType_>(_params["topic"], 1 , &BlockROSSubscriber::subsCallback, this);
-			#endif
-	    	return true;
-	    }
-
-        std::vector<std::string> parameters() override {return {"topic"};} 
-
-    private:
-        void subsCallback(const typename _Trait::ROSType_::ConstPtr &_msg){
-			for (auto tag : _Trait::output_){
-				if(getPipe(tag.first)->registrations() !=0 ){
-               		getPipe(tag.first)->flush(_Trait::conversion_(tag.first , _msg));
-				}
-			}
+        PluginNodeCreator(RegistryItemCreator _fn){
+            creatorFun_ = _fn;
         }
 
+        RegistryItemCreator get() { return creatorFun_; };
+
     private:
-		#ifdef FLOW_USE_ROS
-			ros::NodeHandle nh_;
-			ros::Subscriber subROS_;
-		#endif
+        RegistryItemCreator creatorFun_;
     };
-
 }
-
 
 #endif

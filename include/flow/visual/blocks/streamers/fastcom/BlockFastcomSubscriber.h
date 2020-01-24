@@ -34,13 +34,11 @@ namespace flow{
     class BlockFastcomSubscriber : public flow::Block{
     public:
 		BlockFastcomSubscriber(){
-            for (auto tag : _Trait::output_)
-		        createPipe(tag.first, tag.second);
-			}
-
-        static std::string name() { 
-			return _Trait::blockName_;
+			for (auto tag : _Trait::output_)
+				createPipe(tag.first, tag.second);
 		}
+
+        std::string name() {  return _Trait::blockName_; }
 	
         virtual bool configure(std::unordered_map<std::string, std::string> _params) override{
 			

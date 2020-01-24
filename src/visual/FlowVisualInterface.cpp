@@ -55,6 +55,8 @@
 
 #include <X11/Xlib.h>   
 
+#include <dlfcn.h>
+
 using QtNodes::FlowView;
 using QtNodes::FlowScene;
 using QtNodes::ConnectionStyle;
@@ -188,9 +190,39 @@ namespace flow{
     std::shared_ptr<QtNodes::DataModelRegistry> FlowVisualInterface::registerDataModels(){
         auto registry = std::make_shared<QtNodes::DataModelRegistry>();
 
+        loadCustomPlugins(registry);
         registerFn_(registry);
 
         return registry;
+    }
+
+    
+    void FlowVisualInterface::loadCustomPlugins(std::shared_ptr<QtNodes::DataModelRegistry> &_registry){
+        // List plugins in default folder
+        // Iterate over file
+        // Load blocks registered
+
+
+        
+        void *hndl = dlopen("/home/bardo91/programming/test_dynamic_load/build/libext_lib.so", RTLD_NOW);
+        if(hndl == nullptr){
+            std::cerr << dlerror() << std::endl;
+            exit(-1);
+        }
+        dlerror();
+
+        typedef PluginNodeCreator* (*Factory)();
+        void *mkr = dlsym(hndl, "factory");
+        Factory factory = (Factory) mkr;
+
+        const char *dlsym_error = dlerror();    
+        if (dlsym_error) {
+            std::cerr << "Cannot load symbol 'factory': " << dlsym_error <<            '\n';
+        }
+
+        PluginNodeCreator* nodeCreator = factory();
+
+        _registry->registerModel<NodeDataModel>(nodeCreator->get(),"Base");
     }
 
 }

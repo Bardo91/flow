@@ -31,7 +31,7 @@ namespace flow{
     template<typename _Trait >
     class BlockFastcomPublisher : public flow::Block{
     public:
-        static std::string name() {return _Trait::blockName_; }
+        std::string name() {return _Trait::blockName_; }
         std::string description() const override {return    "Communication block using fastcom.\n"+
                                                             "Publisher actor that sends data of type "+ _Trait::input_ +".";};
 
