@@ -28,8 +28,9 @@ PROJECT(flow VERSION 0.1.0)
 #########################################
 option(BUILD_EXAMPLES   "Compile examples"                  OFF)
 option(BUILD_TESTS      "Prepare tests"                     OFF)
-option(FLOW_USE_ROS	    "Compile ROS dependent modules"	    ON)
+option(FLOW_USE_ROS	    "Compile ROS dependent modules"	    OFF)
 option(FLOW_USE_FASTCOM	"Compile FASTCOM dependent modules"	ON)
+option(FLOW_DVS	        "Add DVS daya type"               	ON)
 
 set(CMAKE_AUTOMOC ON)
 
@@ -72,6 +73,17 @@ if(${PCL_FOUND})
   target_link_libraries(${PROJECT_NAME} LINK_PRIVATE ${PCL_LIBRARIES})
   target_compile_definitions(${PROJECT_NAME} PUBLIC "ENABLE_PCL" "DISABLE_PCAP" "DISABLE_PNG" "DISABLE_LIBUSB_1_0")
 endif()
+
+if (${FLOW_DVS})
+  find_package(dv)
+  if (${dv_FOUND})
+    target_include_directories(${PROJECT_NAME} PUBLIC ${dv_INCLUDE_DIRS})
+    target_link_libraries(${PROJECT_NAME} LINK_PUBLIC ${dv_LIBRARIES})
+    target_compile_definitions(${PROJECT_NAME} PUBLIC HAS_DV)    
+  else()
+    set(FLOW_DVS OFF)
+  endif(${dv_FOUND})
+endif(${FLOW_DVS})
 
 if(${FLOW_USE_ROS})
   include(cmake/install_ros_macros.cmake)

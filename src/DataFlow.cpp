@@ -27,6 +27,8 @@
 #include <Eigen/Eigen>
 #include <opencv2/opencv.hpp>
 
+#include <dv-sdk/processing.hpp>
+
 std::vector<std::string> flow::TypeLog::registeredTypes_ = {};
 
 FLOW_TYPE_REGISTER(int, int)
