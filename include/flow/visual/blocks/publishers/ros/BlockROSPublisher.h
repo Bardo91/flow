@@ -34,7 +34,7 @@ namespace flow{
     template<typename _Trait >
     class BlockROSPublisher : public flow::Block{
     public:
-        static std::string name() {return _Trait::blockName_; }
+        std::string name() {return _Trait::blockName_; }
 
 		BlockROSPublisher(){
             createPolicy(_Trait::input_);

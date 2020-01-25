@@ -55,6 +55,9 @@
 
 #include <X11/Xlib.h>   
 
+#include <dlfcn.h>
+#include <boost/filesystem.hpp>
+
 using QtNodes::FlowView;
 using QtNodes::FlowScene;
 using QtNodes::ConnectionStyle;
@@ -188,9 +191,57 @@ namespace flow{
     std::shared_ptr<QtNodes::DataModelRegistry> FlowVisualInterface::registerDataModels(){
         auto registry = std::make_shared<QtNodes::DataModelRegistry>();
 
+        loadCustomPlugins(registry);
         registerFn_(registry);
 
         return registry;
+    }
+
+    struct PathLeafString {
+        std::string operator()(const boost::filesystem::directory_entry& entry) const {
+            return entry.path().leaf().string();
+        }
+    };
+
+    void readDirectory(const std::string& name, std::vector<std::string>& v) {
+        boost::filesystem::path p(name);
+        boost::filesystem::directory_iterator start(p);
+        boost::filesystem::directory_iterator end;
+        std::transform(start, end, std::back_inserter(v), PathLeafString());
+    }
+
+    void FlowVisualInterface::loadCustomPlugins(std::shared_ptr<QtNodes::DataModelRegistry> &_registry){
+        // List plugins in default folder
+        std::vector<std::string> files;
+        std::string userDir(getenv("USER"));
+        std::string pluginDir = "/home/"+userDir+"/.flow/plugins";
+        readDirectory(pluginDir, files);
+        // Iterate over file
+        for(auto file:files){
+            std::cout << file << std::endl;
+            // Load blocks registered
+            void *hndl = dlopen((pluginDir+"/"+file).c_str(), RTLD_NOW);
+            if(hndl == nullptr){
+                std::cerr << dlerror() << std::endl;
+                
+            }else{
+                dlerror();
+
+                typedef PluginNodeCreator* (*Factory)();
+                void *mkr = dlsym(hndl, "factory");
+                Factory factory = (Factory) mkr;
+
+                const char *dlsym_error = dlerror();    
+                if (dlsym_error) {
+                    std::cerr << "Cannot load symbol 'factory': " << dlsym_error <<            '\n';
+                }
+
+                PluginNodeCreator* nodeCreator = factory();
+
+                _registry->registerModel<NodeDataModel>(nodeCreator->get(),"Base");
+            }
+        }
+        
     }
 
 }
