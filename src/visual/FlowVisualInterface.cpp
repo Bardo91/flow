@@ -223,22 +223,23 @@ namespace flow{
             void *hndl = dlopen((pluginDir+"/"+file).c_str(), RTLD_NOW);
             if(hndl == nullptr){
                 std::cerr << dlerror() << std::endl;
-                exit(-1);
+                
+            }else{
+                dlerror();
+
+                typedef PluginNodeCreator* (*Factory)();
+                void *mkr = dlsym(hndl, "factory");
+                Factory factory = (Factory) mkr;
+
+                const char *dlsym_error = dlerror();    
+                if (dlsym_error) {
+                    std::cerr << "Cannot load symbol 'factory': " << dlsym_error <<            '\n';
+                }
+
+                PluginNodeCreator* nodeCreator = factory();
+
+                _registry->registerModel<NodeDataModel>(nodeCreator->get(),"Base");
             }
-            dlerror();
-
-            typedef PluginNodeCreator* (*Factory)();
-            void *mkr = dlsym(hndl, "factory");
-            Factory factory = (Factory) mkr;
-
-            const char *dlsym_error = dlerror();    
-            if (dlsym_error) {
-                std::cerr << "Cannot load symbol 'factory': " << dlsym_error <<            '\n';
-            }
-
-            PluginNodeCreator* nodeCreator = factory();
-
-            _registry->registerModel<NodeDataModel>(nodeCreator->get(),"Base");
         }
         
     }
