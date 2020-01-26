@@ -32,6 +32,7 @@
 #include <flow/Policy.h>
 
 #include <QtCore/QObject>
+#include <QBoxLayout>
 
 namespace flow{
     class Outpipe;
@@ -69,6 +70,8 @@ namespace flow{
         void disconnect(std::string _pipeTag);
 
         virtual QWidget * customWidget() { return nullptr; };
+        virtual QBoxLayout * creationWidget() { return nullptr; };
+        
         virtual bool resizable() const { return false; }
 
         virtual std::string description() const {return "Flow block without description";};
