@@ -26,7 +26,7 @@ PROJECT(flow VERSION 0.1.0)
 #########################################
 ######			General config	   ######
 #########################################
-option(BUILD_EXAMPLES   "Compile examples"                  OFF)
+option(BUILD_EXAMPLES   "Compile examples"                  ON)
 option(BUILD_TESTS      "Prepare tests"                     OFF)
 option(FLOW_USE_ROS	    "Compile ROS dependent modules"	    OFF)
 option(FLOW_USE_FASTCOM	"Compile FASTCOM dependent modules"	OFF)
@@ -75,13 +75,18 @@ if(${PCL_FOUND})
 endif()
 
 if (${FLOW_DVS})
+  find_package(libcaer)
+  if (${libcaer_FOUND})
+    target_link_libraries(${PROJECT_NAME} LINK_PUBLIC libcaer::caer)
+    target_compile_definitions(${PROJECT_NAME} PUBLIC HAS_LIBCAER)
+  endif(${libcaer_FOUND})
+
   find_package(dv)
   if (${dv_FOUND})
-    target_include_directories(${PROJECT_NAME} PUBLIC ${dv_INCLUDE_DIRS})
-    target_link_libraries(${PROJECT_NAME} LINK_PUBLIC ${dv_LIBRARIES})
-    target_compile_definitions(${PROJECT_NAME} PUBLIC FLOW_DVS)    
+    target_link_libraries(${PROJECT_NAME} LINK_PUBLIC dv::dvsdk)  
+    target_compile_definitions(${PROJECT_NAME} PUBLIC FLOW_DVS)
   else()
-    set(FLOW_DVS OFF)
+    SET(FLOW_DVS OFF)
   endif(${dv_FOUND})
 endif(${FLOW_DVS})
 
