@@ -81,6 +81,8 @@ namespace flow{
         bool isRunningLoop() const;
 
         bool createPolicy(std::map<std::string, std::string> _inputs);
+        void removePolicy();
+        
         bool registerCallback(Policy::PolicyMask _mask, Policy::PolicyCallback _callback);
 
     protected:

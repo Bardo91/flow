@@ -112,6 +112,13 @@ namespace flow{
         }
     }
 
+    void Block::removePolicy(){
+        if(iPolicy_)
+            delete iPolicy_;
+        iPolicy_ = nullptr;
+    }
+        
+
     bool Block::registerCallback(Policy::PolicyMask _mask, Policy::PolicyCallback _callback){
         if(iPolicy_){
             iPolicy_->registerCallback( _mask,  _callback );
