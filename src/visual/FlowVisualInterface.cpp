@@ -237,8 +237,10 @@ namespace flow{
                 }
 
                 PluginNodeCreator* nodeCreator = factory();
-
-                _registry->registerModel<NodeDataModel>(nodeCreator->get(),"Base");
+                auto listOfNodeCreators = nodeCreator->get();
+                for(auto &nodeCreator: listOfNodeCreators){
+                    _registry->registerModel<NodeDataModel>(nodeCreator,"Plugins");
+                }
             }
         }
         

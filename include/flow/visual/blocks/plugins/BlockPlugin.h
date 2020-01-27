@@ -32,14 +32,14 @@ namespace flow{
         using RegistryItemPtr     = std::unique_ptr<QtNodes::NodeDataModel>;
         using RegistryItemCreator = std::function<RegistryItemPtr()>;
 
-        PluginNodeCreator(RegistryItemCreator _fn){
-            creatorFun_ = _fn;
+        void registerNodeCreator(RegistryItemCreator _fn){
+            creatorFun_.push_back(_fn);
         }
 
-        RegistryItemCreator get() { return creatorFun_; };
+        std::vector<RegistryItemCreator> get() { return creatorFun_; };
 
     private:
-        RegistryItemCreator creatorFun_;
+        std::vector<RegistryItemCreator> creatorFun_;
     };
 }
 
