@@ -99,6 +99,16 @@ namespace flow{
         }
     }
 
+
+    bool Block::removePipe(std::string _pipeTag){
+        opipes_.erase(_pipeTag);
+    }
+
+    bool Block::removePipes(){
+        opipes_.clear();
+    }
+
+
     bool Block::isRunningLoop() const{
         return runLoop_;
     }
