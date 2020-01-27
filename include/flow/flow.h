@@ -27,6 +27,9 @@
 #include <flow/visual/FlowVisualInterface.h>
 #include <flow/visual/blocks/FlowVisualBlock.h>
 
+
+#include <flow/visual/blocks/plugins/BlockPlugin.h>
+
 #ifdef FLOW_USE_ROS
     #include <flow/visual/blocks/publishers/ros/ROSPublishers.h>
     #include <flow/visual/blocks/streamers/ros/ROSStreamers.h>

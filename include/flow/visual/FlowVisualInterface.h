@@ -50,6 +50,9 @@ namespace flow{
             std::shared_ptr<QtNodes::DataModelRegistry> registerDataModels();
 
         private:
+            void loadCustomPlugins(std::shared_ptr<QtNodes::DataModelRegistry> &_registry);
+
+        private:
             QApplication *kids_app;
 
             std::shared_ptr<QtNodes::DataModelRegistry> nodeRegistry_;

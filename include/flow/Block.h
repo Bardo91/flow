@@ -32,13 +32,14 @@
 #include <flow/Policy.h>
 
 #include <QtCore/QObject>
+#include <QBoxLayout>
 
 namespace flow{
     class Outpipe;
 
     class Block{
     public:
-        static std::string name() {return "Unnammed";}
+        virtual std::string name() {return "Unnammed";}
         
         virtual ~Block(){};
 
@@ -69,15 +70,22 @@ namespace flow{
         void disconnect(std::string _pipeTag);
 
         virtual QWidget * customWidget() { return nullptr; };
+        virtual QBoxLayout * creationWidget() { return nullptr; };
+        
         virtual bool resizable() const { return false; }
 
         virtual std::string description() const {return "Flow block without description";};
 
     protected:
-        bool createPipe(std::string _pipeTag, std::string _tagType);
         bool isRunningLoop() const;
+        
+        bool createPipe(std::string _pipeTag, std::string _tagType);
+        bool removePipe(std::string _pipeTag);
+        bool removePipes();
 
         bool createPolicy(std::map<std::string, std::string> _inputs);
+        void removePolicy();
+        
         bool registerCallback(Policy::PolicyMask _mask, Policy::PolicyCallback _callback);
 
     protected:

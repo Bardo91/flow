@@ -99,6 +99,16 @@ namespace flow{
         }
     }
 
+
+    bool Block::removePipe(std::string _pipeTag){
+        opipes_.erase(_pipeTag);
+    }
+
+    bool Block::removePipes(){
+        opipes_.clear();
+    }
+
+
     bool Block::isRunningLoop() const{
         return runLoop_;
     }
@@ -111,6 +121,13 @@ namespace flow{
             return true;
         }
     }
+
+    void Block::removePolicy(){
+        if(iPolicy_)
+            delete iPolicy_;
+        iPolicy_ = nullptr;
+    }
+        
 
     bool Block::registerCallback(Policy::PolicyMask _mask, Policy::PolicyCallback _callback){
         if(iPolicy_){

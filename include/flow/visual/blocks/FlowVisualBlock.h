@@ -79,14 +79,14 @@ namespace flow{
 
         QString description() const override {return flowBlock_->description().c_str();};
     
+        QBoxLayout * creationWidget() const override { return flowBlock_->creationWidget();};
+
     public:
-        QString caption() const override { return Block_::name().c_str(); }
+        QString caption() const override { return flowBlock_->name().c_str(); }
 
         bool captionVisible() const override { return true; }
 
-        static QString Name() { return Block_::name().c_str(); }
-
-        QString name() const override { return Block_::name().c_str(); }
+        QString name() const override { return flowBlock_->name().c_str(); }
     
         virtual void inputConnectionDeleted(Connection const&) override;
 

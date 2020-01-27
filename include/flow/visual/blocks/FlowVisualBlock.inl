@@ -39,7 +39,7 @@ namespace flow{
         // Configure frequencies
         freqsLayout_ = new QHBoxLayout();
         configsLayout_->addLayout(freqsLayout_);
-        if(flowBlock_->getPolicy()){
+        /*if(flowBlock_->getPolicy()){
             freqsLayout_->addWidget(new QLabel("Freqs: "));
             for(unsigned i = 0; i < flowBlock_->getPolicy()->masksFrequencies().size(); i++){
                 freqLabels_.push_back(new QLabel("0"));
@@ -56,7 +56,7 @@ namespace flow{
                     }
                 });
             }
-        }
+        }*/
         
         // custom visualizer
         if(flowBlock_->customWidget() != nullptr){
