@@ -41,7 +41,7 @@ namespace flow{
     public:
         virtual std::string name() {return "Unnammed";}
         
-        virtual ~Block(){};
+        ~Block();
 
         // BASE METHODS
         virtual bool configure(std::unordered_map<std::string, std::string> _params) { return false; };

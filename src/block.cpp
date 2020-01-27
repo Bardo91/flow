@@ -26,7 +26,9 @@
 
 namespace flow{
     // BASE METHODS
-
+    Block::~Block(){
+        // this->stop();
+    }
     
     std::unordered_map<std::string, std::shared_ptr<Outpipe>> Block::getPipes(){
         return opipes_;
@@ -37,14 +39,17 @@ namespace flow{
     }
 
     void Block::start(){
+        this->stop();   // Just in case stop it 
+
         runLoop_ = true;
         loopThread_ = std::thread(&Block::loopCallback, this);
     }
 
     void Block::stop(){
         runLoop_ = false;
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
         if(loopThread_.joinable())
-            loopThread_.joinable();
+            loopThread_.join();
     }
 
     
