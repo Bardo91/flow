@@ -39,7 +39,7 @@ namespace flow{
 
     class Block{
     public:
-        virtual std::string name() {return "Unnammed";}
+        virtual std::string name() const {return "Unnammed";}
         
         ~Block();
 
