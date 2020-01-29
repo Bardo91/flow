@@ -39,13 +39,6 @@ FLOW_TYPE_REGISTER(vec4, Eigen::Vector4f)
 FLOW_TYPE_REGISTER(quat, Eigen::Quaternionf)
 FLOW_TYPE_REGISTER(image, cv::Mat)
 
-#ifdef FLOW_USE_ROS
-	#include <dvs_msgs/EventArray.h>
-
-    FLOW_TYPE_REGISTER(v_event, dvs_msgs::EventArray)
-    FLOW_TYPE_REGISTER(event, dvs_msgs::Event)
-#endif
-
 namespace flow{
 
     DataFlow::DataFlow(std::map<std::string, std::string> _flows, std::function<void(DataFlow _f)> _callback){

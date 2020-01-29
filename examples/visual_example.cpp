@@ -33,7 +33,7 @@ using namespace flow;
 
 class FloatStreamerBlock: public Block{
 public:
-    static std::string name() {return "Float streamer";}
+    std::string name() {return "Float streamer";}
         FloatStreamerBlock(){
             createPipe("time", "float");
         }
@@ -64,7 +64,7 @@ private:
 
 class FloatCouterBlock: public Block{
 public:
-    static std::string name() {return "Float Couter";}
+    std::string name() {return "Float Couter";}
     FloatCouterBlock(){
         createPolicy({{{"clock", "float"}}});
         registerCallback({"clock"}, 
@@ -80,7 +80,7 @@ public:
 
 class IntStreamerBlock: public Block{
 public:
-    static std::string name() {return "Int streamer";}
+    std::string name() {return "Int streamer";}
         IntStreamerBlock(){
             createPipe("time", "int");
         }
@@ -111,7 +111,7 @@ private:
 
 class IntCouterBlock: public Block{
 public:
-    static std::string name() {return "Int Couter";}
+    std::string name() {return "Int Couter";}
     IntCouterBlock(){
         createPolicy({{{"clock", "int"}}});
         registerCallback({"clock"}, 

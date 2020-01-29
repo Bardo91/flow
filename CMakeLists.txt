@@ -26,10 +26,10 @@ PROJECT(flow VERSION 0.1.0)
 #########################################
 ######			General config	   ######
 #########################################
-option(BUILD_EXAMPLES   "Compile examples"                  OFF)
+option(BUILD_EXAMPLES   "Compile examples"                  ON)
 option(BUILD_TESTS      "Prepare tests"                     OFF)
-option(FLOW_USE_ROS	    "Compile ROS dependent modules"	    ON)
-option(FLOW_USE_FASTCOM	"Compile FASTCOM dependent modules"	ON)
+option(FLOW_USE_ROS	    "Compile ROS dependent modules"	    OFF)
+option(FLOW_USE_FASTCOM	"Compile FASTCOM dependent modules"	OFF)
 
 set(CMAKE_AUTOMOC ON)
 
@@ -74,17 +74,17 @@ if(${PCL_FOUND})
 endif()
 
 if(${FLOW_USE_ROS})
-  include(cmake/install_ros_macros.cmake)
+  # include(cmake/install_ros_macros.cmake)
   
-  if(NOT EXISTS "~/.flow/thirdparty/catkin_ethz")
-    install_ros_ethz()
-  endif()
+  # if(NOT EXISTS "~/.flow/thirdparty/catkin_ethz")
+  #   install_ros_ethz()
+  # endif()
   
   find_package(Boost COMPONENTS system)
-	find_package(catkin COMPONENTS roscpp tf rosbag cv_bridge image_transport sensor_msgs geometry_msgs dvs_msgs)
+	find_package(catkin COMPONENTS roscpp tf rosbag cv_bridge image_transport sensor_msgs geometry_msgs )#dvs_msgs)
 	if(${catkin_FOUND})
 		catkin_package(
-			CATKIN_DEPENDS roscpp tf rosbag cv_bridge image_transport sensor_msgs geometry_msgs dvs_msgs
+			CATKIN_DEPENDS roscpp tf rosbag cv_bridge image_transport sensor_msgs geometry_msgs #dvs_msgs
 			INCLUDE_DIRS include
 		)
 		target_compile_definitions(${PROJECT_NAME} PUBLIC FLOW_USE_ROS)
