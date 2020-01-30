@@ -205,9 +205,11 @@ namespace flow{
 
     void readDirectory(const std::string& name, std::vector<std::string>& v) {
         boost::filesystem::path p(name);
-        boost::filesystem::directory_iterator start(p);
-        boost::filesystem::directory_iterator end;
-        std::transform(start, end, std::back_inserter(v), PathLeafString());
+        if(boost::filesystem::exists(p)){
+            boost::filesystem::directory_iterator start(p);
+            boost::filesystem::directory_iterator end;
+            std::transform(start, end, std::back_inserter(v), PathLeafString());
+        }
     }
 
     void FlowVisualInterface::loadCustomPlugins(std::shared_ptr<QtNodes::DataModelRegistry> &_registry){
