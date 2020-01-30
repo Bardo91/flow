@@ -26,10 +26,8 @@ PROJECT(flow VERSION 0.1.0)
 #########################################
 ######			General config	   ######
 #########################################
-option(BUILD_EXAMPLES   "Compile examples"                  ON)
-option(BUILD_TESTS      "Prepare tests"                     OFF)
-option(FLOW_USE_ROS	    "Compile ROS dependent modules"	    OFF)
-option(FLOW_USE_FASTCOM	"Compile FASTCOM dependent modules"	OFF)
+option(BUILD_EXAMPLES   "Compile examples"     ON)
+option(BUILD_TESTS      "Prepare tests"        OFF)
 
 set(CMAKE_AUTOMOC ON)
 
@@ -73,51 +71,13 @@ if(${PCL_FOUND})
   target_compile_definitions(${PROJECT_NAME} PUBLIC "ENABLE_PCL" "DISABLE_PCAP" "DISABLE_PNG" "DISABLE_LIBUSB_1_0")
 endif()
 
-if(${FLOW_USE_ROS})
-  # include(cmake/install_ros_macros.cmake)
-  
-  # if(NOT EXISTS "~/.flow/thirdparty/catkin_ethz")
-  #   install_ros_ethz()
-  # endif()
-  
-  find_package(Boost COMPONENTS system)
-	find_package(catkin COMPONENTS roscpp tf rosbag cv_bridge image_transport sensor_msgs geometry_msgs )#dvs_msgs)
-	if(${catkin_FOUND})
-		catkin_package(
-			CATKIN_DEPENDS roscpp tf rosbag cv_bridge image_transport sensor_msgs geometry_msgs #dvs_msgs
-			INCLUDE_DIRS include
-		)
-		target_compile_definitions(${PROJECT_NAME} PUBLIC FLOW_USE_ROS)
-		target_link_libraries(${PROJECT_NAME} LINK_PUBLIC ${catkin_LIBRARIES} ${rosbag_LIBRARIES})
-		target_include_directories(${PROJECT_NAME}  PUBLIC ${catkin_INCLUDE_DIRS} ${rosbag_INCLUDE_DIRS})
-		target_include_directories(${PROJECT_NAME}  PUBLIC ${Boost_INCLUDE_DIRS} )
-		target_link_libraries(${PROJECT_NAME} LINK_PUBLIC ${Boost_LIBRARIES})
-		add_dependencies(${PROJECT_NAME} ${catkin_EXPORTED_TARGETS})
-	else()
-		set(FLOW_USE_ROS OFF)
-	endif()
+find_package(OpenCV REQUIRED)
+if(${OpenCV_FOUND})
+  target_include_directories(${PROJECT_NAME} PUBLIC ${OpenCV_INCLUDE_DIRS})
+  target_link_libraries(${PROJECT_NAME} LINK_PRIVATE ${OpenCV_LIBS})
+  target_compile_definitions(${PROJECT_NAME} PUBLIC "HAS_OPENCV")
 endif()
 
-if(NOT ${FLOW_USE_ROS})
-  find_package(OpenCV REQUIRED)
-  if(${OpenCV_FOUND})
-    target_include_directories(${PROJECT_NAME} PUBLIC ${OpenCV_INCLUDE_DIRS})
-    target_link_libraries(${PROJECT_NAME} LINK_PRIVATE ${OpenCV_LIBS})
-    target_compile_definitions(${PROJECT_NAME} PUBLIC "HAS_OPENCV")
-  endif()
-endif()
-
-
-if(${FLOW_USE_FASTCOM})
-  find_package(fastcom)
-  if(${fastcom_FOUND})
-    target_include_directories(${PROJECT_NAME} PUBLIC ${fastcom_INCLUDE_DIRS})
-    target_link_libraries(${PROJECT_NAME} LINK_PUBLIC ${fastcom_LIBRARIES})
-    target_compile_definitions(${PROJECT_NAME} PUBLIC FLOW_USE_FASTCOM FASTCOM_HAS_OPENCV)
-  else()
-    set(FLOW_USE_FASTCOM OFF)
-  endif()
-endif(${FLOW_USE_FASTCOM})
 
 #########################################
 ######			Documentation	   ######
