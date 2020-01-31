@@ -42,9 +42,6 @@
 #include <QtCore/QJsonDocument>
 #include <QtCore/QJsonObject>
 
-#ifdef FLOW_USE_ROS
-	#include <ros/ros.h>
-#endif
 #ifdef foreach  // To be able to use Qt and RealSense Device
   #undef foreach
 #endif
@@ -82,12 +79,6 @@ namespace flow{
         XInitThreads();	
 
         kids_app = new QApplication(_argc, _argv);
-
-        #ifdef FLOW_USE_ROS
-        	ros::init(_argc, _argv, "SLAM4KIDS");
-        	ros::AsyncSpinner spinner(4);
-        	spinner.start();
-		#endif
 
         QWidget mainWidget;
         auto menuBar    = new QMenuBar();

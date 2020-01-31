@@ -26,8 +26,8 @@ PROJECT(flow VERSION 0.1.0)
 #########################################
 ######			General config	   ######
 #########################################
-option(BUILD_EXAMPLES   "Compile examples"     ON)
-option(BUILD_TESTS      "Prepare tests"        OFF)
+option(BUILD_EXAMPLES   "Compile examples"              ON )
+option(BUILD_TESTS      "Prepare tests"                 OFF)
 
 set(CMAKE_AUTOMOC ON)
 
@@ -67,17 +67,16 @@ endif()
 find_package(PCL QUIET REQUIRED)
 if(${PCL_FOUND})
   target_include_directories(${PROJECT_NAME} PUBLIC ${PCL_INCLUDE_DIRS})
-  target_link_libraries(${PROJECT_NAME} LINK_PRIVATE ${PCL_LIBRARIES})
+  target_link_libraries(${PROJECT_NAME} LINK_PUBLIC ${PCL_LIBRARIES})
   target_compile_definitions(${PROJECT_NAME} PUBLIC "ENABLE_PCL" "DISABLE_PCAP" "DISABLE_PNG" "DISABLE_LIBUSB_1_0")
 endif()
 
 find_package(OpenCV REQUIRED)
 if(${OpenCV_FOUND})
   target_include_directories(${PROJECT_NAME} PUBLIC ${OpenCV_INCLUDE_DIRS})
-  target_link_libraries(${PROJECT_NAME} LINK_PRIVATE ${OpenCV_LIBS})
+  target_link_libraries(${PROJECT_NAME} LINK_PUBLIC ${OpenCV_LIBS})
   target_compile_definitions(${PROJECT_NAME} PUBLIC "HAS_OPENCV")
 endif()
-
 
 #########################################
 ######			Documentation	   ######
