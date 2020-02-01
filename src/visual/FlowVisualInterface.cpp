@@ -232,7 +232,7 @@ namespace flow{
                 PluginNodeCreator* nodeCreator = factory();
                 auto listOfNodeCreators = nodeCreator->get();
                 for(auto &nodeCreator: listOfNodeCreators){
-                    _registry->registerModel<NodeDataModel>(nodeCreator,"Plugins");
+                    _registry->registerModel<NodeDataModel>(nodeCreator.second,nodeCreator.first.c_str());
                 }
             }
         }
