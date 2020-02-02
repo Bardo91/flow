@@ -90,72 +90,67 @@ namespace flow{
         QVBoxLayout *l = new QVBoxLayout(&mainWidget);
         l->addWidget(menuBar);
 
-        if(registerFn_ != nullptr){
+        setStyle();
 
-            setStyle();
+        auto scene = new FlowScene(     registerDataModels(), 
+                                        &mainWidget
+                                        );
 
-            auto scene = new FlowScene(     registerDataModels(), 
-                                            &mainWidget
-                                            );
+        l->addWidget(new FlowView(scene));
+        l->setContentsMargins(0, 0, 0, 0);
+        l->setSpacing(0);
 
-            l->addWidget(new FlowView(scene));
-            l->setContentsMargins(0, 0, 0, 0);
-            l->setSpacing(0);
+        QObject::connect(saveAction, &QAction::triggered, scene, &FlowScene::save);
 
-            QObject::connect(saveAction, &QAction::triggered, scene, &FlowScene::save);
-
-            QObject::connect(loadAction, &QAction::triggered, scene, &FlowScene::load);
+        QObject::connect(loadAction, &QAction::triggered, scene, &FlowScene::load);
 
 
-            QObject::connect(configureAll, &QAction::triggered, [&](){
-                auto nodes = scene->allNodes();
+        QObject::connect(configureAll, &QAction::triggered, [&](){
+            auto nodes = scene->allNodes();
 
-                for(auto node:nodes){
-                    NodeDataModel* dataModel = node->nodeDataModel();
-                    // This conversion is not safe but, all nodes in slam4kids are ConfigurableBlocks
-                    auto d_ptr = dynamic_cast<ConfigurableBlock*>(dataModel);
-                    if(d_ptr != nullptr)
-                        d_ptr->configure();
-                }
+            for(auto node:nodes){
+                NodeDataModel* dataModel = node->nodeDataModel();
+                // This conversion is not safe but, all nodes in slam4kids are ConfigurableBlocks
+                auto d_ptr = dynamic_cast<ConfigurableBlock*>(dataModel);
+                if(d_ptr != nullptr)
+                    d_ptr->configure();
+            }
 
-            });
+        });
 
-            QObject::connect(generateCode, &QAction::triggered, [&](){
-                QString fileName = QFileDialog::getOpenFileName(nullptr,
-                                                    "Select scene to save",
-                                                    QDir::homePath(),
-                                                    "Flow Scene Files (*.flow)");
+        QObject::connect(generateCode, &QAction::triggered, [&](){
+            QString fileName = QFileDialog::getOpenFileName(nullptr,
+                                                "Select scene to save",
+                                                QDir::homePath(),
+                                                "Flow Scene Files (*.flow)");
 
-                if (!QFileInfo::exists(fileName))
-                return;
+            if (!QFileInfo::exists(fileName))
+            return;
 
-                QFile file(fileName);
+            QFile file(fileName);
 
-                if (!file.open(QIODevice::ReadOnly))
-                return;
+            if (!file.open(QIODevice::ReadOnly))
+            return;
 
-                std::string cppFile = fileName.toStdString().substr(0, fileName.size()-4) + "cpp";
-                auto lastBar = cppFile.find_last_of('/');
-                std::string cppFolder = cppFile.substr(0, lastBar);
-                std::string cmakeFilePath = cppFolder + "/CMakeLists.txt";
+            std::string cppFile = fileName.toStdString().substr(0, fileName.size()-4) + "cpp";
+            auto lastBar = cppFile.find_last_of('/');
+            std::string cppFolder = cppFile.substr(0, lastBar);
+            std::string cmakeFilePath = cppFolder + "/CMakeLists.txt";
 
 
-                QByteArray wholeFile = file.readAll();
-                QJsonObject const jsonDocument = QJsonDocument::fromJson(wholeFile).object();
-                CodeGenerator::parseScene(cppFile,jsonDocument, customIncludes_);
-                CodeGenerator::generateCmake(cmakeFilePath, cppFile, customFinds_, customLinks_);
-                CodeGenerator::compile(cppFolder);
-            });
+            QByteArray wholeFile = file.readAll();
+            QJsonObject const jsonDocument = QJsonDocument::fromJson(wholeFile).object();
+            CodeGenerator::parseScene(cppFile,jsonDocument, customIncludes_);
+            CodeGenerator::generateCmake(cmakeFilePath, cppFile, customFinds_, customLinks_);
+            CodeGenerator::compile(cppFolder);
+        });
 
-            mainWidget.setWindowTitle("Node-based flow editor");
-            mainWidget.resize(800, 600);
-            mainWidget.showNormal();
+        mainWidget.setWindowTitle("Node-based flow editor");
+        mainWidget.resize(800, 600);
+        mainWidget.showNormal();
 
-            return kids_app->exec();
-        }else{
-            std::cout << "No register function has been added to FlowVisualInterface" << std::endl;
-            return false;
-        }
+        return kids_app->exec();
+    
     }
 
 
@@ -183,7 +178,8 @@ namespace flow{
         auto registry = std::make_shared<QtNodes::DataModelRegistry>();
 
         loadCustomPlugins(registry);
-        registerFn_(registry);
+        if(registerFn_ != nullptr)
+            registerFn_(registry);
 
         return registry;
     }

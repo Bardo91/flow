@@ -26,8 +26,9 @@ PROJECT(flow VERSION 0.1.0)
 #########################################
 ######			General config	   ######
 #########################################
-option(BUILD_EXAMPLES   "Compile examples"              ON )
+option(BUILD_EXAMPLES   "Compile examples"              OFF)
 option(BUILD_TESTS      "Prepare tests"                 OFF)
+option(BUILD_TOOLS      "Build tools"                   ON)
 
 set(CMAKE_AUTOMOC ON)
 
@@ -103,11 +104,19 @@ if(${BUILD_TESTS})
 endif()
 
 #########################################
-######			Test				######
+######			Examples				######
 #########################################
 
 if(${BUILD_EXAMPLES})
   add_subdirectory(examples)
+endif()
+
+#########################################
+######			Tools		######
+#########################################
+
+if(${BUILD_TOOLS})
+  add_subdirectory(tools)
 endif()
 
 #########################################
@@ -134,7 +143,6 @@ write_basic_package_version_file(
     COMPATIBILITY AnyNewerVersion
     )
 
-
 # This installs the include folder
 install(DIRECTORY include DESTINATION ${CMAKE_INSTALL_PREFIX} FILES_MATCHING PATTERN "*.h")
 install(DIRECTORY include DESTINATION ${CMAKE_INSTALL_PREFIX} FILES_MATCHING PATTERN "*.inl")
@@ -153,6 +161,13 @@ install(FILES "${CMAKE_CURRENT_BINARY_DIR}/flowConfig.cmake"
         DESTINATION lib/cmake/flow
         )
 
+if(${BUILD_TOOLS})
+install(TARGETS flow_kids
+  LIBRARY DESTINATION bin
+  ARCHIVE DESTINATION bin
+)
+endif()
+
 # uninstall target 
 if(NOT TARGET uninstall) 
   configure_file( 
@@ -163,5 +178,3 @@ if(NOT TARGET uninstall)
   add_custom_target(uninstall COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake) 
 endif() 
 
-
- 
