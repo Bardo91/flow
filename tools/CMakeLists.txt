@@ -23,3 +23,12 @@
 add_executable(flow_kids flow_kids.cpp)
 target_include_directories(flow_kids PUBLIC ../include)
 target_link_libraries(flow_kids LINK_PUBLIC flow)
+
+### Add test with input file
+find_package(fastcom REQUIRED)
+find_package(catkin COMPONENTS roscpp )#dvs_msgs)
+
+add_executable(speed_test speed_test.cpp)
+target_link_libraries(speed_test LINK_PRIVATE flow fastcom)
+target_link_libraries(speed_test LINK_PUBLIC ${catkin_LIBRARIES})
+target_include_directories(speed_test PUBLIC ${catkin_INCLUDE_DIRS})
