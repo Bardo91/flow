@@ -218,6 +218,11 @@ namespace flow{
 
                 typedef PluginNodeCreator* (*Factory)();
                 void *mkr = dlsym(hndl, "factory");
+                if(mkr == nullptr){
+                    std::cout << "Pluging " << file << " does not have factory" << std::endl;
+                    continue;
+                }
+
                 Factory factory = (Factory) mkr;
 
                 const char *dlsym_error = dlerror();    
