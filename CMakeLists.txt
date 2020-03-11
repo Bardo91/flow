@@ -115,57 +115,58 @@ if(NOT DEFINED CMAKE_INSTALL_PREFIX)
   set(CMAKE_INSTALL_PREFIX "/usr/local")
 endif() 
 
-install(TARGETS ${PROJECT_NAME} EXPORT ${PROJECT_NAME}-targets
-	COMPONENT ${PROJECT_NAME}
-	LIBRARY DESTINATION lib
-	ARCHIVE DESTINATION lib
-	RUNTIME DESTINATION bin
-	INCLUDES DESTINATION include
-)
+install(TARGETS ${PROJECT_NAME}
+        EXPORT ${PROJECT_NAME}-targets
+        LIBRARY DESTINATION lib
+        ARCHIVE DESTINATION lib
+        INCLUDES DESTINATION ${CMAKE_INSTALL_PREFIX}
+        )
 
+write_basic_package_version_file(
+    "${CMAKE_BINARY_DIR}/${PROJECT_NAME}-config-version.cmake"
+    VERSION ${PACKAGE_VERSION}
+    COMPATIBILITY AnyNewerVersion
+    )
+
+# This installs the include folder
+install(DIRECTORY include DESTINATION ${CMAKE_INSTALL_PREFIX} FILES_MATCHING PATTERN "*.h")
+install(DIRECTORY include DESTINATION ${CMAKE_INSTALL_PREFIX} FILES_MATCHING PATTERN "*.inl")
+
+export(TARGETS flow NAMESPACE flow:: FILE flow.cmake)
+
+# This generates flow-targets.cmake
 install(EXPORT ${PROJECT_NAME}-targets
-	FILE "${PROJECT_NAME}-targets.cmake"
-	NAMESPACE ${PROJECT_NAME}::
-	DESTINATION lib/cmake/${PROJECT_NAME}
-	COMPONENT ${PROJECT_NAME}
-)
+    FILE "${PROJECT_NAME}-targets.cmake"
+    NAMESPACE ${PROJECT_NAME}::
+    DESTINATION lib/cmake/${PROJECT_NAME}
+    )
 
 configure_file(
     "${CMAKE_SOURCE_DIR}/cmake/templates/${PROJECT_NAME}-config.cmake.in"
-	"${CMAKE_BINARY_DIR}/${PROJECT_NAME}-config.cmake"
-	@ONLY
-)
+    "${CMAKE_BINARY_DIR}/${PROJECT_NAME}-config.cmake"
+    @ONLY
+  )
+  
+install(FILES 
+          "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-config.cmake"
+          "${CMAKE_BINARY_DIR}/${PROJECT_NAME}-config-version.cmake"
+        DESTINATION lib/cmake/${PROJECT_NAME}
+        )
 
-include(CMakePackageConfigHelpers)
-write_basic_package_version_file(
-    "${CMAKE_BINARY_DIR}/${PROJECT_NAME}-config-version.cmake"
-    VERSION ${version}
-    COMPATIBILITY AnyNewerVersion
+if(${BUILD_TOOLS})
+install(TARGETS flow_kids
+  LIBRARY DESTINATION bin
+  ARCHIVE DESTINATION bin
 )
-
-install(
-    FILES
-        "${CMAKE_BINARY_DIR}/${PROJECT_NAME}-config.cmake"
-        "${CMAKE_BINARY_DIR}/${PROJECT_NAME}-config-version.cmake"
-    DESTINATION lib/cmake/${PROJECT_NAME}
-    COMPONENT ${PROJECT_NAME}
-)
-
-# DESTINATION will be automatically prefixed by ${CMAKE_INSTALL_PREFIX}
-install(
-    DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include
-    COMPONENT ${PROJECT_NAME}
-    DESTINATION ${CMAKE_INSTALL_PREFIX}
-)
+endif()
 
 # uninstall target 
 if(NOT TARGET uninstall) 
-    configure_file( 
-        "${CMAKE_CURRENT_SOURCE_DIR}/cmake/templates/cmake_uninstall.cmake.in" 
-        "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake" 
-        @ONLY) 
+  configure_file( 
+      "${CMAKE_CURRENT_SOURCE_DIR}/cmake/templates/cmake_uninstall.cmake.in" 
+      "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake" 
+      IMMEDIATE @ONLY) 
  
-    add_custom_target(uninstall COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake) 
+  add_custom_target(uninstall COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake) 
 endif() 
-
 
