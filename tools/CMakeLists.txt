@@ -2,7 +2,7 @@
 ##---------------------------------------------------------------------------------------------------------------------
 ##  FLOW
 ##---------------------------------------------------------------------------------------------------------------------
-##  Copyright 2019 - Pablo Ramon Soria (a.k.a. Bardo91) 
+##  Copyright 2020 - Pablo Ramon Soria (a.k.a. Bardo91) 
 ##---------------------------------------------------------------------------------------------------------------------
 ##  Permission is hereby granted, free of charge, to any person obtaining a copy of this software 
 ##  and associated documentation files (the "Software"), to deal in the Software without restriction, 
@@ -25,8 +25,8 @@ target_include_directories(flow_kids PUBLIC ../include)
 target_link_libraries(flow_kids LINK_PUBLIC flow)
 
 ### Add test with input file
-find_package(fastcom REQUIRED)
-find_package(catkin COMPONENTS roscpp )#dvs_msgs)
+# find_package(fastcom REQUIRED)
+# find_package(catkin COMPONENTS roscpp )#dvs_msgs)
 
 # add_executable(speed_test speed_test.cpp)
 # target_link_libraries(speed_test LINK_PRIVATE flow fastcom)
