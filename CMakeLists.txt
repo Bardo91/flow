@@ -28,7 +28,7 @@ PROJECT(flow VERSION 0.1.0)
 #########################################
 option(BUILD_EXAMPLES   "Compile examples"              OFF)
 option(BUILD_TESTS      "Prepare tests"                 OFF)
-option(BUILD_TOOLS      "Build tools"                   ON)
+option(BUILD_TOOLS      "Build tools"                   OFF)
 
 set(CMAKE_AUTOMOC ON)
 

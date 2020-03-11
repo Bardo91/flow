@@ -107,10 +107,19 @@ namespace flow{
 
     bool Block::removePipe(std::string _pipeTag){
         opipes_.erase(_pipeTag);
+
+        std::unordered_map<std::string, std::shared_ptr<Outpipe>>::const_iterator got = opipes_.find(_pipeTag);
+        if ( got == opipes_.end()){
+            return true;
+        }else{
+            return false;
+        }
     }
 
     bool Block::removePipes(){
         opipes_.clear();
+
+        return opipes_.empty();
     }
 
 
