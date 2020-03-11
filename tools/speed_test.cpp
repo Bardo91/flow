@@ -33,6 +33,9 @@
 
 using namespace flow;
 
+
+FLOW_TYPE_REGISTER(int, int)
+
 const int N_TESTS = 10000;
 
 void speedTestFlow();

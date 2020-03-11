@@ -65,19 +65,9 @@ if(${Eigen3_FOUND})
   target_include_directories(${PROJECT_NAME} PUBLIC "/usr/include/eigen3")
 endif()
 
-find_package(PCL QUIET REQUIRED)
-if(${PCL_FOUND})
-  target_include_directories(${PROJECT_NAME} PUBLIC ${PCL_INCLUDE_DIRS})
-  target_link_libraries(${PROJECT_NAME} LINK_PUBLIC ${PCL_LIBRARIES})
-  target_compile_definitions(${PROJECT_NAME} PUBLIC "ENABLE_PCL" "DISABLE_PCAP" "DISABLE_PNG" "DISABLE_LIBUSB_1_0")
-endif()
+find_package(Boost REQUIRED COMPONENTS system filesystem)
+target_link_libraries(${PROJECT_NAME} LINK_PUBLIC Boost::boost Boost::system Boost::filesystem)
 
-find_package(OpenCV REQUIRED)
-if(${OpenCV_FOUND})
-  target_include_directories(${PROJECT_NAME} PUBLIC ${OpenCV_INCLUDE_DIRS})
-  target_link_libraries(${PROJECT_NAME} LINK_PUBLIC ${OpenCV_LIBS})
-  target_compile_definitions(${PROJECT_NAME} PUBLIC "HAS_OPENCV")
-endif()
 
 #########################################
 ######			Documentation	   ######
