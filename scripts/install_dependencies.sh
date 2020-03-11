@@ -47,4 +47,4 @@ fi
 
 sudo apt-get install libboost-all-dev curl
 
-install_git_repo "nodeeditor" "https://github.com/paceholder/nodeeditor"
+install_git_repo "nodeeditor" "https://github.com/mico-corp/nodeeditor.git"
