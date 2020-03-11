@@ -5,5 +5,5 @@ find_package(NodeEditor REQUIRED)
 find_package(Boost REQUIRED COMPONENTS system filesystem)
 
 if(NOT TARGET flow::flow)
-    include("${flow_CMAKE_DIR}/flowTargets.cmake")
+    include("${flow_CMAKE_DIR}/flow-targets.cmake")
 endif()
