@@ -174,14 +174,14 @@ endif()
 ##################################################
 ####  CPACK deb generation configuration    ######
 ##################################################
-
-set(CPACK_GENERATOR "DEB")
-set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Bardo91") #required
-set(CPACK_PACKAGE_CONTACT "Bardo91 pabramsor@gmail.com")
-set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON) # automatic sh dependencies.
-
-include(CPack)
-
+if(${PUSH_PPA})
+  set(UPLOAD_PPA "ppa:bardo91/mico")
+  set(CPACK_GENERATOR "DEB")
+  set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Pablo Ramon Soria <pabramsor@gmail.com>") #required
+  
+  include(CPack)
+  include(cmake/templates/UploadPPA.cmake)
+endif()
 
 
 
