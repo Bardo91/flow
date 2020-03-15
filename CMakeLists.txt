@@ -178,6 +178,7 @@ if(${PREPARE_PACKAGE_PPA})
   set(UPLOAD_PPA "ppa:bardo91/mico")
   set(CPACK_GENERATOR "DEB")
   set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Pablo Ramon Soria <pabramsor@gmail.com>") #required
+  set(CPACK_DEBIAN_PACKAGE_NAME ${PLUGIN_NAME})
   
   include(CPack)
   include(cmake/templates/prepare_package_ppa.cmake)
