@@ -170,3 +170,24 @@ if(NOT TARGET uninstall)
   add_custom_target(uninstall COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake) 
 endif() 
 
+
+##################################################
+####  CPACK deb generation configuration    ######
+##################################################
+
+set(CPACK_GENERATOR "DEB")
+set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Bardo91") #required
+set(CPACK_PACKAGE_CONTACT "Bardo91 pabramsor@gmail.com")
+set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON) # automatic sh dependencies.
+
+include(CPack)
+
+
+
+
+
+
+
+
+
+
