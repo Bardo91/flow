@@ -331,29 +331,6 @@ add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/Debian/${DISTRI}/${DEB_SOURCE_CHAN
 add_custom_target(debuild_${DISTRI}
 				DEPENDS ${DEBIAN_SOURCE_DIR}/CMakeLists.txt
 						${CMAKE_BINARY_DIR}/Debian/${DISTRI}/${DEB_SOURCE_CHANGES}
-		)
-##############################################################################
-# dput ppa:your-lp-id/ppa <source.changes>
-message(STATUS "Upload PPA is ${UPLOAD_PPA}")
-if(UPLOAD_PPA)
-    if (EXISTS ${DPUT_CONFIG_IN})
-        set(DPUT_DIST ${DISTRI})
-        configure_file(
-            ${DPUT_CONFIG_IN}
-            ${CMAKE_BINARY_DIR}/Debian/${DISTRI}/dput.cf
-            @ONLY
-        )
-        add_custom_target(dput_${DISTRI} ALL
-            COMMAND ${DPUT_EXECUTABLE} -c ${CMAKE_BINARY_DIR}/Debian/${DISTRI}/dput.cf ${DPUT_HOST} ${DEB_SOURCE_CHANGES}
-            DEPENDS debuild_${DISTRI}
-            WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/Debian/${DISTRI}
-        )
-    else()
-        add_custom_target(dput_${DISTRI} ALL
-            COMMAND ${DPUT_EXECUTABLE} ${DPUT_HOST} ${DEB_SOURCE_CHANGES}
-            DEPENDS debuild_${DISTRI}
-            WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/Debian/${DISTRI}
-        )
-    endif()
-endif()
+    )
+    
 endforeach(DISTRI)

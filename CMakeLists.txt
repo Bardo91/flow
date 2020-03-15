@@ -174,13 +174,13 @@ endif()
 ##################################################
 ####  CPACK deb generation configuration    ######
 ##################################################
-if(${PUSH_PPA})
+if(${PREPARE_PACKAGE_PPA})
   set(UPLOAD_PPA "ppa:bardo91/mico")
   set(CPACK_GENERATOR "DEB")
   set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Pablo Ramon Soria <pabramsor@gmail.com>") #required
   
   include(CPack)
-  include(cmake/templates/UploadPPA.cmake)
+  include(cmake/templates/prepare_package_ppa.cmake)
 endif()
 
 
