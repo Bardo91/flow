@@ -142,7 +142,7 @@ install(EXPORT ${PROJECT_NAME}-targets
     )
 
 configure_file(
-    "${CMAKE_SOURCE_DIR}/cmake/templates/${PROJECT_NAME}-config.cmake.in"
+    "${CMAKE_CURRENT_SOURCE_DIR}/cmake/templates/${PROJECT_NAME}-config.cmake.in"
     "${CMAKE_BINARY_DIR}/${PROJECT_NAME}-config.cmake"
     @ONLY
   )
