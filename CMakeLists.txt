@@ -19,16 +19,15 @@
 ##  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ##---------------------------------------------------------------------------------------------------------------------
 
-cmake_minimum_required(VERSION 3.8 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.12 FATAL_ERROR)
 PROJECT(flow VERSION 0.1.0)
-
 
 #########################################
 ######			General config	   ######
 #########################################
 option(BUILD_EXAMPLES   "Compile examples"              OFF)
 option(BUILD_TESTS      "Prepare tests"                 OFF)
-option(BUILD_TOOLS      "Build tools"                   OFF)
+option(BUILD_TOOLS      "Build tools"                   ON)
 
 set(CMAKE_AUTOMOC ON)
 
@@ -53,11 +52,21 @@ target_link_libraries(${PROJECT_NAME} LINK_PUBLIC pthread)
 ######    Loading 3rd party libraries.    ########
 ##################################################
 
-find_package(NodeEditor)
-if(${NodeEditor_FOUND})
-  target_include_directories(${PROJECT_NAME} PUBLIC ${NodeEditor_INCLUDE_DIRS})
-  target_link_libraries(${PROJECT_NAME} LINK_PUBLIC ${NodeEditor_LIBRARIES})
+if(${BUNDLE_COMPILATION})
+
+  find_package(NodeEditor REQUIRED)
+  target_link_libraries(${PROJECT_NAME} LINK_PUBLIC NodeEditor::nodes)
   target_compile_definitions(${PROJECT_NAME} PUBLIC HAS_QTNODEEDITOR)
+  # find_package(Qt5 5.3 COMPONENTS Core Widgets Gui OpenGL)
+  # target_link_libraries(${PROJECT_NAME} PUBLIC Qt5::Core Qt5::Widgets Qt5::Gui Qt5::OpenGL )
+
+else()
+  find_package(NodeEditor)
+  if(${NodeEditor_FOUND})
+    target_include_directories(${PROJECT_NAME} PUBLIC ${NodeEditor_INCLUDE_DIRS})
+    target_link_libraries(${PROJECT_NAME} LINK_PUBLIC ${NodeEditor_LIBRARIES})
+    target_compile_definitions(${PROJECT_NAME} PUBLIC HAS_QTNODEEDITOR)
+  endif()
 endif()
 
 find_package(Eigen3 REQUIRED)
@@ -73,12 +82,12 @@ target_link_libraries(${PROJECT_NAME} LINK_PUBLIC Boost::boost Boost::system Boo
 ######    Documentation.                  ########
 ##################################################
 find_package(Doxygen)
-if(DOXYGEN_FOUND)
-	configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY)
-	add_custom_target(	doc_flow
-						${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
-						WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-						COMMENT "Generating API documentation with Doxygen" VERBATIM )
+  if(DOXYGEN_FOUND)
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY)
+    add_custom_target(	doc_flow
+              ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
+              WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+              COMMENT "Generating API documentation with Doxygen" VERBATIM )
 endif(DOXYGEN_FOUND)
 
 ##################################################
@@ -115,7 +124,7 @@ if(NOT DEFINED CMAKE_INSTALL_PREFIX)
   set(CMAKE_INSTALL_PREFIX "/usr/local")
 endif() 
 
-install(TARGETS ${PROJECT_NAME}
+install(TARGETS nodes ${PROJECT_NAME} 
         EXPORT ${PROJECT_NAME}-targets
         LIBRARY DESTINATION lib
         ARCHIVE DESTINATION lib
@@ -123,7 +132,7 @@ install(TARGETS ${PROJECT_NAME}
         )
 
 write_basic_package_version_file(
-    "${CMAKE_BINARY_DIR}/${PROJECT_NAME}-config-version.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-config-version.cmake"
     VERSION ${PACKAGE_VERSION}
     COMPATIBILITY AnyNewerVersion
     )
@@ -132,7 +141,7 @@ write_basic_package_version_file(
 install(DIRECTORY include DESTINATION ${CMAKE_INSTALL_PREFIX} FILES_MATCHING PATTERN "*.h")
 install(DIRECTORY include DESTINATION ${CMAKE_INSTALL_PREFIX} FILES_MATCHING PATTERN "*.inl")
 
-export(TARGETS flow NAMESPACE flow:: FILE flow.cmake)
+export(TARGETS nodes flow NAMESPACE flow:: FILE flow.cmake)
 
 # This generates flow-targets.cmake
 install(EXPORT ${PROJECT_NAME}-targets
@@ -142,22 +151,22 @@ install(EXPORT ${PROJECT_NAME}-targets
     )
 
 configure_file(
-    "${CMAKE_SOURCE_DIR}/cmake/templates/${PROJECT_NAME}-config.cmake.in"
-    "${CMAKE_BINARY_DIR}/${PROJECT_NAME}-config.cmake"
+    "${CMAKE_CURRENT_SOURCE_DIR}/cmake/templates/${PROJECT_NAME}-config.cmake.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-config.cmake"
     @ONLY
   )
   
 install(FILES 
           "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-config.cmake"
-          "${CMAKE_BINARY_DIR}/${PROJECT_NAME}-config-version.cmake"
+          "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-config-version.cmake"
         DESTINATION lib/cmake/${PROJECT_NAME}
         )
 
 if(${BUILD_TOOLS})
-install(TARGETS flow_kids
-  LIBRARY DESTINATION bin
-  ARCHIVE DESTINATION bin
-)
+  install(TARGETS flow_kids
+    LIBRARY DESTINATION bin
+    ARCHIVE DESTINATION bin
+  )
 endif()
 
 # uninstall target 
