@@ -33,6 +33,7 @@
 
 #include <QtCore/QObject>
 #include <QBoxLayout>
+#include <QIcon>
 
 namespace flow{
     class Outpipe;
@@ -75,6 +76,8 @@ namespace flow{
         virtual bool resizable() const { return false; }
 
         virtual std::string description() const {return "Flow block without description";};
+
+        virtual QIcon icon() const { return QIcon("/usr/share/icons/Humanity/actions/64/help-contents.svg"); };
 
     protected:
         bool isRunningLoop() const;

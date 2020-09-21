@@ -79,6 +79,8 @@ namespace flow{
 
         QString description() const override {return flowBlock_->description().c_str();};
     
+        QIcon icon() const override { return flowBlock_->icon();};
+
         QBoxLayout * creationWidget() const override { return flowBlock_->creationWidget();};
 
     public:
