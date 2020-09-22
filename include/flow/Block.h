@@ -40,13 +40,14 @@ namespace flow{
 
     class Block{
     public:
+        enum eParameterType {BOOLEAN, INTEGER, DECIMAL, STRING};
         virtual std::string name() const {return "Unnammed";}
         
         ~Block();
 
         // BASE METHODS
         virtual bool configure(std::unordered_map<std::string, std::string> _params) { return false; };
-        virtual std::vector<std::string> parameters(){ return {}; };
+        virtual std::vector<std::pair<std::string, eParameterType>> parameters(){ return {}; };
 
         [[deprecated("This function gives the map with all pipes, please use getPipe method and get just the needed")]]
         std::unordered_map<std::string, std::shared_ptr<Outpipe>> getPipes();

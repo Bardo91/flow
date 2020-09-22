@@ -26,28 +26,45 @@
 #include <QWidget>
 #include <QHBoxLayout>
 #include <QLineEdit>
+#include <QCheckBox>
 #include <QLabel>
 
+#include <flow/Block.h>
+#include <sstream>
+namespace flow{
 
-class ParameterWidget: public QHBoxLayout{
-    Q_OBJECT
-public:
-    ParameterWidget(const std::string _label, 
-                    const std::string _default, 
-                    QWidget *_parent = nullptr, 
-                    const char *_name = nullptr);
-    ~ParameterWidget();
-    
-    std::string label() const;
+    class ParameterWidget: public QHBoxLayout{
+        Q_OBJECT
+    public:
+        ParameterWidget(const std::string _label, 
+                        Block::eParameterType _type,
+                        const std::string _default, 
+                        QWidget *_parent = nullptr, 
+                        const char *_name = nullptr);
+        ~ParameterWidget();
+        
+        std::string label() const;
 
-    void value(const std::string &_value);
-    std::string value() const;
+        std::string getValueString();
+        int getValueInt();
+        float getValueDec();
+        bool getValueBool();
+
+        void setValueString(std::string _val);
+        void setValueInt(int _val);
+        void setValueDec(float _val);
+        void setValueBool(bool _val);
+
+        Block::eParameterType type() { return type_; };
+
+    private:
+        QLabel   * label_;
+        QWidget   * value_;
+        flow::Block::eParameterType type_;
+
+    };
 
 
-private:
-    QLabel   * label_;
-    QLineEdit   * value_;
-
-};
+}
 
 #endif

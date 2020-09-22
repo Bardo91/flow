@@ -66,7 +66,7 @@ namespace flow{
         // configure parameters
         if(flowBlock_->parameters().size() > 0){
             for(auto &param: flowBlock_->parameters()){
-                configParams_.push_back(new ParameterWidget(param.c_str(), ""));
+                configParams_.push_back(new ParameterWidget(param.first, param.second, ""));
                 configsLayout_->addLayout(configParams_.back());
             }
             configButton_ = new QToolButton();
@@ -115,7 +115,23 @@ namespace flow{
         unsigned counter = 0;
         QJsonObject jsonParams;
         for(auto &param: flowBlock_->parameters()){
-            jsonParams[param.c_str()] =  configParams_[counter]->value().c_str();
+            QJsonObject jParam =  jsonParams[param.first.c_str()].toObject(); 
+            jParam["type"] = configParams_[counter]->type();
+            switch (configParams_[counter]->type()) {
+                case flow::Block::eParameterType::STRING:
+                    jParam["value"] = configParams_[counter]->getValueString().c_str();
+                    break;
+                case flow::Block::eParameterType::DECIMAL:
+                    jParam["value"] = configParams_[counter]->getValueDec();
+                    break;
+                case flow::Block::eParameterType::INTEGER:
+                    jParam["value"] = configParams_[counter]->getValueInt();
+                    break;
+                case flow::Block::eParameterType::BOOLEAN:
+                    jParam["value"] = configParams_[counter]->getValueBool();
+                    break;
+            }
+            
             counter++;
         }
         modelJson["params"] = jsonParams;
@@ -148,7 +164,21 @@ namespace flow{
         std::unordered_map<std::string, std::string> params;
         int counter = 0; 
         for(auto &param: flowBlock_->parameters()){
-            params[param] =  configParams_[counter]->value();
+            switch (configParams_[counter]->type()) {   /// 666 PARAMS SHOULD BE also generic not string format but that implies more changes and by now I have made a lot in a single commit, leave it for the next one
+                case flow::Block::eParameterType::STRING:
+                    params[param.first.c_str()] = configParams_[counter]->getValueString();
+                    break;
+                case flow::Block::eParameterType::DECIMAL:
+                    params[param.first.c_str()] = std::to_string(configParams_[counter]->getValueDec());
+                    break;
+                case flow::Block::eParameterType::INTEGER:
+                    params[param.first.c_str()] = std::to_string(configParams_[counter]->getValueInt());
+                    break;
+                case flow::Block::eParameterType::BOOLEAN:
+                    params[param.first.c_str()] = std::to_string(configParams_[counter]->getValueBool());
+                    break;
+            }
+            // params[param] =  configParams_[counter]->value();
             counter++;
         }
 
@@ -160,10 +190,24 @@ namespace flow{
         
         unsigned counter = 0;
         for(auto &param: flowBlock_->parameters()){
-            QJsonValue v = _json["params"].toObject()[param.c_str()];
-            if (!v.isUndefined()) {
-                QString strNum = v.toString();
-                configParams_[counter]->value(strNum.toStdString());
+            QJsonValue type = _json["params"].toObject()[param.first.c_str()].toObject()["type"];
+            QJsonValue value = _json["params"].toObject()[param.first.c_str()].toObject()["value"];
+            if (!type.isUndefined() && !value.isUndefined()) {
+                switch (type.toInt()) {   /// 666 PARAMS SHOULD BE also generic not string format but that implies more changes and by now I have made a lot in a single commit, leave it for the next one
+                case flow::Block::eParameterType::STRING:
+                    configParams_[counter]->setValueString(value.toString().toStdString());
+                    break;
+                case flow::Block::eParameterType::DECIMAL:
+                    configParams_[counter]->setValueDec(value.toDouble());
+                    break;
+                case flow::Block::eParameterType::INTEGER:
+                    configParams_[counter]->setValueInt(value.toInt());
+                    break;
+                case flow::Block::eParameterType::BOOLEAN:
+                    configParams_[counter]->setValueBool(value.toBool());
+                    break;
+            }
+                
             }
             counter++;
         }

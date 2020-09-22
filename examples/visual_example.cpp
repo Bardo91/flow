@@ -57,7 +57,7 @@ public:
                 return false;
             } 
         };
-        virtual std::vector<std::string> parameters() override{ return {"init_value"}; };
+        virtual std::vector<std::pair<std::string, flow::Block::eParameterType>> parameters() override{ return {"init_value"}; };
 private:
     float counter_  = 1.0;
 };
@@ -104,7 +104,7 @@ public:
                 return false;
             } 
         };
-        virtual std::vector<std::string> parameters() override{ return {"init_value"}; };
+        virtual std::vector<std::pair<std::string, flow::Block::eParameterType>> parameters() override{ return {"init_value"}; };
 private:
     int counter_  = 1;
 };

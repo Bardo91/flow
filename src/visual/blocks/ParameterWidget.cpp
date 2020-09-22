@@ -21,40 +21,95 @@
 //---------------------------------------------------------------------------------------------------------------------
 
 #include <flow/visual/blocks/ParameterWidget.h>
+#include <QIntValidator>
+#include <QDoubleValidator>
+#include <QSpinBox>
 
-//---------------------------------------------------------------------------------------------------------------------
-ParameterWidget::ParameterWidget(   const std::string _label, 
-                                    const std::string _default, 
-                                    QWidget *_parent, 
-                                    const char *_name){
-    label_ = new QLabel(_label.c_str());
+namespace flow{
 
-    value_ = new QLineEdit();
-    value_->setText(_default.c_str());
 
-    this->addWidget(label_);
-    this->addWidget(value_);
+    //---------------------------------------------------------------------------------------------------------------------
+    ParameterWidget::ParameterWidget(   const std::string _label, 
+                                        flow::Block::eParameterType _type,
+                                        const std::string _default, 
+                                        QWidget *_parent, 
+                                        const char *_name){
+
+        type_ = _type;
+        label_ = new QLabel(_label.c_str());
+
+        switch (type_) {
+        case flow::Block::eParameterType::STRING:
+            value_ = new QLineEdit();
+            static_cast<QLineEdit*>(value_)->setText(_default.c_str());
+            break;
+        case flow::Block::eParameterType::DECIMAL:
+            value_ = new QLineEdit();
+            static_cast<QLineEdit*>(value_)->setText(_default.c_str());
+            static_cast<QLineEdit*>(value_)->setValidator( new QDoubleValidator() );
+            break;
+        case flow::Block::eParameterType::INTEGER:
+        {
+            value_ = new QSpinBox();
+            std::stringstream ss; ss << _default.c_str();
+            int val; ss >> val;
+            static_cast<QSpinBox*>(value_)->setValue(val);
+            break;
+        }
+        case flow::Block::eParameterType::BOOLEAN:
+            value_ = new QCheckBox();
+            break;
+        }
+
+        this->addWidget(label_);
+        this->addWidget(value_);
+    }
+
+    //---------------------------------------------------------------------------------------------------------------------
+    ParameterWidget::~ParameterWidget(){
+        delete label_;
+        delete value_;
+    }
+
+    //---------------------------------------------------------------------------------------------------------------------
+    std::string ParameterWidget::label() const{
+        return label_->text().toStdString();
+    }
+
+
+    std::string ParameterWidget::getValueString(){
+        return static_cast<QLineEdit*>(value_)->text().toStdString();
+    } 
+
+    int ParameterWidget::getValueInt(){
+        return static_cast<QSpinBox*>(value_)->value();
+    }
+
+    float ParameterWidget::getValueDec(){
+        auto str = static_cast<QLineEdit*>(value_)->text().toStdString();
+        std::stringstream ss; ss << str;
+        float val; ss >> val;
+        return val;
+    }
+
+    bool ParameterWidget::getValueBool(){
+        return static_cast<QCheckBox*>(value_)->isChecked();
+    }
+
+    void ParameterWidget::setValueString(std::string _val){
+        static_cast<QLineEdit*>(value_)->setText(_val.c_str());
+    }
+
+    void ParameterWidget::setValueInt(int _val){
+        static_cast<QSpinBox*>(value_)->setValue(_val);
+    }
+
+    void ParameterWidget::setValueDec(float _val){
+        static_cast<QLineEdit*>(value_)->setText(std::to_string(_val).c_str());
+    }
+
+    void ParameterWidget::setValueBool(bool _val){
+        static_cast<QCheckBox*>(value_)->setChecked(_val);
+    }
+
 }
-
-//---------------------------------------------------------------------------------------------------------------------
-ParameterWidget::~ParameterWidget(){
-    delete label_;
-    delete value_;
-}
-
-//---------------------------------------------------------------------------------------------------------------------
-std::string ParameterWidget::label() const{
-    return label_->text().toStdString();
-}
-
-//---------------------------------------------------------------------------------------------------------------------
-void ParameterWidget::value(const std::string &_value){
-    value_->setText(_value.c_str());
-}
-
-//---------------------------------------------------------------------------------------------------------------------
-std::string ParameterWidget::value() const{
-    return value_->text().toStdString();
-}
-
-
