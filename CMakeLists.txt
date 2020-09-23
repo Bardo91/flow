@@ -166,6 +166,7 @@ if(${BUILD_TOOLS})
   install(TARGETS flow_kids
     LIBRARY DESTINATION bin
     ARCHIVE DESTINATION bin
+    RUNTIME DESTINATION bin
   )
 endif()
 
