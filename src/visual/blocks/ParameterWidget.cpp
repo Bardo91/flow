@@ -54,6 +54,7 @@ namespace flow{
             std::stringstream ss; ss << _default.c_str();
             int val; ss >> val;
             static_cast<QSpinBox*>(value_)->setValue(val);
+            static_cast<QSpinBox*>(value_)->setMaximum(std::numeric_limits<int>::max());
             break;
         }
         case flow::Block::eParameterType::BOOLEAN:
