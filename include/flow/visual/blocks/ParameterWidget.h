@@ -34,7 +34,6 @@
 namespace flow{
 
     class ParameterWidget: public QHBoxLayout{
-        Q_OBJECT
     public:
         ParameterWidget(const std::string _label, 
                         Block::eParameterType _type,
