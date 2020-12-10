@@ -53,8 +53,6 @@ target_link_libraries(${PROJECT_NAME} LINK_PUBLIC pthread)
 ##################################################
 
 if(${BUNDLE_COMPILATION})
-
-  find_package(NodeEditor REQUIRED)
   target_link_libraries(${PROJECT_NAME} LINK_PUBLIC NodeEditor::nodes)
   target_compile_definitions(${PROJECT_NAME} PUBLIC HAS_QTNODEEDITOR)
   # find_package(Qt5 5.3 COMPONENTS Core Widgets Gui OpenGL)
