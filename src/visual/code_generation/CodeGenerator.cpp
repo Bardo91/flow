@@ -32,6 +32,11 @@
 
 #include <boost/core/demangle.hpp>
 
+#ifdef _WIN32
+    #include <windows.h> 
+#endif
+
+
 namespace flow{
     // Initialize dictionary
     void CodeGenerator::parseScene(std::string _cppFile, QJsonObject const &_scene, const std::vector<std::string> &_customIncludes){
@@ -206,11 +211,21 @@ namespace flow{
 
 
     std::string CodeGenerator::demangleClassType(const char* mangled) {
-        int status;
-        std::unique_ptr<char[], void (*)(void*)> result(
-        abi::__cxa_demangle(mangled, 0, 0, &status), std::free);
-        std::string str = result.get() ? std::string(result.get()) : "error occurred";
-        return str;
+        #ifdef linux
+            int status;
+            std::unique_ptr<char[], void (*)(void*)> result(abi::__cxa_demangle(mangled, 0, 0, &status), std::free);
+            std::string str = result.get() ? std::string(result.get()) : "error occurred";
+            return str;
+        #endif
+        #ifdef _WIN32
+            /*TCHAR szUndecorateName[256];
+            memset(szUndecorateName, 0, 256);
+            UnDecorateSymbolName(mangled, szUndecorateName, 256, 0);
+            std::string str(szUndecorateName);
+            return str;*/
+            assert(false);
+            return "";
+        #endif
     }
 
 }

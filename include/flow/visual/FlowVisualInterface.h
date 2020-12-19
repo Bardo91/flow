@@ -39,11 +39,11 @@ namespace flow{
             typedef std::function<void(std::shared_ptr<QtNodes::DataModelRegistry> &_registry)> RegistryFnType_;
             typedef std::shared_ptr<QtNodes::DataModelRegistry> RegistryType_;
 
-            int init(int _argc, char** _argv);
-            void quit();
+            __declspec(dllexport) int init(int _argc, char** _argv);
+            __declspec(dllexport) void quit();
 
-            void setNodeRegisterFn(std::function<void(std::shared_ptr<QtNodes::DataModelRegistry> &_registry)> _fn);
-            void setCodeGeneratorCustoms(   const std::vector<std::string> &_customIncludes = {}, 
+            __declspec(dllexport) void setNodeRegisterFn(std::function<void(std::shared_ptr<QtNodes::DataModelRegistry> &_registry)> _fn);
+            __declspec(dllexport) void setCodeGeneratorCustoms(   const std::vector<std::string> &_customIncludes = {},
                                             const std::vector<std::string> &_customFinds = {}, 
                                             const std::vector<std::string> &_customLinks = {} );
         private:

@@ -53,6 +53,7 @@ namespace flow{
             }
         }
         flows_.push_back(new DataFlow(flows, _callback));
+        return true;
     }
 
     void Policy::update(std::string _tag, std::any _data){

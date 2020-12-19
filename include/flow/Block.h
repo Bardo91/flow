@@ -43,54 +43,54 @@ namespace flow{
         enum eParameterType {BOOLEAN, INTEGER, DECIMAL, STRING};
         virtual std::string name() const {return "Unnammed";}
         
-        ~Block();
+        __declspec(dllexport) ~Block();
 
         // BASE METHODS
         virtual bool configure(std::unordered_map<std::string, std::string> _params) { return false; };
         virtual std::vector<std::pair<std::string, eParameterType>> parameters(){ return {}; };
 
         [[deprecated("This function gives the map with all pipes, please use getPipe method and get just the needed")]]
-        std::unordered_map<std::string, std::shared_ptr<Outpipe>> getPipes();
+        __declspec(dllexport) std::unordered_map<std::string, std::shared_ptr<Outpipe>>  getPipes();
         
-        std::shared_ptr<Outpipe> getPipe(std::string _tag);
+        __declspec(dllexport) std::shared_ptr<Outpipe> getPipe(std::string _tag);
 
-        void start();
-        void stop();
+        __declspec(dllexport) void start();
+        __declspec(dllexport) void stop();
         
         // void operator()(std::unordered_map<std::string,std::any> _data, std::unordered_map<std::string,bool> _valid);
 
-        int nInputs();
-        std::vector<std::string> inputTags();
+        __declspec(dllexport) int nInputs();
+        __declspec(dllexport) std::vector<std::string> inputTags();
 
-        int nOutputs();
-        std::vector<std::string> outputTags();
+        __declspec(dllexport) int nOutputs();
+        __declspec(dllexport) std::vector<std::string> outputTags();
 
-        Policy* getPolicy();
+        __declspec(dllexport) Policy* getPolicy();
 
-        void connect(std::string _pipeTag, std::string _policyTag, Block& _otherBlock);
+        __declspec(dllexport) void connect(std::string _pipeTag, std::string _policyTag, Block& _otherBlock);
 
-        void disconnect(std::string _pipeTag);
+        __declspec(dllexport) void disconnect(std::string _pipeTag);
 
-        virtual QWidget * customWidget() { return nullptr; };
-        virtual QBoxLayout * creationWidget() { return nullptr; };
+        __declspec(dllexport) virtual QWidget * customWidget() { return nullptr; };
+        __declspec(dllexport) virtual QBoxLayout * creationWidget() { return nullptr; };
         
-        virtual bool resizable() const { return false; }
+        __declspec(dllexport) virtual bool resizable() const { return false; }
 
-        virtual std::string description() const {return "Flow block without description";};
+        __declspec(dllexport) virtual std::string description() const {return "Flow block without description";};
 
-        virtual QIcon icon() const { return QIcon("/usr/share/icons/Humanity/actions/64/help-contents.svg"); };
+        __declspec(dllexport) virtual QIcon icon() const { return QIcon("/usr/share/icons/Humanity/actions/64/help-contents.svg"); };
 
     protected:
-        bool isRunningLoop() const;
+        __declspec(dllexport) bool isRunningLoop() const;
         
-        bool createPipe(std::string _pipeTag, std::string _tagType);
-        bool removePipe(std::string _pipeTag);
-        bool removePipes();
+        __declspec(dllexport) bool createPipe(std::string _pipeTag, std::string _tagType);
+        __declspec(dllexport) bool removePipe(std::string _pipeTag);
+        __declspec(dllexport) bool removePipes();
 
-        bool createPolicy(std::map<std::string, std::string> _inputs);
-        void removePolicy();
+        __declspec(dllexport) bool createPolicy(std::map<std::string, std::string> _inputs);
+        __declspec(dllexport) void removePolicy();
         
-        bool registerCallback(Policy::PolicyMask _mask, Policy::PolicyCallback _callback);
+        __declspec(dllexport) bool registerCallback(Policy::PolicyMask _mask, Policy::PolicyCallback _callback);
 
     protected:
         virtual void loopCallback() {};

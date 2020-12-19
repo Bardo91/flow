@@ -43,20 +43,20 @@ namespace flow{
             typedef std::vector<std::string> PolicyMask;
             typedef std::function<void(DataFlow _f)> PolicyCallback;
 
-            Policy(std::map<std::string, std::string> _inputs);
-            bool registerCallback(PolicyMask _mask, PolicyCallback _callback);
-            void update(std::string _tag, std::any _data);
+            __declspec(dllexport) Policy(std::map<std::string, std::string> _inputs);
+            __declspec(dllexport) bool registerCallback(PolicyMask _mask, PolicyCallback _callback);
+            __declspec(dllexport) void update(std::string _tag, std::any _data);
     
-            int nInputs();
-            std::vector<std::string> inputTags();
+            __declspec(dllexport) int nInputs();
+            __declspec(dllexport) std::vector<std::string> inputTags();
 
-            std::string type(std::string _tag);
+            __declspec(dllexport) std::string type(std::string _tag);
 
-            void associatePipe(std::string _tag, Outpipe* _pipe);
+            __declspec(dllexport) void associatePipe(std::string _tag, Outpipe* _pipe);
 
-            bool disconnect(std::string _tag);
+            __declspec(dllexport) bool disconnect(std::string _tag);
 
-            std::vector<float> masksFrequencies() const;
+            __declspec(dllexport) std::vector<float> masksFrequencies() const;
 
         private:
             std::map<std::string, std::string> inputs_;

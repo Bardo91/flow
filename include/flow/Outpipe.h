@@ -43,16 +43,16 @@ namespace flow{
     
     class Outpipe{
         public:
-            Outpipe(std::string _tag, std::string _type);
+            __declspec(dllexport) Outpipe(std::string _tag, std::string _type);
 
-            bool registerPolicy(Policy * _pol, std::string _policyTag);
-            void unregisterPolicy(Policy* _pol);
-            int registrations();
+            __declspec(dllexport) bool registerPolicy(Policy * _pol, std::string _policyTag);
+            __declspec(dllexport) void unregisterPolicy(Policy* _pol);
+            __declspec(dllexport) int registrations();
 
-            void flush(std::any _data);
+            __declspec(dllexport) void flush(std::any _data);
 
-            std::string tag() const;
-            std::string type() const;
+            __declspec(dllexport) std::string tag() const;
+            __declspec(dllexport) std::string type() const;
             
 
         protected:

@@ -23,15 +23,14 @@
 #ifndef FLOW_DATAFLOW_H_
 #define FLOW_DATAFLOW_H_
 
-#include <vector>
-#include <cstdlib>
-
 #include <any>
-#include <functional>
-#include <map>
 #include <chrono>
-
+#include <cstdlib>
+#include <functional>
 #include <iostream>
+#include <map>
+#include <string>
+#include <vector>
 
 namespace flow{
         
@@ -68,9 +67,6 @@ namespace flow{
         static std::vector<std::string> registeredTypes(){
             return registeredTypes_;
         }
-
-    private:
-        TypeLog();
 
     private:
         static std::vector<std::string> registeredTypes_;
