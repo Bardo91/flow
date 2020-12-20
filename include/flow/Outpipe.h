@@ -23,6 +23,8 @@
 #ifndef FLOW_OUTPIPE_H_
 #define FLOW_OUTPIPE_H_
 
+#include <flow/Export.h>
+
 #include <vector>
 #include <cstdlib>
 
@@ -41,18 +43,18 @@
 namespace flow{
     class Policy;
     
-    class Outpipe{
+    class FLOW_DECL Outpipe{
         public:
-            __declspec(dllexport) Outpipe(std::string _tag, std::string _type);
+            Outpipe(std::string _tag, std::string _type);
 
-            __declspec(dllexport) bool registerPolicy(Policy * _pol, std::string _policyTag);
-            __declspec(dllexport) void unregisterPolicy(Policy* _pol);
-            __declspec(dllexport) int registrations();
+            bool registerPolicy(Policy * _pol, std::string _policyTag);
+            void unregisterPolicy(Policy* _pol);
+            int registrations();
 
-            __declspec(dllexport) void flush(std::any _data);
+            void flush(std::any _data);
 
-            __declspec(dllexport) std::string tag() const;
-            __declspec(dllexport) std::string type() const;
+            std::string tag() const;
+            std::string type() const;
             
 
         protected:

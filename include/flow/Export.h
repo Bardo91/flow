@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------------------------------------------------
-//  FLOW
+//  flow
 //---------------------------------------------------------------------------------------------------------------------
 //  Copyright 2020 Pablo Ramon Soria (a.k.a. Bardo91) pabramsor@gmail.com
 //---------------------------------------------------------------------------------------------------------------------
@@ -19,56 +19,27 @@
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
 
+#ifndef FLOW_EXPORT_H_
+#define FLOW_EXPORT_H_
 
-#ifndef FLOW_POLICY_H_
-#define FLOW_POLICY_H_
+#if defined(_WIN32)
+#  define FLOW_DECL_EXPORT __declspec(dllexport)
+#  define FLOW_FACTORY_EXPORT __declspec(dllexport)
+#  define FLOW_DECL_IMPORT __declspec(dllimport)
+#elif defined (__linux__)
+#  define FLOW_DECL_EXPORT
+#  define FLOW_FACTORY_EXPORT
+#  define FLOW_DECL_IMPORT
+#endif
 
-#include <flow/Export.h>
-
-#include <vector>
-#include <cstdlib>
-
-#include <any>
-#include <unordered_map>
-#include <thread>
-#include <chrono>
-#include <iostream>
-#include <functional>
-
-#include <flow/DataFlow.h>
-
-namespace flow{
-    class Outpipe;
-
-    class FLOW_DECL Policy{
-        public:
-            typedef std::vector<std::string> PolicyMask;
-            typedef std::function<void(DataFlow _f)> PolicyCallback;
-
-            Policy(std::map<std::string, std::string> _inputs);
-            bool registerCallback(PolicyMask _mask, PolicyCallback _callback);
-            void update(std::string _tag, std::any _data);
-    
-            int nInputs();
-            std::vector<std::string> inputTags();
-
-            std::string type(std::string _tag);
-
-            void associatePipe(std::string _tag, Outpipe* _pipe);
-
-            bool disconnect(std::string _tag);
-
-            std::vector<float> masksFrequencies() const;
-
-        private:
-            std::map<std::string, std::string> inputs_;
-            std::vector<DataFlow*> flows_;
-            std::vector<std::string>                    tags_;
-            
-            std::unordered_map<std::string, Outpipe*>   connetedPipes_; 
-    };
-}
-
-
+#if defined (FLOW_LIB_SHARED)
+#  ifdef FLOW_EXPORTS
+#    define FLOW_DECL FLOW_DECL_EXPORT
+#  else
+#    define FLOW_DECL FLOW_DECL_IMPORT
+#  endif
+#elif !defined (FLOW_LIB_SHARED)
+#  define FLOW_DECL
+#endif
 
 #endif

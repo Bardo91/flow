@@ -24,6 +24,8 @@
 #ifndef FLOW_VISUAL_CODEGENERATION_CODEGENERATOR_H_
 #define FLOW_VISUAL_CODEGENERATION_CODEGENERATOR_H_
 
+#include <flow/Export.h>
+
 #include <QJsonObject>
 
 #include <fstream>
@@ -32,7 +34,7 @@
 #include <unordered_map>
 
 namespace flow{
-    class CodeGenerator{
+    class FLOW_DECL CodeGenerator{
     public:
         static void parseScene(std::string _cppFile, QJsonObject const &_scene, const std::vector<std::string> &_customIncludes = {});
         static void generateCmake(  std::string _cmakeFile, 

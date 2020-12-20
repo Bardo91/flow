@@ -24,6 +24,8 @@
 #ifndef FLOW_VISUAL_DATATYPES_STREAMERPIPEINFO_H_
 #define FLOW_VISUAL_DATATYPES_STREAMERPIPEINFO_H_
 
+#include <flow/Export.h>
+
 #include <nodes/NodeDataModel>
 
 #include <cassert>
@@ -43,7 +45,7 @@ namespace flow {
         flow::Block* otherBlock_ = nullptr;
     };
 
-    class StreamerPipeInfo : public NodeData {
+    class FLOW_DECL StreamerPipeInfo : public NodeData {
     public:
         StreamerPipeInfo() {} 
 

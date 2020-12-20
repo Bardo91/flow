@@ -23,6 +23,8 @@
 #ifndef FLOW_VISUAL_BLOCKS_PARAMETERWIDGET_H_
 #define FLOW_VISUAL_BLOCKS_PARAMETERWIDGET_H_
 
+#include <flow/Export.h>
+
 #include <QWidget>
 #include <QHBoxLayout>
 #include <QLineEdit>
@@ -35,26 +37,26 @@ namespace flow{
 
     class ParameterWidget: public QHBoxLayout{
     public:
-        __declspec(dllexport) ParameterWidget(const std::string _label,
+        ParameterWidget(const std::string _label,
                         Block::eParameterType _type,
                         const std::string _default, 
                         QWidget *_parent = nullptr, 
                         const char *_name = nullptr);
-        __declspec(dllexport) ~ParameterWidget();
+        ~ParameterWidget();
         
-        __declspec(dllexport) std::string label() const;
+        std::string label() const;
 
-        __declspec(dllexport) std::string getValueString();
-        __declspec(dllexport) int getValueInt();
-        __declspec(dllexport) float getValueDec();
-        __declspec(dllexport) bool getValueBool();
+        std::string getValueString();
+        int getValueInt();
+        float getValueDec();
+        bool getValueBool();
 
-        __declspec(dllexport) void setValueString(std::string _val);
-        __declspec(dllexport) void setValueInt(int _val);
-        __declspec(dllexport) void setValueDec(float _val);
-        __declspec(dllexport) void setValueBool(bool _val);
+        void setValueString(std::string _val);
+        void setValueInt(int _val);
+        void setValueDec(float _val);
+        void setValueBool(bool _val);
 
-        __declspec(dllexport) Block::eParameterType type() { return type_; };
+        Block::eParameterType type() { return type_; };
 
     private:
         QLabel   * label_;

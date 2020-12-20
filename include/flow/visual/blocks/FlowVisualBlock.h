@@ -24,6 +24,7 @@
 #define FLOW_VISUAL_BLOCKS_FLOWBLOCK_H_
 
 #include <flow/flow.h>
+#include <flow/Export.h>
 
 #include <flow/visual/blocks/ParameterWidget.h>
 

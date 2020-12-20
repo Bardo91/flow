@@ -23,6 +23,8 @@
 #ifndef FLOW_DATAFLOW_H_
 #define FLOW_DATAFLOW_H_
 
+#include <flow/Export.h>
+
 #include <any>
 #include <chrono>
 #include <cstdlib>
@@ -34,7 +36,7 @@
 
 namespace flow{
         
-    class DataFlow{
+    class FLOW_DECL DataFlow{
     public:
         DataFlow(std::map<std::string, std::string> _flows, std::function<void(DataFlow _f)> _callback);
 

@@ -65,7 +65,6 @@ if(${BUNDLE_COMPILATION})
   target_compile_definitions(${PROJECT_NAME} PUBLIC HAS_QTNODEEDITOR)
   # find_package(Qt5 5.3 COMPONENTS Core Widgets Gui OpenGL)
   # target_link_libraries(${PROJECT_NAME} PUBLIC Qt5::Core Qt5::Widgets Qt5::Gui Qt5::OpenGL )
-
 else()
   find_package(NodeEditor)
   if(${NodeEditor_FOUND})
@@ -87,6 +86,14 @@ if(WIN32)
     find_package(dlfcn-win32 REQUIRED)
     target_link_libraries(${PROJECT_NAME} LINK_PUBLIC dlfcn-win32::dl)
 endif()
+
+
+target_compile_definitions(${PROJECT_NAME}
+  PUBLIC
+    FLOW_LIB_SHARED
+  PRIVATE
+    FLOW_EXPORTS
+)
 
 ##################################################
 ######    Documentation.                  ########
