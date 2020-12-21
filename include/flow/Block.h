@@ -83,6 +83,8 @@ namespace flow{
         virtual QIcon icon() const { return QIcon("/usr/share/icons/Humanity/actions/64/help-contents.svg"); };
 
     protected:
+        std::string resourceDir () const;
+
         bool isRunningLoop() const;
         
         bool createPipe(std::string _pipeTag, std::string _tagType);
