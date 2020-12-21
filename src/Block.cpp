@@ -122,17 +122,6 @@ namespace flow{
         return opipes_.empty();
     }
 
-    
-    std::string Block::resourceDir () const{
-        #if defined(_WIN32)
-            return "c:/.flow/plugins/resources/";
-        #elif defined(__linux__)
-            std::string userDir(getenv("USER"));
-            std::string resourcesDir = "/home/"+userDir+"/.flow/plugins/resources/";
-            return resourcesDir;
-        #endif
-    }
-
     bool Block::isRunningLoop() const{
         return runLoop_;
     }

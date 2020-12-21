@@ -72,7 +72,7 @@ namespace flow{
             configButton_ = new QToolButton();
             configButton_->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
             configButton_->setLayoutDirection(Qt::RightToLeft);
-            configButton_->setIcon(QIcon("/usr/share/icons/Humanity/actions/128/help-contents.svg"));
+            configButton_->setIcon(QIcon((Persistency::resourceDir() + "/question.svg").c_str()));
             configButton_->setText("Configure");
             configsLayout_->addWidget(configButton_);
             connect(configButton_, &QPushButton::clicked, this, [this]() {
@@ -218,10 +218,10 @@ namespace flow{
     inline void FlowVisualBlock<Block_,HasAutoLoop_>::configure(){
         if(flowBlock_->configure(this->extractParamsGui())){
             if(configButton_) 
-                configButton_->setIcon(QIcon("/usr/share/icons/Humanity/actions/48/dialog-apply.svg"));
+                configButton_->setIcon(QIcon((Persistency::resourceDir()+"check.svg").c_str()));
         }else{
             if(configButton_)
-                configButton_->setIcon(QIcon("/usr/share/icons/Humanity/actions/64/process-stop.svg"));
+                configButton_->setIcon(QIcon((Persistency::resourceDir()+"cancel.svg").c_str()));
         }
     }
 

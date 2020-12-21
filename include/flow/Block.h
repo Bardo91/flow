@@ -24,6 +24,7 @@
 #define FLOW_BLOCK_H_
 
 #include <flow/Export.h>
+#include <flow/Persistency.h>
 
 #include <vector>
 #include <functional>
@@ -42,7 +43,7 @@ namespace flow{
 
     class Block{
     public:
-        enum eParameterType {BOOLEAN, INTEGER, DECIMAL, STRING};
+        enum eParameterType {BOOLEAN, INTEGER, DECIMAL, STRING, OPTIONS};
         virtual std::string name() const {return "Unnammed";}
         
         ~Block();
@@ -80,11 +81,9 @@ namespace flow{
 
         virtual std::string description() const {return "Flow block without description";};
 
-        virtual QIcon icon() const { return QIcon("/usr/share/icons/Humanity/actions/64/help-contents.svg"); };
+        virtual QIcon icon() const { return QIcon((Persistency::resourceDir()+"question.svg").c_str()); };
 
     protected:
-        std::string resourceDir () const;
-
         bool isRunningLoop() const;
         
         bool createPipe(std::string _pipeTag, std::string _tagType);

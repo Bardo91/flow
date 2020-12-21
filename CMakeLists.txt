@@ -95,6 +95,11 @@ target_compile_definitions(${PROJECT_NAME}
     FLOW_EXPORTS
 )
 
+add_custom_target(flow_resources ALL
+                COMMAND ${CMAKE_COMMAND} -E copy_directory 	${CMAKE_CURRENT_SOURCE_DIR}/resources 
+                ${CMAKE_BINARY_DIR}/plugins/resources
+)
+
 ##################################################
 ######    Documentation.                  ########
 ##################################################
