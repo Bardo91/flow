@@ -35,7 +35,10 @@ namespace flow{
     }
 
     std::shared_ptr<Outpipe> Block::getPipe(std::string _tag){
-        return opipes_[_tag];
+        if(opipes_.find(_tag) != opipes_.end())
+            return opipes_[_tag];
+        else
+            return nullptr;
     }
 
     void Block::start(){
