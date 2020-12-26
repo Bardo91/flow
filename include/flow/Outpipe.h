@@ -23,6 +23,8 @@
 #ifndef FLOW_OUTPIPE_H_
 #define FLOW_OUTPIPE_H_
 
+#include <flow/Export.h>
+
 #include <vector>
 #include <cstdlib>
 
@@ -41,7 +43,7 @@
 namespace flow{
     class Policy;
     
-    class Outpipe{
+    class FLOW_DECL Outpipe{
         public:
             Outpipe(std::string _tag, std::string _type);
 

@@ -23,6 +23,9 @@
 #ifndef FLOW_BLOCK_H_
 #define FLOW_BLOCK_H_
 
+#include <flow/Export.h>
+#include <flow/Persistency.h>
+
 #include <vector>
 #include <functional>
 #include <unordered_map>
@@ -40,7 +43,7 @@ namespace flow{
 
     class Block{
     public:
-        enum eParameterType {BOOLEAN, INTEGER, DECIMAL, STRING};
+        enum eParameterType {BOOLEAN, INTEGER, DECIMAL, STRING, OPTIONS};
         virtual std::string name() const {return "Unnammed";}
         
         ~Block();
@@ -50,7 +53,7 @@ namespace flow{
         virtual std::vector<std::pair<std::string, eParameterType>> parameters(){ return {}; };
 
         [[deprecated("This function gives the map with all pipes, please use getPipe method and get just the needed")]]
-        std::unordered_map<std::string, std::shared_ptr<Outpipe>> getPipes();
+        std::unordered_map<std::string, std::shared_ptr<Outpipe>>  getPipes();
         
         std::shared_ptr<Outpipe> getPipe(std::string _tag);
 
@@ -78,7 +81,7 @@ namespace flow{
 
         virtual std::string description() const {return "Flow block without description";};
 
-        virtual QIcon icon() const { return QIcon("/usr/share/icons/Humanity/actions/64/help-contents.svg"); };
+        virtual QIcon icon() const { return QIcon((Persistency::resourceDir()+"question.svg").c_str()); };
 
     protected:
         bool isRunningLoop() const;

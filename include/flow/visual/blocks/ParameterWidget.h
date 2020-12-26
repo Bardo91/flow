@@ -23,6 +23,8 @@
 #ifndef FLOW_VISUAL_BLOCKS_PARAMETERWIDGET_H_
 #define FLOW_VISUAL_BLOCKS_PARAMETERWIDGET_H_
 
+#include <flow/Export.h>
+
 #include <QWidget>
 #include <QHBoxLayout>
 #include <QLineEdit>
@@ -35,7 +37,7 @@ namespace flow{
 
     class ParameterWidget: public QHBoxLayout{
     public:
-        ParameterWidget(const std::string _label, 
+        ParameterWidget(const std::string _label,
                         Block::eParameterType _type,
                         const std::string _default, 
                         QWidget *_parent = nullptr, 

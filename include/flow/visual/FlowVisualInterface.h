@@ -26,6 +26,8 @@
 
 #ifdef HAS_QTNODEEDITOR
 
+#include <flow/Export.h>
+
 #include <nodes/DataModelRegistry>
 #include <QtWidgets/QApplication>
 
@@ -43,7 +45,7 @@ namespace flow{
             void quit();
 
             void setNodeRegisterFn(std::function<void(std::shared_ptr<QtNodes::DataModelRegistry> &_registry)> _fn);
-            void setCodeGeneratorCustoms(   const std::vector<std::string> &_customIncludes = {}, 
+            void setCodeGeneratorCustoms(   const std::vector<std::string> &_customIncludes = {},
                                             const std::vector<std::string> &_customFinds = {}, 
                                             const std::vector<std::string> &_customLinks = {} );
         private:

@@ -50,9 +50,16 @@
 #include <flow/visual/blocks/FlowVisualBlock.h>
 #include <flow/visual/code_generation/CodeGenerator.h>
 
-#include <X11/Xlib.h>   
+#ifdef linux
+    #include <X11/Xlib.h>   
+    #include <dlfcn.h>
+#endif
 
-#include <dlfcn.h>
+#ifdef _WIN32
+    #include <windows.h>
+    #include <dlfcn.h>
+#endif
+
 #include <boost/filesystem.hpp>
 
 using QtNodes::FlowView;
@@ -73,10 +80,12 @@ setStyle()
   }
   )");
 }
-
 namespace flow{
     int FlowVisualInterface::init(int _argc, char** _argv){
+        
+    #ifdef linux
         XInitThreads();	
+    #endif
 
         kids_app = new QApplication(_argc, _argv);
 
@@ -202,16 +211,21 @@ namespace flow{
     void FlowVisualInterface::loadCustomPlugins(std::shared_ptr<QtNodes::DataModelRegistry> &_registry){
         // List plugins in default folder
         std::vector<std::string> files;
-        std::string userDir(getenv("USER"));
-        std::string pluginDir = "/home/"+userDir+"/.flow/plugins";
+        #ifdef linux
+            std::string userName(getenv("USER"));
+            std::string pluginDir = "/home/"+userName+"/.flow/plugins/";
+        #endif
+        #ifdef _WIN32
+            std::string pluginDir = "C:\\.flow\\plugins\\";
+        #endif
         readDirectory(pluginDir, files);
         // Iterate over file
         for(auto file:files){
             std::cout << file << std::endl;
             // Load blocks registered
-            void *hndl = dlopen((pluginDir+"/"+file).c_str(), RTLD_NOW);
+            void *hndl = dlopen((pluginDir+file).c_str(), RTLD_NOW);
             if(hndl == nullptr){
-                std::cerr << dlerror() << std::endl;
+                std::cerr << "ERROR: " <<  dlerror() << std::endl;
                 
             }else{
                 dlerror();

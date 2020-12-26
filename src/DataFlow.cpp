@@ -22,7 +22,7 @@
 #include <flow/DataFlow.h>
 #include <thread>
 
-std::vector<std::string> flow::TypeLog::registeredTypes_ = {};
+std::vector<std::string> flow::TypeLog::registeredTypes_;
 
 namespace flow{
 

@@ -22,6 +22,12 @@
 cmake_minimum_required(VERSION 3.12 FATAL_ERROR)
 PROJECT(flow VERSION 0.1.0)
 
+if(WIN32)
+	set(Boost_USE_STATIC_LIBS ON)
+	add_compile_options("/std:c++17")
+endif()
+
+
 #########################################
 ######			General config	   ######
 #########################################
@@ -37,7 +43,7 @@ set(CMAKE_AUTOMOC ON)
 file(GLOB_RECURSE FLOW_HEADERS "./include/*.h" "./include/*.inl")
 file(GLOB_RECURSE FLOW_SOURCES "./src/*.cpp")
 
-add_library(${PROJECT_NAME} SHARED ${FLOW_HEADERS} ${FLOW_SOURCES})
+add_library(${PROJECT_NAME}  ${LIBRARY_MODE} ${FLOW_HEADERS} ${FLOW_SOURCES})
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
 set_target_properties(${PROJECT_NAME} PROPERTIES LINKER_LANGUAGE C)
 
@@ -46,18 +52,19 @@ target_include_directories(${PROJECT_NAME} PUBLIC
     $<INSTALL_INTERFACE:include>
 )
 
-target_link_libraries(${PROJECT_NAME} LINK_PUBLIC pthread)
-
 ##################################################
 ######    Loading 3rd party libraries.    ########
 ##################################################
+
+if(UNIX)
+    target_link_libraries(${PROJECT_NAME} LINK_PUBLIC pthread)
+endif()
 
 if(${BUNDLE_COMPILATION})
   target_link_libraries(${PROJECT_NAME} LINK_PUBLIC NodeEditor::nodes)
   target_compile_definitions(${PROJECT_NAME} PUBLIC HAS_QTNODEEDITOR)
   # find_package(Qt5 5.3 COMPONENTS Core Widgets Gui OpenGL)
   # target_link_libraries(${PROJECT_NAME} PUBLIC Qt5::Core Qt5::Widgets Qt5::Gui Qt5::OpenGL )
-
 else()
   find_package(NodeEditor)
   if(${NodeEditor_FOUND})
@@ -75,6 +82,23 @@ endif()
 find_package(Boost REQUIRED COMPONENTS system filesystem)
 target_link_libraries(${PROJECT_NAME} LINK_PUBLIC Boost::boost Boost::system Boost::filesystem)
 
+if(WIN32)
+    find_package(dlfcn-win32 REQUIRED)
+    target_link_libraries(${PROJECT_NAME} LINK_PUBLIC dlfcn-win32::dl)
+endif()
+
+
+target_compile_definitions(${PROJECT_NAME}
+  PUBLIC
+    FLOW_LIB_SHARED
+  PRIVATE
+    FLOW_EXPORTS
+)
+
+add_custom_target(flow_resources ALL
+                COMMAND ${CMAKE_COMMAND} -E copy_directory 	${CMAKE_CURRENT_SOURCE_DIR}/resources 
+                ${CMAKE_BINARY_DIR}/plugins/resources
+)
 
 ##################################################
 ######    Documentation.                  ########

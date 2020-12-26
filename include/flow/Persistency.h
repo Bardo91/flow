@@ -19,56 +19,24 @@
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
 
+#ifndef FLOW_PERSISTENCY_H_
+#define FLOW_PERSISTENCY_H_
 
-#ifndef FLOW_POLICY_H_
-#define FLOW_POLICY_H_
-
-#include <flow/Export.h>
-
-#include <vector>
-#include <cstdlib>
-
-#include <any>
-#include <unordered_map>
-#include <thread>
-#include <chrono>
-#include <iostream>
-#include <functional>
-
-#include <flow/DataFlow.h>
+#include <string>
 
 namespace flow{
-    class Outpipe;
-
-    class FLOW_DECL Policy{
-        public:
-            typedef std::vector<std::string> PolicyMask;
-            typedef std::function<void(DataFlow _f)> PolicyCallback;
-
-            Policy(std::map<std::string, std::string> _inputs);
-            bool registerCallback(PolicyMask _mask, PolicyCallback _callback);
-            void update(std::string _tag, std::any _data);
-    
-            int nInputs();
-            std::vector<std::string> inputTags();
-
-            std::string type(std::string _tag);
-
-            void associatePipe(std::string _tag, Outpipe* _pipe);
-
-            bool disconnect(std::string _tag);
-
-            std::vector<float> masksFrequencies() const;
-
-        private:
-            std::map<std::string, std::string> inputs_;
-            std::vector<DataFlow*> flows_;
-            std::vector<std::string>                    tags_;
-            
-            std::unordered_map<std::string, Outpipe*>   connetedPipes_; 
+    class Persistency{
+    public:
+        static std::string resourceDir () {
+            #if defined(_WIN32)
+                return "c:/.flow/plugins/resources/";
+            #elif defined(__linux__)
+                std::string userDir(getenv("USER"));
+                std::string resourcesDir = "/home/"+userDir+"/.flow/plugins/resources/";
+                return resourcesDir;
+            #endif
+        }
     };
 }
-
-
 
 #endif

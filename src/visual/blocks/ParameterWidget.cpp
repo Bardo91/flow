@@ -24,9 +24,19 @@
 #include <QIntValidator>
 #include <QDoubleValidator>
 #include <QSpinBox>
+#include <QComboBox>
 
 namespace flow{
 
+    std::vector<std::string> split(const std::string& s, char delimiter){
+        std::vector<std::string> tokens;
+        std::string token;
+        std::istringstream tokenStream(s);
+        while (std::getline(tokenStream, token, delimiter)) {
+            tokens.push_back(token);
+        }
+        return tokens;
+    }
 
     //---------------------------------------------------------------------------------------------------------------------
     ParameterWidget::ParameterWidget(   const std::string _label, 
@@ -59,6 +69,13 @@ namespace flow{
         }
         case flow::Block::eParameterType::BOOLEAN:
             value_ = new QCheckBox();
+            break;
+        case flow::Block::eParameterType::OPTIONS:
+            value_ = new QComboBox();
+            auto values = split(_default, ';');
+            for(const auto &value: values){
+                static_cast<QComboBox*>(value_)->addItem(value.c_str());
+            }
             break;
         }
 

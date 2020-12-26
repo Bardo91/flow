@@ -23,19 +23,20 @@
 #ifndef FLOW_DATAFLOW_H_
 #define FLOW_DATAFLOW_H_
 
-#include <vector>
-#include <cstdlib>
+#include <flow/Export.h>
 
 #include <any>
-#include <functional>
-#include <map>
 #include <chrono>
-
+#include <cstdlib>
+#include <functional>
 #include <iostream>
+#include <map>
+#include <string>
+#include <vector>
 
 namespace flow{
         
-    class DataFlow{
+    class FLOW_DECL DataFlow{
     public:
         DataFlow(std::map<std::string, std::string> _flows, std::function<void(DataFlow _f)> _callback);
 
@@ -68,9 +69,6 @@ namespace flow{
         static std::vector<std::string> registeredTypes(){
             return registeredTypes_;
         }
-
-    private:
-        TypeLog();
 
     private:
         static std::vector<std::string> registeredTypes_;
