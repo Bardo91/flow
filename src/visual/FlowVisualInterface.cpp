@@ -212,8 +212,8 @@ namespace flow{
         // List plugins in default folder
         std::vector<std::string> files;
         #ifdef linux
-            //std::string userDir(getenv("USER"));
-            std::string pluginDir = "C:/.flow/plugins/";
+            std::string userName(getenv("USER"));
+            std::string pluginDir = "/home/"+userName+"/.flow/plugins/";
         #endif
         #ifdef _WIN32
             std::string pluginDir = "C:\\.flow\\plugins\\";
