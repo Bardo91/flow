@@ -63,15 +63,20 @@ namespace flow{
     public:
 
         static void registerType(std::string _type){
-            registeredTypes_.push_back(_type);
+            //if(std::find(registeredTypes_.begin(), registeredTypes_.end(), _type) == registeredTypes_.end())
+            //    registeredTypes_.push_back(_type);
+            registeredTypes_[index_] = _type;
+            index_++;
         }
 
         static std::vector<std::string> registeredTypes(){
-            return registeredTypes_;
+            return std::vector<std::string>(registeredTypes_, registeredTypes_ + index_);
         }
 
     private:
-        static std::vector<std::string> registeredTypes_;
+        //static std::vector<std::string> registeredTypes_;
+        static std::string registeredTypes_[100];
+        static int index_;
     };
 }
 
