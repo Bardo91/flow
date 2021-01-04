@@ -34,23 +34,39 @@
 #include <any>
 #include <flow/Policy.h>
 
+#include <tuple>
+#include <any>
+
 #include <QtCore/QObject>
 #include <QBoxLayout>
 #include <QIcon>
+#include <cassert>
+#include<optional>
 
 namespace flow{
     class Outpipe;
 
+    struct ConfigParameterDef {
+        enum eParameterType { BOOLEAN, INTEGER, DECIMAL, STRING, OPTIONS };
+        std::string name_;
+        eParameterType type_;
+        std::any value_;
+        bool                     asBool()       const { assert(type_ == eParameterType::BOOLEAN); return std::any_cast<bool>(value_); };
+        int                      asInteger()    const { assert(type_ == eParameterType::INTEGER); return std::any_cast<int>(value_); };
+        float                    asDecimal()    const { assert(type_ == eParameterType::DECIMAL); return std::any_cast<float>(value_); };
+        std::string              asString()     const { assert(type_ == eParameterType::STRING);  return std::any_cast<std::string>(value_); };
+        std::vector<std::string> asOptions()    const { assert(type_ == eParameterType::OPTIONS); return std::any_cast<std::vector<std::string>>(value_); };
+    };
+
     class Block{
     public:
-        enum eParameterType {BOOLEAN, INTEGER, DECIMAL, STRING, OPTIONS};
         virtual std::string name() const {return "Unnammed";}
         
         ~Block();
 
         // BASE METHODS
-        virtual bool configure(std::unordered_map<std::string, std::string> _params) { return false; };
-        virtual std::vector<std::pair<std::string, eParameterType>> parameters(){ return {}; };
+        virtual bool configure(std::vector<flow::ConfigParameterDef> _params) { return false; };
+        virtual std::vector<flow::ConfigParameterDef> parameters(){ return {}; };
 
         [[deprecated("This function gives the map with all pipes, please use getPipe method and get just the needed")]]
         std::unordered_map<std::string, std::shared_ptr<Outpipe>>  getPipes();
@@ -82,6 +98,8 @@ namespace flow{
         virtual std::string description() const {return "Flow block without description";};
 
         virtual QIcon icon() const { return QIcon((Persistency::resourceDir()+"question.svg").c_str()); };
+
+        std::optional<ConfigParameterDef> getParamByName(const std::vector<flow::ConfigParameterDef> &_params, const std::string &_pname);
 
     protected:
         bool isRunningLoop() const;
