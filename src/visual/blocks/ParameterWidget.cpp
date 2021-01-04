@@ -105,7 +105,7 @@ namespace flow{
             return { lName_, type_, static_cast<QLineEdit*>(value_)->text().toStdString()};
             break;
         case ConfigParameterDef::eParameterType::OPTIONS:
-            return { lName_, type_, static_cast<QComboBox*>(value_)->currentText()};
+            return { lName_, ConfigParameterDef::eParameterType::STRING,  static_cast<QComboBox*>(value_)->currentText().toStdString()};
             break;
         default:
             assert(false);
