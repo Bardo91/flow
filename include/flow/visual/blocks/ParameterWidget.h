@@ -33,35 +33,32 @@
 
 #include <flow/Block.h>
 #include <sstream>
+
 namespace flow{
 
     class ParameterWidget: public QHBoxLayout{
     public:
-        ParameterWidget(const std::string _label,
-                        Block::eParameterType _type,
-                        const std::string _default, 
+        ParameterWidget(const ConfigParameterDef &_param, 
                         QWidget *_parent = nullptr, 
                         const char *_name = nullptr);
         ~ParameterWidget();
         
         std::string label() const;
 
-        std::string getValueString();
-        int getValueInt();
-        float getValueDec();
-        bool getValueBool();
+        ConfigParameterDef getParam();
 
         void setValueString(std::string _val);
         void setValueInt(int _val);
         void setValueDec(float _val);
         void setValueBool(bool _val);
 
-        Block::eParameterType type() { return type_; };
+        ConfigParameterDef::eParameterType type() { return type_; };
 
     private:
+        std::string lName_;
         QLabel   * label_;
         QWidget   * value_;
-        flow::Block::eParameterType type_;
+        flow::ConfigParameterDef::eParameterType type_;
 
     };
 

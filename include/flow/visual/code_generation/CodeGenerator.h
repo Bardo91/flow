@@ -32,6 +32,7 @@
 #include <vector>
 
 #include <unordered_map>
+#include <flow/Block.h>
 
 namespace flow{
     class FLOW_DECL CodeGenerator{
@@ -48,7 +49,7 @@ namespace flow{
 
         static std::string demangleClassType(const char* mangled);
     
-        static std::unordered_map<std::string, std::string> dictClassInit;
+        static std::vector<flow::ConfigParameterDef> dictClassInit;
     };
 }
 

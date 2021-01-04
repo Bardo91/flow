@@ -70,7 +70,7 @@ namespace flow{
         QJsonObject save() const override;
         void restore(QJsonObject const &p) override;
 
-        std::unordered_map<std::string, std::string> extractParamsGui();
+        std::vector<flow::ConfigParameterDef> extractParamsGui();
 
         void configure() override;
 

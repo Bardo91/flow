@@ -39,42 +39,37 @@ namespace flow{
     }
 
     //---------------------------------------------------------------------------------------------------------------------
-    ParameterWidget::ParameterWidget(   const std::string _label, 
-                                        flow::Block::eParameterType _type,
-                                        const std::string _default, 
+    ParameterWidget::ParameterWidget(   const ConfigParameterDef &_param, 
                                         QWidget *_parent, 
                                         const char *_name){
-
-        type_ = _type;
-        label_ = new QLabel(_label.c_str());
+        lName_ = _param.name_;
+        type_ = _param.type_;
+        label_ = new QLabel(_param.name_.c_str());
 
         switch (type_) {
-        case flow::Block::eParameterType::STRING:
+        case flow::ConfigParameterDef::eParameterType::STRING:
             value_ = new QLineEdit();
-            static_cast<QLineEdit*>(value_)->setText(_default.c_str());
+            static_cast<QLineEdit*>(value_)->setText(_param.asString().c_str());
             break;
-        case flow::Block::eParameterType::DECIMAL:
+        case flow::ConfigParameterDef::eParameterType::DECIMAL:
             value_ = new QLineEdit();
-            static_cast<QLineEdit*>(value_)->setText(_default.c_str());
+            static_cast<QLineEdit*>(value_)->setText(QString::number(_param.asDecimal(), 'f', 5));
             static_cast<QLineEdit*>(value_)->setValidator( new QDoubleValidator() );
             break;
-        case flow::Block::eParameterType::INTEGER:
+        case flow::ConfigParameterDef::eParameterType::INTEGER:
         {
             value_ = new QSpinBox();
-            std::stringstream ss; ss << _default.c_str();
-            int val; ss >> val;
-            static_cast<QSpinBox*>(value_)->setValue(val);
+            static_cast<QSpinBox*>(value_)->setValue(_param.asInteger());
             static_cast<QSpinBox*>(value_)->setMaximum(std::numeric_limits<int>::max());
             break;
         }
-        case flow::Block::eParameterType::BOOLEAN:
+        case flow::ConfigParameterDef::eParameterType::BOOLEAN:
             value_ = new QCheckBox();
             break;
-        case flow::Block::eParameterType::OPTIONS:
+        case flow::ConfigParameterDef::eParameterType::OPTIONS:
             value_ = new QComboBox();
-            auto values = split(_default, ';');
-            for(const auto &value: values){
-                static_cast<QComboBox*>(value_)->addItem(value.c_str());
+            for(const auto &opt: _param.asOptions()){
+                static_cast<QComboBox*>(value_)->addItem(opt.c_str());
             }
             break;
         }
@@ -95,23 +90,27 @@ namespace flow{
     }
 
 
-    std::string ParameterWidget::getValueString(){
-        return static_cast<QLineEdit*>(value_)->text().toStdString();
-    } 
-
-    int ParameterWidget::getValueInt(){
-        return static_cast<QSpinBox*>(value_)->value();
-    }
-
-    float ParameterWidget::getValueDec(){
-        auto str = static_cast<QLineEdit*>(value_)->text().toStdString();
-        std::stringstream ss; ss << str;
-        float val; ss >> val;
-        return val;
-    }
-
-    bool ParameterWidget::getValueBool(){
-        return static_cast<QCheckBox*>(value_)->isChecked();
+    ConfigParameterDef ParameterWidget::getParam(){
+        switch (type_){
+        case ConfigParameterDef::eParameterType::BOOLEAN:
+            return { lName_, type_, static_cast<QCheckBox*>(value_)->isChecked()};
+            break;
+        case ConfigParameterDef::eParameterType::INTEGER:
+            return { lName_, type_, static_cast<QSpinBox*>(value_)->value()};
+            break;
+        case ConfigParameterDef::eParameterType::DECIMAL:
+            return { lName_, type_, std::stof(static_cast<QLineEdit*>(value_)->text().toStdString())};
+            break;
+        case ConfigParameterDef::eParameterType::STRING:
+            return { lName_, type_, static_cast<QLineEdit*>(value_)->text().toStdString()};
+            break;
+        case ConfigParameterDef::eParameterType::OPTIONS:
+            return { lName_, type_, static_cast<QComboBox*>(value_)->currentText()};
+            break;
+        default:
+            assert(false);
+            break;
+        }
     }
 
     void ParameterWidget::setValueString(std::string _val){

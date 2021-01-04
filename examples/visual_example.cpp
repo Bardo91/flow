@@ -48,7 +48,7 @@ public:
             }      
         }
 
-        virtual bool configure(std::unordered_map<std::string, std::string> _params) override { 
+        virtual bool configure(std::vector<flow::ConfigParameterDef> _params) override { 
             if(_params["init_value"] != ""){
                 std::istringstream istr(_params["init_value"]);
                 istr >> counter_;
@@ -57,7 +57,7 @@ public:
                 return false;
             } 
         };
-        virtual std::vector<std::pair<std::string, flow::Block::eParameterType>> parameters() override{ return {"init_value"}; };
+        virtual std::vector<flow::ConfigParameterDef> parameters() override{ return {"init_value"}; };
 private:
     float counter_  = 1.0;
 };
@@ -95,7 +95,7 @@ public:
             }      
         }
 
-        virtual bool configure(std::unordered_map<std::string, std::string> _params) override { 
+        virtual bool configure(std::vector<flow::ConfigParameterDef> _params) override { 
             if(_params["init_value"] != ""){
                 std::istringstream istr(_params["init_value"]);
                 istr >> counter_;
@@ -104,7 +104,7 @@ public:
                 return false;
             } 
         };
-        virtual std::vector<std::pair<std::string, flow::Block::eParameterType>> parameters() override{ return {"init_value"}; };
+        virtual std::vector<flow::ConfigParameterDef> parameters() override{ return {"init_value"}; };
 private:
     int counter_  = 1;
 };

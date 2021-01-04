@@ -40,85 +40,85 @@
 namespace flow{
     // Initialize dictionary
     void CodeGenerator::parseScene(std::string _cppFile, QJsonObject const &_scene, const std::vector<std::string> &_customIncludes){
-        std::ofstream genMain(_cppFile);
+        //std::ofstream genMain(_cppFile);
     
-        // Write preamble
-        writeInit(genMain, _customIncludes);
-        
-        genMain << "" << std::endl;
-        genMain << "\t// Creating blocks" << std::endl;
-        genMain << "" << std::endl;
-        // Init Nodes
-        std::unordered_map<std::string, std::string> id2Name;
-        std::unordered_map<std::string, QJsonArray> id2OutTags;
-        QJsonArray nodesJsonArray = _scene["nodes"].toArray();
-        int nodeCounter = 0;
-        for (QJsonValueRef node : nodesJsonArray){
-            std::string id = node.toObject()["id"].toString().toStdString();
-            std::string classType = node.toObject()["model"].toObject()["class"].toString().toStdString();
-            classType = boost::core::demangle(classType.c_str());
-            classType = classType.substr(0, classType.size()-1);
+        //// Write preamble
+        //writeInit(genMain, _customIncludes);
+        //
+        //genMain << "" << std::endl;
+        //genMain << "\t// Creating blocks" << std::endl;
+        //genMain << "" << std::endl;
+        //// Init Nodes
+        //std::vector<flow::ConfigParameterDef> id2Name;
+        //std::unordered_map<std::string, QJsonArray> id2OutTags;
+        //QJsonArray nodesJsonArray = _scene["nodes"].toArray();
+        //int nodeCounter = 0;
+        //for (QJsonValueRef node : nodesJsonArray){
+        //    std::string id = node.toObject()["id"].toString().toStdString();
+        //    std::string classType = node.toObject()["model"].toObject()["class"].toString().toStdString();
+        //    classType = boost::core::demangle(classType.c_str());
+        //    classType = classType.substr(0, classType.size()-1);
 
-            id2Name[id] = "node_" + std::to_string(nodeCounter);
-            id2OutTags[id] = node.toObject()["model"].toObject()["out_tags"].toArray();
-            nodeCounter++;
+        //    id2Name[id] = "node_" + std::to_string(nodeCounter);
+        //    id2OutTags[id] = node.toObject()["model"].toObject()["out_tags"].toArray();
+        //    nodeCounter++;
 
-            genMain << "\t" << classType << " " << id2Name[id] << ";" << std::endl;
-
-
-            QJsonObject blockParams = node.toObject()["model"].toObject()["params"].toObject();
-            unsigned int nKeys = blockParams.keys().size();
-            if(nKeys > 0){
-                genMain << "\t" << id2Name[id] << ".configure({"<<std::endl;
-                for(unsigned i = 0; i < nKeys; i++){
-                    QString key = blockParams.keys()[i];
-                    genMain << "\t\t" << "{\"" << key.toStdString() << "\",\"" << blockParams[key].toString().toStdString() << "\"}";
-                    if(i < (nKeys-1)){
-                        genMain << ",";
-                    }
-                    genMain << std::endl;
-
-                }
-                genMain << "\t" << "});" <<std::endl << std::endl;
-            }
-        }
-
-        genMain << "" << std::endl;
-        genMain << "\t// Connecting blocks" << std::endl;
-        genMain << "" << std::endl;
-
-        // Connect nodes
-        QJsonArray connectionJsonArray = _scene["connections"].toArray();
-        for (QJsonValueRef connectionRef : connectionJsonArray) {
-            auto connection = connectionRef.toObject();
-            auto inId = connection["in_id"].toString().toStdString();
-              unsigned inIdx = connection["in_index"].toInt();
-            auto outId = connection["out_id"].toString().toStdString();
-            unsigned outIdx = connection["out_index"].toInt();
-            
-            
-            std::string tag = id2OutTags[outId][outIdx].toString().toStdString();
-
-            genMain << "\t" << id2Name[outId] << ".connect(\"" << tag << "\", " << id2Name[inId] << ");\n";
-        }
-
-        // Start autoloop
-        genMain << "" << std::endl;
-        genMain << "\t// Starting autoloopable blocks" << std::endl;
-        genMain << "" << std::endl;
+        //    genMain << "\t" << classType << " " << id2Name[id] << ";" << std::endl;
 
 
-        for (QJsonValueRef node : nodesJsonArray){
-            std::string id = node.toObject()["id"].toString().toStdString();
-            bool hasAutoloop = node.toObject()["model"].toObject()["autoloop"].toBool();   
+        //    QJsonObject blockParams = node.toObject()["model"].toObject()["params"].toObject();
+        //    unsigned int nKeys = blockParams.keys().size();
+        //    if(nKeys > 0){
+        //        genMain << "\t" << id2Name[id] << ".configure({"<<std::endl;
+        //        for(unsigned i = 0; i < nKeys; i++){
+        //            QString key = blockParams.keys()[i];
+        //            genMain << "\t\t" << "{\"" << key.toStdString() << "\",\"" << blockParams[key].toString().toStdString() << "\"}";
+        //            if(i < (nKeys-1)){
+        //                genMain << ",";
+        //            }
+        //            genMain << std::endl;
 
-            if(hasAutoloop){
-                genMain << "\t" << id2Name[id] << ".start();"<<std::endl;
-            }
+        //        }
+        //        genMain << "\t" << "});" <<std::endl << std::endl;
+        //    }
+        //}
 
-        }
-        // Write end
-        writeEnd(genMain);
+        //genMain << "" << std::endl;
+        //genMain << "\t// Connecting blocks" << std::endl;
+        //genMain << "" << std::endl;
+
+        //// Connect nodes
+        //QJsonArray connectionJsonArray = _scene["connections"].toArray();
+        //for (QJsonValueRef connectionRef : connectionJsonArray) {
+        //    auto connection = connectionRef.toObject();
+        //    auto inId = connection["in_id"].toString().toStdString();
+        //      unsigned inIdx = connection["in_index"].toInt();
+        //    auto outId = connection["out_id"].toString().toStdString();
+        //    unsigned outIdx = connection["out_index"].toInt();
+        //    
+        //    
+        //    std::string tag = id2OutTags[outId][outIdx].toString().toStdString();
+
+        //    genMain << "\t" << id2Name[outId] << ".connect(\"" << tag << "\", " << id2Name[inId] << ");\n";
+        //}
+
+        //// Start autoloop
+        //genMain << "" << std::endl;
+        //genMain << "\t// Starting autoloopable blocks" << std::endl;
+        //genMain << "" << std::endl;
+
+
+        //for (QJsonValueRef node : nodesJsonArray){
+        //    std::string id = node.toObject()["id"].toString().toStdString();
+        //    bool hasAutoloop = node.toObject()["model"].toObject()["autoloop"].toBool();   
+
+        //    if(hasAutoloop){
+        //        genMain << "\t" << id2Name[id] << ".start();"<<std::endl;
+        //    }
+
+        //}
+        //// Write end
+        //writeEnd(genMain);
     }
 
     void CodeGenerator::generateCmake(  std::string _cmakeFilePath, 

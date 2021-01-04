@@ -97,6 +97,21 @@ namespace flow{
         iPolicy_->disconnect(_pipeTag);
     }
 
+    
+    std::optional<ConfigParameterDef> Block::getParamByName(const std::vector<flow::ConfigParameterDef> &_params, const std::string &_pname){
+        auto iter = std::find_if(  _params.begin(), 
+                                _params.end(), 
+                                [&_pname](const ConfigParameterDef &_param ){ 
+                                    return _param.name_ == _pname;
+                                });
+
+        if(iter == _params.end()){
+            return std::nullopt;
+        }else{
+            return *iter;
+        }
+    }
+
     bool Block::createPipe(std::string _pipeTag, std::string _tagType){
         if(opipes_[_pipeTag] == nullptr){
             opipes_[_pipeTag] = std::shared_ptr<Outpipe>(new flow::Outpipe(_pipeTag, _tagType));
