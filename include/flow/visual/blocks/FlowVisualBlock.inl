@@ -115,7 +115,7 @@ namespace flow{
         unsigned counter = 0;
         QJsonObject jsonParams;
         for(const auto &param: flowBlock_->parameters()){
-            QJsonObject jParam =  jsonParams[param.name_.c_str()].toObject();
+            QJsonObject jParam;
             jParam["type"] = configParams_[counter]->type();
             switch (configParams_[counter]->type()) {
                 case flow::ConfigParameterDef::eParameterType::STRING:
@@ -131,7 +131,8 @@ namespace flow{
                     jParam["value"] = configParams_[counter]->getParam().asBool();
                     break;
             }
-            
+
+            jsonParams[param.name_.c_str()] = jParam;
             counter++;
         }
         modelJson["params"] = jsonParams;
