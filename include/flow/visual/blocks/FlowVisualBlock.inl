@@ -178,7 +178,7 @@ namespace flow{
             QJsonValue type = _json["params"].toObject()[param.name_.c_str()].toObject()["type"];
             QJsonValue value = _json["params"].toObject()[param.name_.c_str()].toObject()["value"];
             if (!type.isUndefined() && !value.isUndefined()) {
-                switch (type.toInt()) {   /// 666 PARAMS SHOULD BE also generic not string format but that implies more changes and by now I have made a lot in a single commit, leave it for the next one
+                switch (type.toInt()) {
                 case flow::ConfigParameterDef::eParameterType::STRING:
                     configParams_[counter]->setValueString(value.toString().toStdString());
                     break;
