@@ -59,39 +59,11 @@ namespace flow{
         float usageFreq_ = 0;
     };
 
-    class TypeLog{
-    public:
-
-        static void registerType(std::string _type){
-            //if(std::find(registeredTypes_.begin(), registeredTypes_.end(), _type) == registeredTypes_.end())
-            //    registeredTypes_.push_back(_type);
-            registeredTypes_[index_] = _type;
-            index_++;
-        }
-
-        static std::vector<std::string> registeredTypes(){
-            return std::vector<std::string>(registeredTypes_, registeredTypes_ + index_);
-        }
-
-    private:
-        //static std::vector<std::string> registeredTypes_;
-        static std::string registeredTypes_[100];
-        static int index_;
-    };
 }
 
 
 #define FLOW_TYPE_REGISTER(tagType_, Type_)                                                             \
     namespace flow{                                                                                     \
-        struct TypeLogTrait##tagType_{                                                                  \
-            TypeLogTrait##tagType_(){                                                                   \
-                TypeLog::registerType(#tagType_);                                                       \
-            }                                                                                           \
-            std::string string = #tagType_;                                                             \
-            typedef Type_ TraitType_;                                                                   \
-            static TypeLogTrait##tagType_ traitRegistrator_;                                            \
-        };                                                                                              \
-        TypeLogTrait##tagType_ TypeLogTrait##tagType_::traitRegistrator_ = TypeLogTrait##tagType_();    \
                                                                                                         \
         template<>                                                                                      \
         Type_ DataFlow::get<Type_>(std::string _tag){                                                   \

@@ -22,10 +22,6 @@
 #include <flow/DataFlow.h>
 #include <thread>
 
-//std::vector<std::string> flow::TypeLog::registeredTypes_;
-std::string flow::TypeLog::registeredTypes_[100];
-int flow::TypeLog::index_ = 0;;
-
 namespace flow{
 
     DataFlow::DataFlow(std::map<std::string, std::string> _flows, std::function<void(DataFlow _f)> _callback){
