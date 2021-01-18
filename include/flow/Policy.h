@@ -40,12 +40,35 @@
 namespace flow{
     class Outpipe;
 
+    class PolicyInput{
+    public:
+        std::string tag(){return tag_;};
+        std::string typeName(){return typeName_;};
+    protected:
+        std::string tag_;
+        std::string typeName_;
+    };
+
+    template<typename T_>
+    struct PolicyInputTemplate: public PolicyInput {
+        PolicyInputTemplate(std::string const &_tag){
+            tag_ = _tag;
+            typeName_ = typeid(T_).name();
+        }
+    };
+
+    template<typename T_>
+    PolicyInput* makeInput(std::string const &_tag){
+        return new PolicyInputTemplate<T_>(_tag);
+    }
+
+
     class FLOW_DECL Policy{
         public:
             typedef std::vector<std::string> PolicyMask;
             typedef std::function<void(DataFlow _f)> PolicyCallback;
 
-            Policy(std::map<std::string, std::string> _inputs);
+            Policy(std::vector<PolicyInput*> _inputs);
             bool registerCallback(PolicyMask _mask, PolicyCallback _callback);
             void update(std::string _tag, std::any _data);
     

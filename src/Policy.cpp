@@ -29,17 +29,17 @@
 
 namespace flow{
 
-    Policy::Policy(std::map<std::string, std::string> _inputs){
+    Policy::Policy(std::vector<PolicyInput*> _inputs){
         if(_inputs.size() == 0){
             throw std::invalid_argument( "A Policy cannot be constructed with an empty list of input pipe tags." );
         }
 
         for(auto &input:_inputs){
-            if(input.first == "" || input.second == ""){
+            if(input->tag() == "" || input->typeName() == ""){
                 throw std::invalid_argument( "A Policy cannot be constructed with an empty list of input pipe tags." );
             }
-            inputs_[input.first] = input.second;
-            tags_.push_back(input.first);
+            inputs_[input->tag()] = input->typeName();
+            tags_.push_back(input->tag());
         }
     }
 

@@ -33,6 +33,7 @@
 #include <map>
 #include <string>
 #include <vector>
+#include <cstring>
 
 namespace flow{
         
@@ -57,21 +58,81 @@ namespace flow{
         
         std::chrono::time_point<std::chrono::system_clock> lastUsageT_;
         float usageFreq_ = 0;
+
+    public:
+        static std::map<std::string, std::map<std::string, std::function<std::any(std::any&)>>> conversions_;
+        static bool checkIfConversionAvailable(std::string const &_from, std::string const &_to);
     };
 
 }
 
+namespace flow{
 
-#define FLOW_TYPE_REGISTER(tagType_, Type_)                                                             \
+        template<typename T_>
+        inline T_ DataFlow::get(std::string _tag){
+            /*std::cout << "tag: " <<  _tag << std::endl;
+            std::cout << "Expected Type tag: " << types_[_tag] << std::endl;
+            std::cout << "Real Data type name: " << data_[_tag].type().name() << std::endl;
+            std::cout << "Template parameter type name: " << typeid(T_).name() << std::endl;*/
+
+            if(types_.find(_tag) == types_.end()){
+                throw std::invalid_argument("Input tag does not exist, Add it as policy");
+            } 
+            
+            //std::cout << typeid(T_).name()  << ", " <<  data_[_tag].type().name() << ", " << strcmp(typeid(T_).name(), data_[_tag].type().name()) << std::endl; 
+            if(strcmp(typeid(T_).name(), data_[_tag].type().name()) == 0 ){
+                //std::cout << "flowing directly: " << types_[_tag] << "/ " << data_[_tag].type().name()  << std::endl;
+                return std::any_cast<T_>(data_[_tag]);                
+            }else{
+                if( conversions_.find(types_[_tag])!= conversions_.end() && 
+                    conversions_[types_[_tag]].find(typeid(T_).name()) != conversions_[types_[_tag]].end()){
+
+                    //std::cout << "Casting from " << types_[_tag] << "/" << data_[_tag].type().name() << " to " <<  typeid(T_).name() << std::endl;
+                    std::function<std::any(std::any&)> fn = conversions_[types_[_tag]][typeid(T_).name()];
+                    return std::any_cast<T_>(fn(data_[_tag]));
+                }else{
+                    throw std::invalid_argument("Bad tag type when getting data from DataFlow");
+                }
+            }
+        }
+    }
+
+// #define FLOW_TYPE_REGISTER(tagType_, Type_)                                                             \
+//     namespace flow{                                                                                     \
+//                                                                                                         \
+//         template<>                                                                                      \
+//         Type_ DataFlow::get<Type_>(std::string _tag){                                                   \
+//             if(types_.find(_tag) == types_.end() || types_[_tag] != data_[_tag].type().name() ){               \
+//                 if( conversions_.find(types_[_tag])!= conversions_.end() &&                             \
+//                     conversions_[types_[_tag]].find(typeid(Type_).name()) != conversions_[types_[_tag]].end() ){ \
+//                             std::cout << "Casting from " << types_[_tag] << " to " <<  typeid(Type_).name() << std::endl; \
+//                             std::function<std::any(std::any&)> fn = conversions_[types_[_tag]][typeid(Type_).name()]; \
+//                             return std::any_cast<Type_>(fn(data_[_tag]));       \
+//                         }else{                                                                          \
+//                             throw std::invalid_argument("Bad tag type when getting data from DataFlow");\
+//                         }                                                                               \
+//             }                                                                                           \
+//             std::cout << "flowing directly: " << types_[_tag] << "/ " << data_[_tag].type().name()  << std::endl; \
+//             return std::any_cast<Type_>(data_[_tag]);                                                   \
+//         }                                                                                               \
+//     }                                                                                                   \
+
+
+
+#define FLOW_CONVERSION_REGISTER(tagType1_, Type1_, tagType2_, Type2_, conversion_)                     \
     namespace flow{                                                                                     \
-                                                                                                        \
-        template<>                                                                                      \
-        Type_ DataFlow::get<Type_>(std::string _tag){                                                   \
-            if(types_.find(_tag) == types_.end() || types_[_tag] != #tagType_ ){                        \
-                throw std::invalid_argument("Bad tag type when getting data from DataFlow");            \
+        struct ConversionRegistrator##tagType1_##tagType2_{                                             \
+            ConversionRegistrator##tagType1_##tagType2_(){                                              \
+                DataFlow::conversions_[#tagType1_][typeid(Type2_).name()] = conversion_;               \
+                DataFlow::conversions_[#tagType1_][#Type2_] = conversion_;               \
             }                                                                                           \
-            return std::any_cast<Type_>(data_[_tag]);                                                   \
-        }                                                                                               \
+            typedef Type1_ TraitType1_;                                                                 \
+            typedef Type2_ TraitType2_;                                                                 \
+            static ConversionRegistrator##tagType1_##tagType2_ traitRegistrator_;                       \
+        };                                                                                              \
+        ConversionRegistrator##tagType1_##tagType2_ ConversionRegistrator##tagType1_##tagType2_::traitRegistrator_ = ConversionRegistrator##tagType1_##tagType2_();    \
     }                                                                                                   \
+
+
 
 #endif

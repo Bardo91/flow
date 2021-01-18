@@ -46,7 +46,8 @@ namespace flow{
             auto iterPol = std::find(registeredPolicies_.begin(), registeredPolicies_.end(), _pol);
             if(iterPol == registeredPolicies_.end()){
                 // Check that types are compatible
-                if(type_ == _pol->type(_policyTag)){   // 666 TODO
+                // if(type_ == _pol->type(_policyTag)){   // 666 TODO
+                if(DataFlow::checkIfConversionAvailable(type_, _pol->type(_policyTag))){
                     policiesGuard.lock();
                     registeredPolicies_.push_back(_pol);
                     tagTranslators_[_pol] = _policyTag;

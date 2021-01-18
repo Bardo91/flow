@@ -24,6 +24,8 @@
 
 namespace flow{
 
+    std::map<std::string, std::map<std::string, std::function<std::any(std::any&)>>> DataFlow::conversions_;
+    
     DataFlow::DataFlow(std::map<std::string, std::string> _flows, std::function<void(DataFlow _f)> _callback){
         callback_ = _callback;
         for(auto &f:_flows){
@@ -63,5 +65,19 @@ namespace flow{
 
     float DataFlow::frequency() const{
         return usageFreq_;
+    }
+
+
+    bool DataFlow::checkIfConversionAvailable(std::string const &_from, std::string const &_to){
+        if(_from == _to)
+            return true;
+
+        if(conversions_.find(_from) != conversions_.end()){
+            if(conversions_[_from].find(_to) != conversions_[_from].end()){
+                return true;
+            }
+        }
+
+        return false;
     }
 }

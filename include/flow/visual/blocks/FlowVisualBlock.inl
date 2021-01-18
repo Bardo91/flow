@@ -257,15 +257,17 @@ namespace flow{
         // In NodeEditor, NodeDataType is just a pair of string indicating type and name of type. So faking it.
         //return StreamerPipeInfo(nullptr, tag).type();
         
+        std::string portTypeTag;
         if(portType == PortType::In){
-            auto type = flowBlock_->getPolicy()->type(tag);
+            portTypeTag = flowBlock_->getPolicy()->type(tag);
             // std::cout << Block_::name() << ". " << index << ": " << type << std::endl;
-            return NodeDataType{type.c_str(),tag.c_str()};
         }else{
-            auto type = flowBlock_->getPipe(tag)->type();
+            portTypeTag = flowBlock_->getPipe(tag)->type();
             // std::cout << Block_::name() << ". " << index << ": " << type << std::endl;
-            return NodeDataType{type.c_str(),tag.c_str()};
         }
+
+        //return NodeDataType{portTypeTag.c_str(),tag.c_str()};
+        return NodeDataType{nullptr,tag.c_str()}; // Allowing connecting any with any.
     }
 
     template<typename Block_, bool HasAutoLoop_>

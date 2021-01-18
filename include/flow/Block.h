@@ -33,6 +33,7 @@
 
 #include <any>
 #include <flow/Policy.h>
+#include <flow/Outpipe.h>
 
 #include <tuple>
 #include <any>
@@ -44,7 +45,6 @@
 #include<optional>
 
 namespace flow{
-    class Outpipe;
 
     struct ConfigParameterDef {
         enum eParameterType { BOOLEAN, INTEGER, DECIMAL, STRING, OPTIONS };
@@ -104,11 +104,12 @@ namespace flow{
     protected:
         bool isRunningLoop() const;
         
-        bool createPipe(std::string _pipeTag, std::string _tagType);
+        template<typename T_>
+        bool createPipe(std::string _pipeTag);
         bool removePipe(std::string _pipeTag);
         bool removePipes();
 
-        bool createPolicy(std::map<std::string, std::string> _inputs);
+        bool createPolicy(std::vector<PolicyInput*> _inputs);
         void removePolicy();
         
         bool registerCallback(Policy::PolicyMask _mask, Policy::PolicyCallback _callback);
@@ -122,6 +123,20 @@ namespace flow{
         std::thread loopThread_;
         bool runLoop_ = false;
     };
+
+
+    template<typename T_>
+    bool Block::createPipe(std::string _pipeTag){
+        if(opipes_[_pipeTag] == nullptr){
+            opipes_[_pipeTag] = std::shared_ptr<Outpipe>(new flow::Outpipe(_pipeTag, typeid(T_).name()));
+            return true;
+        }else{
+            throw std::invalid_argument("Pipe with tag " + _pipeTag + " already defined.");
+            return false;
+        }
+    }
+
+
 
 }
 

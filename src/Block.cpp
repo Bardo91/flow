@@ -112,17 +112,6 @@ namespace flow{
         }
     }
 
-    bool Block::createPipe(std::string _pipeTag, std::string _tagType){
-        if(opipes_[_pipeTag] == nullptr){
-            opipes_[_pipeTag] = std::shared_ptr<Outpipe>(new flow::Outpipe(_pipeTag, _tagType));
-            return true;
-        }else{
-            throw std::invalid_argument("Pipe with tag " + _pipeTag + " already defined.");
-            return false;
-        }
-    }
-
-
     bool Block::removePipe(std::string _pipeTag){
         opipes_.erase(_pipeTag);
 
@@ -144,7 +133,7 @@ namespace flow{
         return runLoop_;
     }
 
-    bool Block::createPolicy(std::map<std::string, std::string> _inputs){
+    bool Block::createPolicy(std::vector<PolicyInput*> _inputs){
         if(iPolicy_){
             return false;
         }else{
