@@ -24,7 +24,7 @@
 
 namespace flow{
 
-    #if defined(__UNIX__)
+    #if defined(__linux__)
         std::map<std::string, std::map<std::string, std::function<std::any(std::any&)>>> DataFlow::conversions_ = {};
     #endif 
 
