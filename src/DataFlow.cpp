@@ -24,8 +24,10 @@
 
 namespace flow{
 
-    std::map<std::string, std::map<std::string, std::function<std::any(std::any&)>>> DataFlow::conversions_;
-    
+    #if defined(__UNIX__)
+        std::map<std::string, std::map<std::string, std::function<std::any(std::any&)>>> DataFlow::conversions_ = {};
+    #endif 
+
     DataFlow::DataFlow(std::map<std::string, std::string> _flows, std::function<void(DataFlow _f)> _callback){
         callback_ = _callback;
         for(auto &f:_flows){

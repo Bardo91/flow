@@ -37,7 +37,7 @@
 
 namespace flow{
         
-    class FLOW_DECL DataFlow{
+    class DataFlow{
     public:
         DataFlow(std::map<std::string, std::string> _flows, std::function<void(DataFlow _f)> _callback);
 
@@ -117,19 +117,25 @@ namespace flow{
 //     }                                                                                                   \
 
 
+#if defined(WIN32)
+    #define INIT_FLOW_CONVERSION_MAP()                                                                                  \
+        std::map<std::string, std::map<std::string, std::function<std::any(std::any&)>>> flow::DataFlow::conversions_ = {};
+#else
+    #define INIT_FLOW_CONVERSION_MAP()
+#endif
 
-#define FLOW_CONVERSION_REGISTER(Type1_, Type2_, conversion_)                     \
-    namespace flow{                                                                                     \
-        struct ConversionRegistrator##Type1_##Type2_{                                             \
-            ConversionRegistrator##Type1_##Type2_(){                                              \
-                DataFlow::conversions_[typeid(Type1_).name()][typeid(Type2_).name()] = conversion_;               \
-            }                                                                                           \
-            typedef Type1_ TraitType1_;                                                                 \
-            typedef Type2_ TraitType2_;                                                                 \
-            static ConversionRegistrator##Type1_##Type2_ traitRegistrator_;                       \
-        };                                                                                              \
+#define FLOW_CONVERSION_REGISTER(Type1_, Type2_, conversion_)                                                       \
+    namespace flow{                                                                                                 \
+        struct ConversionRegistrator##Type1_##Type2_{                                                               \
+            ConversionRegistrator##Type1_##Type2_(){                                                                \
+                DataFlow::conversions_[typeid(Type1_).name()][typeid(Type2_).name()] = conversion_;                 \
+            }                                                                                                       \
+            typedef Type1_ TraitType1_;                                                                             \
+            typedef Type2_ TraitType2_;                                                                             \
+            static ConversionRegistrator##Type1_##Type2_ traitRegistrator_;                                         \
+        };                                                                                                          \
         ConversionRegistrator##Type1_##Type2_ ConversionRegistrator##Type1_##Type2_::traitRegistrator_ = ConversionRegistrator##Type1_##Type2_();    \
-    }                                                                                                   \
+    }                                                                                                               \
 
 
 
