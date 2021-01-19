@@ -32,14 +32,19 @@ namespace flow{
     inline FlowVisualBlock<Block_,HasAutoLoop_>::FlowVisualBlock() {
         flowBlock_ = new Block_();
 
+        if(flowBlock_->customWidget() == nullptr && flowBlock_->parameters().size() == 0 && !HasAutoLoop_){
+            configBox_ = nullptr;
+            return;
+        }
+
         // Configure group box
         configsLayout_ = new QVBoxLayout();
         configBox_ = new QGroupBox("");
         configBox_->setLayout(configsLayout_);
         // Configure frequencies
-        freqsLayout_ = new QHBoxLayout();
+        /*freqsLayout_ = new QHBoxLayout();
         configsLayout_->addLayout(freqsLayout_);
-        /*if(flowBlock_->getPolicy()){
+        if(flowBlock_->getPolicy()){
             freqsLayout_->addWidget(new QLabel("Freqs: "));
             for(unsigned i = 0; i < flowBlock_->getPolicy()->masksFrequencies().size(); i++){
                 freqLabels_.push_back(new QLabel("0"));
