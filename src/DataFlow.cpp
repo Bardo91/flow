@@ -21,6 +21,7 @@
 
 #include <flow/DataFlow.h>
 #include <thread>
+#include <flow/ThreadPool.h>
 
 namespace flow{
 
@@ -55,8 +56,8 @@ namespace flow{
             if(flag->second) flagCounter++;
         }
         if(flagCounter == updated_.size()){
-            // callback_(*this);
-            std::thread(callback_, *this).detach(); // 666 Smthg is not completelly thread safe and produces crash
+            ThreadPool::get()->emplace(std::bind(callback_, *this));
+            // std::thread(callback_, *this).detach(); // 666 Smthg is not completelly thread safe and produces crash
             auto currT = std::chrono::system_clock::now();
             float incT = std::chrono::duration_cast<std::chrono::microseconds>(currT-lastUsageT_).count();
             lastUsageT_ = currT;
