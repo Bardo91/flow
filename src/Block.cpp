@@ -49,10 +49,12 @@ namespace flow{
     }
 
     void Block::stop(){
-        runLoop_ = false;
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
-        if(loopThread_.joinable())
-            loopThread_.join();
+        if(runLoop_){
+            runLoop_ = false;
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            if(loopThread_.joinable())
+                loopThread_.join();
+        }
     }
 
     
