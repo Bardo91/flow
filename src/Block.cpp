@@ -27,7 +27,7 @@
 namespace flow{
     // BASE METHODS
     Block::~Block(){
-        // this->stop();
+        this->stop();
     }
     
     std::unordered_map<std::string, std::shared_ptr<Outpipe>> Block::getPipes(){
