@@ -24,13 +24,13 @@
 #include <flow/visual/data_types/StreamerPipeInfo.h>
 #include <QJsonArray>
 #include <QIcon>
-
+#include <memory>
 
 namespace flow{
 
     template<typename Block_, bool HasAutoLoop_>
     inline FlowVisualBlock<Block_,HasAutoLoop_>::FlowVisualBlock() {
-        flowBlock_ = new Block_();
+        flowBlock_ = std::make_shared<Block_>();
 
         if(flowBlock_->customWidget() == nullptr && flowBlock_->parameters().size() == 0 && !HasAutoLoop_){
             configBox_ = nullptr;
@@ -41,28 +41,7 @@ namespace flow{
         configsLayout_ = new QVBoxLayout();
         configBox_ = new QGroupBox("");
         configBox_->setLayout(configsLayout_);
-        // Configure frequencies
-        /*freqsLayout_ = new QHBoxLayout();
-        configsLayout_->addLayout(freqsLayout_);
-        if(flowBlock_->getPolicy()){
-            freqsLayout_->addWidget(new QLabel("Freqs: "));
-            for(unsigned i = 0; i < flowBlock_->getPolicy()->masksFrequencies().size(); i++){
-                freqLabels_.push_back(new QLabel("0"));
-                freqsLayout_->addWidget(freqLabels_.back());
-            }
-            if(freqLabels_.size() > 0){
-                freqLabelUpdater_ = std::thread([&](){
-                    while(flowBlock_){
-                        auto freqs = flowBlock_->getPolicy()->masksFrequencies();
-                        for(unsigned i = 0; i < freqs.size(); i++){
-                            freqLabels_[i]->setText(QString::number(freqs[i], 'f', 2));
-                        }
-                        std::this_thread::sleep_for(std::chrono::milliseconds(300));
-                    }
-                });
-            }
-        }*/
-        
+
         // custom visualizer
         if(flowBlock_->customWidget() != nullptr){
             configsLayout_->addWidget(flowBlock_->customWidget());
@@ -106,10 +85,7 @@ namespace flow{
 
     template<typename Block_, bool HasAutoLoop_>
     inline FlowVisualBlock<Block_,HasAutoLoop_>::~FlowVisualBlock(){
-        delete flowBlock_;
-        flowBlock_ = nullptr;
-        if(freqLabelUpdater_.joinable())
-            freqLabelUpdater_.join();
+
     }
 
 

@@ -42,14 +42,14 @@ namespace flow {
 
     struct PipeInfo{
         std::string pipeName_ = "";
-        flow::Block* otherBlock_ = nullptr;
+        std::shared_ptr<flow::Block> otherBlock_ = nullptr;
     };
 
     class FLOW_DECL StreamerPipeInfo : public NodeData {
     public:
         StreamerPipeInfo() {} 
 
-        StreamerPipeInfo(flow::Block* const _blockRef, const std::string _pipeName) {
+        StreamerPipeInfo(std::shared_ptr<flow::Block> const &_blockRef, const std::string _pipeName) {
             pipeInfo_.otherBlock_ = _blockRef;
             pipeInfo_.pipeName_ = _pipeName;
         }
