@@ -142,10 +142,6 @@ endif()
 ##################################################
 include(CMakePackageConfigHelpers)
 
-if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "/usr/local")
-endif() 
-
 install(TARGETS nodes ${PROJECT_NAME} 
         EXPORT ${PROJECT_NAME}-targets
         LIBRARY DESTINATION lib
