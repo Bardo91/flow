@@ -81,6 +81,11 @@ namespace flow{
             }
         }
 
+        if( strcmp(typeid(std::any).name(), _to.c_str()) == 0 ||
+            strcmp(typeid(std::any).name(), _from.c_str()) == 0){ 
+            return true;
+        }
+
         return false;
     }
 }

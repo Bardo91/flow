@@ -70,29 +70,26 @@ namespace flow{
 
         template<typename T_>
         inline T_ DataFlow::get(std::string const &_tag){
-            /*std::cout << "tag: " <<  _tag << std::endl;
-            std::cout << "Expected Type tag: " << types_[_tag] << std::endl;
-            std::cout << "Real Data type name: " << data_[_tag].type().name() << std::endl;
-            std::cout << "Template parameter type name: " << typeid(T_).name() << std::endl;*/
-
             if(types_.find(_tag) == types_.end()){
                 throw std::invalid_argument("Input tag does not exist, Add it as policy");
             } 
             
-            //std::cout << typeid(T_).name()  << ", " <<  data_[_tag].type().name() << ", " << strcmp(typeid(T_).name(), data_[_tag].type().name()) << std::endl; 
             if(strcmp(typeid(T_).name(), data_[_tag].type().name()) == 0 ){
-                //std::cout << "flowing directly: " << types_[_tag] << "/ " << data_[_tag].type().name()  << std::endl;
                 return std::any_cast<T_>(data_[_tag]);                
             }else{
                 if( auto iter = conversions_.find(data_[_tag].type().name()); iter != conversions_.end()){
                     if(iter->second.find(typeid(T_).name()) != iter->second.end()){
-                        //std::cout << "Casting from " << types_[_tag] << "/" << data_[_tag].type().name() << " to " <<  typeid(T_).name() << std::endl;
                         std::function<std::any(std::any&)> fn = iter->second[typeid(T_).name()];
                         return std::any_cast<T_>(fn(data_[_tag]));
                     }
                 }
             }
             throw std::invalid_argument("Bad tag type when getting data from DataFlow");
+        }
+
+        template<>
+        inline std::any DataFlow::get(std::string const& _tag) {
+            return data_[_tag];
         }
     }
 
