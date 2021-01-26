@@ -196,6 +196,19 @@ namespace flow{
         return flowBlock_;
     }
 
+    
+    template<typename Block_, bool HasAutoLoop_>
+    inline void FlowVisualBlock<Block_,HasAutoLoop_>::run() {
+        flowBlock_->start();
+        streamActionButton_->setChecked(true);
+    }
+
+    template<typename Block_, bool HasAutoLoop_>
+    inline void FlowVisualBlock<Block_,HasAutoLoop_>::stop() {
+        flowBlock_->stop();
+        streamActionButton_->setChecked(false);
+    }
+
     template<typename Block_, bool HasAutoLoop_>
     inline void FlowVisualBlock<Block_,HasAutoLoop_>::inputConnectionDeleted(Connection const&_conn) {
         // Unregister element in policy

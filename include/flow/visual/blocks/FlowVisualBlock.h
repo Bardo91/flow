@@ -53,15 +53,24 @@ namespace flow{
     /// Forward declaration
     class Outpipe;
 
-    /// Interface to allow static cast of MicoBlocks.
+    /// Interface to allow dynamic cast of MicoBlocks.
     class ConfigurableBlock{
     public:
         virtual void configure() = 0;
     };
 
+    /// Interface to allow dynamic cast of MicoBlocks.
+    class RunnableBlock{
+    public:
+        virtual void run() = 0;
+        virtual void stop() = 0;
+    private:
+        bool isRunable_;
+    };
+
     /// 
     template<typename Block_, bool HasAutoLoop_ = false>
-    class FlowVisualBlock : public NodeDataModel, public ConfigurableBlock {
+    class FlowVisualBlock : public NodeDataModel, public ConfigurableBlock, public RunnableBlock {
     public:
         FlowVisualBlock();
 
@@ -83,6 +92,10 @@ namespace flow{
         QIcon icon() const override { return flowBlock_->icon();};
 
         QBoxLayout * creationWidget() const override { return flowBlock_->creationWidget();};
+
+        void run() override;
+
+        void stop() override;
 
     public:
         QString caption() const override { return flowBlock_->name().c_str(); }

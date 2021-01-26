@@ -94,6 +94,7 @@ namespace flow{
         auto saveAction = menuBar->addAction("Save");
         auto loadAction = menuBar->addAction("Load");
         auto configureAll = menuBar->addAction("Configure All");
+        auto runAll = menuBar->addAction("Run All");
         auto generateCode = menuBar->addAction("Generate Code");
 
         QVBoxLayout *l = new QVBoxLayout(&mainWidget);
@@ -123,6 +124,19 @@ namespace flow{
                 auto d_ptr = dynamic_cast<ConfigurableBlock*>(dataModel);
                 if(d_ptr != nullptr)
                     d_ptr->configure();
+            }
+
+        });
+
+        QObject::connect(runAll, &QAction::triggered, [&](){
+            auto nodes = scene->allNodes();
+
+            for(auto node:nodes){
+                NodeDataModel* dataModel = node->nodeDataModel();
+                // This conversion is not safe but, all nodes in slam4kids are ConfigurableBlocks
+                auto d_ptr = dynamic_cast<RunnableBlock*>(dataModel);
+                if(d_ptr != nullptr)
+                    d_ptr->run();
             }
 
         });

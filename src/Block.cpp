@@ -42,10 +42,10 @@ namespace flow{
     }
 
     void Block::start(){
-        this->stop();   // Just in case stop it 
-
-        runLoop_ = true;
-        loopThread_ = std::thread(&Block::loopCallback, this);
+        if(!runLoop_){
+            runLoop_ = true;
+            loopThread_ = std::thread(&Block::loopCallback, this);
+        }
     }
 
     void Block::stop(){
