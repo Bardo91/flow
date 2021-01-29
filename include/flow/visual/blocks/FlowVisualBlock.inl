@@ -199,14 +199,18 @@ namespace flow{
     
     template<typename Block_, bool HasAutoLoop_>
     inline void FlowVisualBlock<Block_,HasAutoLoop_>::run() {
-        flowBlock_->start();
-        streamActionButton_->setChecked(true);
+        if constexpr (HasAutoLoop_) {
+            flowBlock_->start();
+            streamActionButton_->setChecked(true);
+        }
     }
 
     template<typename Block_, bool HasAutoLoop_>
     inline void FlowVisualBlock<Block_,HasAutoLoop_>::stop() {
-        flowBlock_->stop();
-        streamActionButton_->setChecked(false);
+        if constexpr (HasAutoLoop_) {
+            flowBlock_->stop();
+            streamActionButton_->setChecked(false);
+        }
     }
 
     template<typename Block_, bool HasAutoLoop_>
