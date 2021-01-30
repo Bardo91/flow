@@ -61,16 +61,16 @@
 #endif
 
 #include <boost/filesystem.hpp>
+#include <boost/program_options.hpp>
+
+namespace po = boost::program_options;
 
 using QtNodes::FlowView;
 using QtNodes::FlowScene;
 using QtNodes::ConnectionStyle;
 
 
-static
-void
-setStyle()
-{
+static void setStyle() {
   ConnectionStyle::setConnectionStyle(
     R"(
   {
@@ -80,6 +80,13 @@ setStyle()
   }
   )");
 }
+
+namespace boost {
+    void throw_exception(std::exception const& e) { // user defined
+        throw e;
+    }
+}
+
 namespace flow{
     int FlowVisualInterface::init(int _argc, char** _argv){
         
@@ -87,6 +94,23 @@ namespace flow{
         XInitThreads();	
     #endif
 
+        // Parse arguments
+        po::options_description desc("Allowed options");
+        desc.add_options()
+            ("help", "produce help message")
+            ("mico_graph", po::value<std::string>(), "Path to existing mico graph")
+        ;
+
+        po::variables_map vm;        
+        po::store(po::parse_command_line(_argc, _argv, desc), vm);
+        po::notify(vm);    
+
+        if (vm.count("help")) {
+            std::cout << desc << "\n";
+            return 1;
+        }
+
+        // Init Qapp
         kids_app = new QApplication(_argc, _argv);
 
         QWidget mainWidget;
@@ -102,7 +126,7 @@ namespace flow{
 
         setStyle();
 
-        auto scene = new FlowScene(     registerDataModels(), 
+        scene = new FlowScene(     registerDataModels(),
                                         &mainWidget
                                         );
 
@@ -116,29 +140,11 @@ namespace flow{
 
 
         QObject::connect(configureAll, &QAction::triggered, [&](){
-            auto nodes = scene->allNodes();
-
-            for(auto node:nodes){
-                NodeDataModel* dataModel = node->nodeDataModel();
-                // This conversion is not safe but, all nodes in slam4kids are ConfigurableBlocks
-                auto d_ptr = dynamic_cast<ConfigurableBlock*>(dataModel);
-                if(d_ptr != nullptr)
-                    d_ptr->configure();
-            }
-
+            this->configureAll();
         });
 
         QObject::connect(runAll, &QAction::triggered, [&](){
-            auto nodes = scene->allNodes();
-
-            for(auto node:nodes){
-                NodeDataModel* dataModel = node->nodeDataModel();
-                // This conversion is not safe but, all nodes in slam4kids are ConfigurableBlocks
-                auto d_ptr = dynamic_cast<RunnableBlock*>(dataModel);
-                if(d_ptr != nullptr)
-                    d_ptr->run();
-            }
-
+            this->runAll();
         });
 
         QObject::connect(generateCode, &QAction::triggered, [&](){
@@ -170,7 +176,27 @@ namespace flow{
 
         mainWidget.setWindowTitle("Node-based flow editor");
         mainWidget.resize(800, 600);
-        mainWidget.showNormal();
+        
+        if (vm.count("mico_graph")) {
+            scene->clearScene();
+            QString fileName = vm["mico_graph"].as<std::string>().c_str();
+            
+            if (!QFileInfo::exists(fileName))
+                return -1;
+
+            QFile file(fileName);
+
+            if (!file.open(QIODevice::ReadOnly))
+                return -1;
+
+            QByteArray wholeFile = file.readAll();
+
+            scene->loadFromMemory(wholeFile);
+            this->configureAll();
+            this->runAll();
+        } else {
+            mainWidget.showNormal();
+        }
 
         return kids_app->exec();
     
@@ -266,6 +292,31 @@ namespace flow{
             }
         }
         
+    }
+
+    void FlowVisualInterface::configureAll() {
+        auto nodes = scene->allNodes();
+
+        for (auto node : nodes) {
+            NodeDataModel* dataModel = node->nodeDataModel();
+            // This conversion is not safe but, all nodes in slam4kids are ConfigurableBlocks
+            auto d_ptr = dynamic_cast<ConfigurableBlock*>(dataModel);
+            if (d_ptr != nullptr)
+                d_ptr->configure();
+        }
+
+    }
+
+    void FlowVisualInterface::runAll() {
+        auto nodes = scene->allNodes();
+
+        for (auto node : nodes) {
+            NodeDataModel* dataModel = node->nodeDataModel();
+            // This conversion is not safe but, all nodes in slam4kids are ConfigurableBlocks
+            auto d_ptr = dynamic_cast<RunnableBlock*>(dataModel);
+            if (d_ptr != nullptr)
+                d_ptr->run();
+        }
     }
 
 }

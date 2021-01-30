@@ -33,6 +33,9 @@
 
 #include <functional>
 
+namespace QtNodes{
+    class FlowScene;
+}
 
 namespace flow{
 
@@ -53,9 +56,12 @@ namespace flow{
 
         private:
             void loadCustomPlugins(std::shared_ptr<QtNodes::DataModelRegistry> &_registry);
+            void configureAll();
+            void runAll();
 
         private:
             QApplication *kids_app;
+            QtNodes::FlowScene* scene;
 
             std::shared_ptr<QtNodes::DataModelRegistry> nodeRegistry_;
             std::function<void(std::shared_ptr<QtNodes::DataModelRegistry> &_registry)> registerFn_ = nullptr;

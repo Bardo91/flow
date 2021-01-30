@@ -79,8 +79,12 @@ if(${Eigen3_FOUND})
   target_include_directories(${PROJECT_NAME} PUBLIC "/usr/include/eigen3")
 endif()
 
-find_package(Boost REQUIRED COMPONENTS system filesystem)
-target_link_libraries(${PROJECT_NAME} LINK_PUBLIC Boost::boost Boost::system Boost::filesystem)
+find_package(Boost REQUIRED COMPONENTS system filesystem program_options exception)
+target_link_libraries(${PROJECT_NAME} LINK_PUBLIC Boost::boost 
+                                                  Boost::system 
+                                                  Boost::filesystem 
+                                                  Boost::program_options 
+                                                  Boost::exception)
 
 if(WIN32)
     find_package(dlfcn-win32 REQUIRED)
