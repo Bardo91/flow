@@ -42,6 +42,7 @@ namespace flow{
 
     class PolicyInput{
     public:
+        PolicyInput(std::string _tag, std::string _type) :tag_(_tag), typeName_(_type) {};
         std::string tag(){return tag_;};
         std::string typeName(){return typeName_;};
     protected:
@@ -51,10 +52,7 @@ namespace flow{
 
     template<typename T_>
     struct PolicyInputTemplate: public PolicyInput {
-        PolicyInputTemplate(std::string const &_tag){
-            tag_ = _tag;
-            typeName_ = typeid(T_).name();
-        }
+        PolicyInputTemplate(std::string const &_tag): PolicyInput(_tag, typeid(T_).name()){ }
     };
 
     template<typename T_>
