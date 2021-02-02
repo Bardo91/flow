@@ -58,6 +58,7 @@ namespace flow{
             void loadCustomPlugins(std::shared_ptr<QtNodes::DataModelRegistry> &_registry);
             void configureAll();
             void runAll();
+            void setStyle();
 
         private:
             QApplication *kids_app;
