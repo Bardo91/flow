@@ -84,7 +84,13 @@ namespace flow{
                     }
                 }
             }
-            throw std::invalid_argument("Bad tag type when getting data from DataFlow");
+
+            if constexpr (std::is_arithmetic_v<T_>)
+                return 0;
+            else if constexpr (std::is_default_constructible_v<T_>)
+                return T_();
+            else
+                throw std::invalid_argument("Bad tag type when getting data from DataFlow");
         }
 
         template<>
