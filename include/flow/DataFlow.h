@@ -70,20 +70,20 @@ namespace flow{
 
         template<typename T_>
         inline T_ DataFlow::get(std::string const &_tag){
-            if(types_.find(_tag) == types_.end()){
-                throw std::invalid_argument("Input tag does not exist, Add it as policy");
-            } 
-            
-            if(strcmp(typeid(T_).name(), data_[_tag].type().name()) == 0 ){
-                return std::any_cast<T_>(data_[_tag]);                
-            }else{
-                if( auto iter = conversions_.find(data_[_tag].type().name()); iter != conversions_.end()){
-                    if(iter->second.find(typeid(T_).name()) != iter->second.end()){
-                        std::function<std::any(std::any&)> fn = iter->second[typeid(T_).name()];
-                        return std::any_cast<T_>(fn(data_[_tag]));
+            if(types_.find(_tag) != types_.end()){
+                //throw std::invalid_argument("Input tag does not exist, Add it as policy");
+                if(strcmp(typeid(T_).name(), data_[_tag].type().name()) == 0 ){
+                    return std::any_cast<T_>(data_[_tag]);                
+                }else{
+                    if( auto iter = conversions_.find(data_[_tag].type().name()); iter != conversions_.end()){
+                        if(iter->second.find(typeid(T_).name()) != iter->second.end()){
+                            std::function<std::any(std::any&)> fn = iter->second[typeid(T_).name()];
+                            return std::any_cast<T_>(fn(data_[_tag]));
+                        }
                     }
                 }
-            }
+            } 
+            
 
             if constexpr (std::is_arithmetic_v<T_>)
                 return 0;
