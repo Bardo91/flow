@@ -98,8 +98,8 @@ namespace flow{
         // Parse arguments
         po::options_description desc("Allowed options");
         desc.add_options()
-            ("help", "produce help message")
-            ("mico_graph", po::value<std::string>(), "Path to existing mico graph")
+            ("help,h", "produce help message")
+            ("mico_graph,g", po::value<std::string>(), "Path to existing mico graph")
         ;
 
         po::variables_map vm;        
