@@ -99,8 +99,14 @@ namespace flow{
             return { lName_, type_, static_cast<QSpinBox*>(value_)->value()};
             break;
         case ConfigParameterDef::eParameterType::DECIMAL:
-            return { lName_, type_, std::stof(static_cast<QLineEdit*>(value_)->text().toStdString())};
+        {
+            std::stringstream ss;
+            ss << static_cast<QLineEdit*>(value_)->text().toStdString();
+            float val;
+            ss >> val;
+            return { lName_, type_, val};
             break;
+        }
         case ConfigParameterDef::eParameterType::STRING:
             return { lName_, type_, static_cast<QLineEdit*>(value_)->text().toStdString()};
             break;
