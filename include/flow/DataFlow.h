@@ -37,17 +37,25 @@
 
 namespace flow{
         
+    /// Base class of flow that a flow of data. It manages the implicit conversion of data through the streams and call the 
+    /// associated callbacks. It is used in input policies to generate automatic data flows.
+    /// @ingroup  flow
     class DataFlow{
     public:
+        /// Construct a data flow with a set if input flows and associate a callback to it.
         DataFlow(std::map<std::string, std::string> _flows, std::function<void(DataFlow _f)> _callback);
 
+        /// Update an specific input tag. If all the inputs have been satisfied then the callback is called.
         void update(std::string _tag, std::any _data);
 
+        /// Query to check internal status of data and update the DataFlow
         void checkData();
 
+        /// Templatized method to get data of any type. Get methods are implemented all around the different plugins
         template<typename T_>
         T_ get(std::string const &_tag);
 
+        /// Get the current frequency at which the DataFlow is triggering the callback.
         float frequency() const;
 
     private:

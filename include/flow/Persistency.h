@@ -25,6 +25,10 @@
 #include <string>
 
 namespace flow{
+
+    
+    /// Base class of flow that is used to get the root folders of flow
+    /// @ingroup  flow
     class Persistency{
     public:
         static std::string resourceDir () {

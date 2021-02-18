@@ -48,6 +48,7 @@ public:
             }      
         }
 
+        /// Configure block with given parameters.
         virtual bool configure(std::vector<flow::ConfigParameterDef> _params) override { 
             if(_params["init_value"] != ""){
                 std::istringstream istr(_params["init_value"]);
@@ -57,7 +58,8 @@ public:
                 return false;
             } 
         };
-        virtual std::vector<flow::ConfigParameterDef> parameters() override{ return {"init_value"}; };
+        virtual /// Get list of parameters of the block
+        std::vector<flow::ConfigParameterDef> parameters() override{ return {"init_value"}; };
 private:
     float counter_  = 1.0;
 };
@@ -95,6 +97,7 @@ public:
             }      
         }
 
+        /// Configure block with given parameters.
         virtual bool configure(std::vector<flow::ConfigParameterDef> _params) override { 
             if(_params["init_value"] != ""){
                 std::istringstream istr(_params["init_value"]);
@@ -104,7 +107,8 @@ public:
                 return false;
             } 
         };
-        virtual std::vector<flow::ConfigParameterDef> parameters() override{ return {"init_value"}; };
+        virtual /// Get list of parameters of the block
+        std::vector<flow::ConfigParameterDef> parameters() override{ return {"init_value"}; };
 private:
     int counter_  = 1;
 };

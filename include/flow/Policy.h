@@ -40,10 +40,18 @@
 namespace flow{
     class Outpipe;
 
+
+    /// Base class of flow that represents a single input stream.
+    /// @ingroup  flow
     class PolicyInput{
     public:
+        /// Build an input stream with a given name and type
         PolicyInput(std::string _tag, std::string _type) :tag_(_tag), typeName_(_type) {};
+
+        /// Get stream name
         std::string tag(){return tag_;};
+        
+        /// Get stream type
         std::string typeName(){return typeName_;};
     protected:
         std::string tag_;

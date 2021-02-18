@@ -58,47 +58,77 @@ namespace flow{
         std::vector<std::string> asOptions()    const { assert(type_ == eParameterType::OPTIONS); return std::any_cast<std::vector<std::string>>(value_); };
     };
 
+    
+    /// Base class of flow that represents a functioning block. A Block represents an action or module with an specific
+    /// behaviour or implemented algorithm. Is composed by a set of N inputs and M outputs and the associated internal actions.
+    /// @ingroup  flow
     class Block{
     public:
+        /// Get name of block
         virtual std::string name() const {return "Unnammed";}
         
+        /// Base destructor
         ~Block();
 
         // BASE METHODS
+        /// Configure block with given parameters.
         virtual bool configure(std::vector<flow::ConfigParameterDef> _params) { return false; };
+        
+        /// Get list of parameters of the block
         virtual std::vector<flow::ConfigParameterDef> parameters(){ return {}; };
 
         [[deprecated("This function gives the map with all pipes, please use getPipe method and get just the needed")]]
         std::unordered_map<std::string, std::shared_ptr<Outpipe>>  getPipes();
         
+        /// Get pointer to output pipe by tag
         std::shared_ptr<Outpipe> getPipe(std::string _tag);
 
+        /// If the block is auto runnable, start it.
         void start();
+
+        /// If the block is auto runnable, stop it.
         void stop();
         
         // void operator()(std::unordered_map<std::string,std::any> _data, std::unordered_map<std::string,bool> _valid);
 
+        /// Retreive number of inputs.
         int nInputs();
+
+        /// Retreive list of input tags
         std::vector<std::string> inputTags();
 
+        /// Retreive number of outputs
         int nOutputs();
+
+        /// Retreive list of output tags
         std::vector<std::string> outputTags();
 
+        /// Retreive input policy
         Policy* getPolicy();
 
+        /// Connect an output pipe of current block with an input policy tag of another block. This method is used by 
+        /// the system for the low level connection of blocks. 
         void connect(std::string _pipeTag, std::string _policyTag, Block& _otherBlock);
 
+        /// Disconnect a connected output pipe
         void disconnect(std::string _pipeTag);
 
+        /// Virtual method to be override by sons. Get custom view widget to be display in the graph
         virtual QWidget * customWidget() { return nullptr; };
+
+        /// Virtual method to be override by sons. Get custom view widget to be display in the creation context menu
         virtual QBoxLayout * creationWidget() { return nullptr; };
         
+        /// Virtual method to tell the interface if the visual block is resizable or not.
         virtual bool resizable() const { return false; }
 
+        /// Returns a brief description of the block
         virtual std::string description() const {return "Flow block without description";};
 
+        /// Virtual method. Retrieve icon of block. By default, the icon is a question mark.
         virtual QIcon icon() const { return QIcon((Persistency::resourceDir()+"question.svg").c_str()); };
 
+        /// Get specific parameter from list of parameter by name.
         std::optional<ConfigParameterDef> getParamByName(const std::vector<flow::ConfigParameterDef> &_params, const std::string &_pname);
 
     protected:

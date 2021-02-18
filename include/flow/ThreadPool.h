@@ -32,6 +32,10 @@
 #include <vector>
 
 namespace flow{
+    
+    /// Base class of flow that handles the creation of multiple threads to optimize their usage
+    /// over the flow architecture.
+    /// @ingroup  flow
     class ThreadPool{
     public:
         using Task = std::function<void()>;
