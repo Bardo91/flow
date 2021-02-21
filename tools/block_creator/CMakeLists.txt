@@ -20,17 +20,17 @@
 ##  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ##---------------------------------------------------------------------------------------------------------------------
 
-add_executable(flow_kids flow_kids.cpp)
-target_include_directories(flow_kids PUBLIC ../include)
-target_link_libraries(flow_kids LINK_PUBLIC flow)
 
-add_subdirectory(block_creator)
+file(GLOB_RECURSE SRC_FILES "src/*.cpp")
+file(GLOB_RECURSE HDR_FILES "src/*.h" "src/*.inl" "include/*.h")
+file(GLOB_RECURSE UI_SOURCES "src/*.ui" )
+file(GLOB_RECURSE QRC_SOURCES "src/*.qrc" )
 
-### Add test with input file
-# find_package(fastcom REQUIRED)
-# find_package(catkin COMPONENTS roscpp )#dvs_msgs)
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-# add_executable(speed_test speed_test.cpp)
-# target_link_libraries(speed_test LINK_PRIVATE flow fastcom)
-# target_link_libraries(speed_test LINK_PUBLIC ${catkin_LIBRARIES})
-# target_include_directories(speed_test PUBLIC ${catkin_INCLUDE_DIRS})
+qt5_wrap_ui(SRC_UI_FILES ${UI_SOURCES})
+
+add_executable(block_creator ${SRC_FILES} ${SRC_UI_FILES} ${HDR_FILES} ${SRC_QRC_FILES})
+set_target_properties(block_creator PROPERTIES CXX_STANDARD 17)
+target_include_directories(block_creator PUBLIC ../include include)
+target_link_libraries(block_creator LINK_PUBLIC flow)
