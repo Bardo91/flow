@@ -46,6 +46,11 @@ namespace flow{
             void addOutput();
 
         private:
+            void generateCurrent();
+            void loadTemplate();
+
+
+        private:
             Ui::BlockCreator *ui_;
             std::vector<InputOutputItemWidget*> inputs_;
             std::vector<InputOutputItemWidget*> outputs_;

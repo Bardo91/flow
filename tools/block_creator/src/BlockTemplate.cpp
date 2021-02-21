@@ -20,12 +20,19 @@
 //---------------------------------------------------------------------------------------------------------------------
 
 #include <block_creator/BlockTemplate.h>
+#include <block_creator/TemplateHeader.h>
+#include <block_creator/TemplateSource.h>
 
+#include <QString>
+
+#include <fstream>
+#include <sstream>
 
 namespace flow{
     namespace creator{
         void BlockTemplate::generate(const std::string &_path){
-
+            generateHeader(_path);
+            generateSource(_path);
         }
 
         void BlockTemplate::name(const std::string &_name){
@@ -66,6 +73,68 @@ namespace flow{
         std::vector<std::string> BlockTemplate::callbacks() const{
             return callbacks_;
         }
+
+
+        void BlockTemplate::generateHeader(const std::string &_path){
+            QString formattedHeader(templateHeader.c_str());
+
+            formattedHeader= formattedHeader    .arg(name_.c_str())
+                                                .arg("Empty description");
+
+            std::ofstream file(name_+".h");
+            file << formattedHeader.toStdString();
+        }
+
+        void BlockTemplate::generateSource(const std::string &_path){
+            // Init file
+            std::ofstream file(name_+".cpp");
+            file << templatePolicy;
+            {
+                QString formatStr(templateBasicIncludesSources.c_str());
+                formatStr =  formatStr.arg(name_.c_str());
+                file << formatStr.toStdString();
+            }
+            
+            // Init constructor
+            {
+                QString formatStr(templateInitConstructor.c_str());
+                formatStr =  formatStr.arg(name_.c_str());
+                file << formatStr.toStdString();
+            }
+
+            // Create pipes
+            for(auto output:outputs_){
+                QString templatePipe(templatePipeCreation.c_str());
+                templatePipe = templatePipe .arg(output.first.c_str())
+                                            .arg(output.second.c_str());
+                file << templatePipe.toStdString();
+            }
+
+
+            // Create policy
+            std::stringstream policy;
+            for(unsigned i = 0; i < inputs_.size(); i++){
+                QString temInput(templateInput.c_str());
+                temInput = temInput .arg(inputs_[i].first.c_str())
+                                    .arg(inputs_[i].second.c_str());
+                policy << temInput.toStdString();
+                if(i < inputs().size()-1) policy << ",";
+            }
+            if(inputs_.size()!= 0){
+                QString formatStr(templatePolicyCreation.c_str());
+                formatStr =  formatStr.arg(policy.str().c_str());
+                file << formatStr.toStdString();
+            }
+
+            // Create callbacks
+
+            // End constructor
+            file << templateEndConstructor;
+
+
+        }
+
+
 
     }
 }

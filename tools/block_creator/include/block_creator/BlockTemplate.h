@@ -47,12 +47,17 @@ namespace flow{
             std::vector<std::string> callbacks() const;
 
         private:
+            void generateHeader(const std::string &_path);
+            void generateSource(const std::string &_path);
+
+        private:
             std::string name_;
             std::vector<InputOutputInfo> inputs_;
             std::vector<InputOutputInfo> outputs_;
             std::vector<std::string> callbacks_;
 
         };
+
     }
 }
 

@@ -23,6 +23,7 @@
 #include <block_creator/BlockCreatorWindow.h>
 #include <block_creator/InputOutputItemWidget.h>
 #include <block_creator/CallbackConfigWidget.h>
+#include <block_creator/BlockTemplate.h>
 
 #include "ui_BlockCreator.h"
 
@@ -40,6 +41,8 @@ namespace flow{
 
             ui_->callbacks_tabs->addTab(new CallbackConfigWidget(this), "Callback 1");
             ui_->callbacks_tabs->removeTab(0);
+
+            connect(ui_->actionGenerate, &QAction::triggered, this, &BlockCreatorWindow::generateCurrent);
         }
 
         BlockCreatorWindow::~BlockCreatorWindow(){
@@ -74,7 +77,23 @@ namespace flow{
         }
 
         void BlockCreatorWindow::generateCurrent(){
-            
+            BlockTemplate blockTemplate;
+
+            blockTemplate.name(ui_->block_name->text().toStdString());
+
+            std::vector<BlockTemplate::InputOutputInfo> outputs;
+            for(auto output: outputs_){
+                outputs.push_back(std::make_pair(output->name(), output->type()));
+            }
+            blockTemplate.outputs(outputs);
+
+            std::vector<BlockTemplate::InputOutputInfo> inputs;
+            for(auto input: inputs_){
+                inputs.push_back(std::make_pair(input->name(), input->type()));
+            }
+            blockTemplate.inputs(inputs);
+
+            blockTemplate.generate("");
         }
 
         void BlockCreatorWindow::loadTemplate(){
