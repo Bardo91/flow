@@ -131,10 +131,10 @@ namespace flow{
                 QString templatePipe(cb.c_str());
 
                 /// Capture inputs
-                QRegExp inputRx("FLOW_INPUT(\\a+, \\a+)");
+                //QRegExp inputRx("FLOW_INPUT(\\a+, \\a+)");
 
                 /// Capture outputs
-                QRegExp outputRx("FLOW_OUTPUT(\\a+, \\a+)");
+                //QRegExp outputRx("FLOW_OUTPUT(\\a+, \\a+)");
                 
 
                 file << templatePipe.toStdString();

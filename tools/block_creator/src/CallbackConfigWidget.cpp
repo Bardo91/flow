@@ -35,7 +35,7 @@ namespace flow{
         }
 
         std::string CallbackConfigWidget::callback(){
-            return method_->text().toStdString();
+            //return method_->text().toStdString();
         };
     }
 }
