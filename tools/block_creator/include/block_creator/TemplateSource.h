@@ -77,7 +77,29 @@ namespace flow{
     /// 1) name of class
     static const std::string templateInitConstructor = 
         "%1::%1(){\n";
+    
     static const std::string templateEndConstructor = 
         "};\n";
+
+    /// Arguments substitution:
+    /// 1) name of input
+    /// 2) type of input
+    static const std::string templateGetData = "_data.get<%2>(\"%1\");\n";
+    
+    
+    /// Arguments substitution:
+    /// 1) name of output
+    /// 2) variable to be flushed
+    static const std::string templateFlushData = "getPipe(\"%1\")->flush(%2);\n";
+
+    /// Arguments substitution:
+    /// 1) inputs
+    /// 2) method function
+    static const std::string templateCallback = 
+    "registerCallback({%1}, \n"
+    "                        [&](flow::DataFlow _data){\n"
+    "                           %2"
+    "                        }\n"
+    ");\n";
 
 }

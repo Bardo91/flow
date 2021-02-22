@@ -33,5 +33,9 @@ namespace flow{
             method_ = new QTextEdit();
             l->addWidget(method_);
         }
+
+        std::string CallbackConfigWidget::callback(){
+            return method_->text().toStdString();
+        };
     }
 }

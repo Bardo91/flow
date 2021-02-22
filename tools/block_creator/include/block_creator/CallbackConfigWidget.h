@@ -34,6 +34,8 @@ namespace flow{
         public:
             CallbackConfigWidget(QWidget *_parent = nullptr);
             
+            std::string callback();
+            
         private:
             QTextEdit *method_;
         };

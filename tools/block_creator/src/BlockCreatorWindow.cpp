@@ -93,6 +93,13 @@ namespace flow{
             }
             blockTemplate.inputs(inputs);
 
+            std::vector<std::string> callbacks;
+            // 666 make this better
+            CallbackConfigWidget* ccw = (CallbackConfigWidget*) ui_->callbacks_tabs->currentWidget();
+            callbacks.push_back(ccw->callback());
+            blockTemplate.callbacks(callbacks);
+
+
             blockTemplate.generate("");
         }
 
