@@ -31,6 +31,9 @@ endif()
 #########################################
 ######			General config	   ######
 #########################################
+find_package(Qt5 REQUIRED COMPONENTS Core Widgets Gui)
+
+
 option(BUILD_EXAMPLES   "Compile examples"              OFF)
 option(BUILD_TESTS      "Prepare tests"                 OFF)
 option(BUILD_TOOLS      "Build tools"                   ON)
@@ -63,8 +66,6 @@ endif()
 if(${BUNDLE_COMPILATION})
   target_link_libraries(${PROJECT_NAME} LINK_PUBLIC NodeEditor::nodes)
   target_compile_definitions(${PROJECT_NAME} PUBLIC HAS_QTNODEEDITOR)
-  # find_package(Qt5 5.3 COMPONENTS Core Widgets Gui OpenGL)
-  # target_link_libraries(${PROJECT_NAME} PUBLIC Qt5::Core Qt5::Widgets Qt5::Gui Qt5::OpenGL )
 else()
   find_package(NodeEditor)
   if(${NodeEditor_FOUND})
@@ -98,6 +99,8 @@ target_compile_definitions(${PROJECT_NAME}
   PRIVATE
     FLOW_EXPORTS
 )
+
+target_link_libraries(${PROJECT_NAME} PUBLIC Qt5::Core Qt5::Widgets)
 
 add_custom_target(flow_resources ALL
                 COMMAND ${CMAKE_COMMAND} -E copy_directory 	${CMAKE_CURRENT_SOURCE_DIR}/resources 
