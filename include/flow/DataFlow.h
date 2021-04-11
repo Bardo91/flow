@@ -112,10 +112,7 @@ namespace flow {
     #define INIT_FLOW_CONVERSION_MAP()                                                                                  \
         std::map<std::string, std::map<std::string, std::function<std::any(std::any&)>>> flow::DataFlow::conversions_ = {};
 #else
-    #define INIT_FLOW_CONVERSION_MAP()          \
-        #ifndef DUMMY_FLOW                      \
-            #define DUMMY_FLOW                  \
-        #endif                                  
+    #define INIT_FLOW_CONVERSION_MAP()                             
 #endif
 
 #define FLOW_CONVERSION_REGISTER(Type1_, Type2_, conversion_)                                                       \
