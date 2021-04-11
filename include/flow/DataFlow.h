@@ -74,65 +74,48 @@ namespace flow{
 
 }
 
-namespace flow{
+namespace flow {
 
-        template<typename T_>
-        inline T_ DataFlow::get(std::string const &_tag){
-            if(types_.find(_tag) != types_.end()){
-                //throw std::invalid_argument("Input tag does not exist, Add it as policy");
-                if(strcmp(typeid(T_).name(), data_[_tag].type().name()) == 0 ){
-                    return std::any_cast<T_>(data_[_tag]);                
-                }else{
-                    if( auto iter = conversions_.find(data_[_tag].type().name()); iter != conversions_.end()){
-                        if(iter->second.find(typeid(T_).name()) != iter->second.end()){
-                            std::function<std::any(std::any&)> fn = iter->second[typeid(T_).name()];
-                            return std::any_cast<T_>(fn(data_[_tag]));
-                        }
+    template<typename T_>
+    inline T_ DataFlow::get(std::string const &_tag){
+        if(types_.find(_tag) != types_.end()){
+            //throw std::invalid_argument("Input tag does not exist, Add it as policy");
+            if(strcmp(typeid(T_).name(), data_[_tag].type().name()) == 0 ){
+                return std::any_cast<T_>(data_[_tag]);                
+            }else{
+                if( auto iter = conversions_.find(data_[_tag].type().name()); iter != conversions_.end()){
+                    if(iter->second.find(typeid(T_).name()) != iter->second.end()){
+                        std::function<std::any(std::any&)> fn = iter->second[typeid(T_).name()];
+                        return std::any_cast<T_>(fn(data_[_tag]));
                     }
                 }
-            } 
-            
+            }
+        } 
+        
 
-            if constexpr (std::is_arithmetic_v<T_>)
-                return 0;
-            else if constexpr (std::is_default_constructible_v<T_>)
-                return T_();
-            else
-                throw std::invalid_argument("Bad tag type when getting data from DataFlow");
-        }
-
-        template<>
-        inline std::any DataFlow::get(std::string const& _tag) {
-            return data_[_tag];
-        }
+        if constexpr (std::is_arithmetic_v<T_>)
+            return 0;
+        else if constexpr (std::is_default_constructible_v<T_>)
+            return T_();
+        else
+            throw std::invalid_argument("Bad tag type when getting data from DataFlow");
     }
 
-// #define FLOW_TYPE_REGISTER(tagType_, Type_)                                                             \
-//     namespace flow{                                                                                     \
-//                                                                                                         \
-//         template<>                                                                                      \
-//         Type_ DataFlow::get<Type_>(std::string _tag){                                                   \
-//             if(types_.find(_tag) == types_.end() || types_[_tag] != data_[_tag].type().name() ){               \
-//                 if( conversions_.find(types_[_tag])!= conversions_.end() &&                             \
-//                     conversions_[types_[_tag]].find(typeid(Type_).name()) != conversions_[types_[_tag]].end() ){ \
-//                             std::cout << "Casting from " << types_[_tag] << " to " <<  typeid(Type_).name() << std::endl; \
-//                             std::function<std::any(std::any&)> fn = conversions_[types_[_tag]][typeid(Type_).name()]; \
-//                             return std::any_cast<Type_>(fn(data_[_tag]));       \
-//                         }else{                                                                          \
-//                             throw std::invalid_argument("Bad tag type when getting data from DataFlow");\
-//                         }                                                                               \
-//             }                                                                                           \
-//             std::cout << "flowing directly: " << types_[_tag] << "/ " << data_[_tag].type().name()  << std::endl; \
-//             return std::any_cast<Type_>(data_[_tag]);                                                   \
-//         }                                                                                               \
-//     }                                                                                                   \
+    template<>
+    inline std::any DataFlow::get(std::string const& _tag) {
+        return data_[_tag];
+    }
+}                                                                                \
 
 
 #if defined(WIN32)
     #define INIT_FLOW_CONVERSION_MAP()                                                                                  \
         std::map<std::string, std::map<std::string, std::function<std::any(std::any&)>>> flow::DataFlow::conversions_ = {};
 #else
-    #define INIT_FLOW_CONVERSION_MAP()
+    #define INIT_FLOW_CONVERSION_MAP()          \
+        #ifndef DUMMY_FLOW                      \
+            #define DUMMY_FLOW                  \
+        #endif                                  
 #endif
 
 #define FLOW_CONVERSION_REGISTER(Type1_, Type2_, conversion_)                                                       \
