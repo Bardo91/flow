@@ -31,12 +31,12 @@
 #include <unordered_map>
 #include <string>
 
-#include <any>
+#include <boost/any.hpp>
 #include <flow/Policy.h>
 #include <flow/Outpipe.h>
 
 #include <tuple>
-#include <any>
+#include <boost/any.hpp>
 
 #include <QtCore/QObject>
 #include <QBoxLayout>
@@ -50,12 +50,12 @@ namespace flow{
         enum eParameterType { BOOLEAN, INTEGER, DECIMAL, STRING, OPTIONS };
         std::string name_;
         eParameterType type_;
-        std::any value_;
-        bool                     asBool()       const { assert(type_ == eParameterType::BOOLEAN); return std::any_cast<bool>(value_); };
-        int                      asInteger()    const { assert(type_ == eParameterType::INTEGER); return std::any_cast<int>(value_); };
-        float                    asDecimal()    const { assert(type_ == eParameterType::DECIMAL); return std::any_cast<float>(value_); };
-        std::string              asString()     const { assert(type_ == eParameterType::STRING);  return std::any_cast<std::string>(value_); };
-        std::vector<std::string> asOptions()    const { assert(type_ == eParameterType::OPTIONS); return std::any_cast<std::vector<std::string>>(value_); };
+        boost::any value_;
+        bool                     asBool()       const { assert(type_ == eParameterType::BOOLEAN); return boost::any_cast<bool>(value_); };
+        int                      asInteger()    const { assert(type_ == eParameterType::INTEGER); return boost::any_cast<int>(value_); };
+        float                    asDecimal()    const { assert(type_ == eParameterType::DECIMAL); return boost::any_cast<float>(value_); };
+        std::string              asString()     const { assert(type_ == eParameterType::STRING);  return boost::any_cast<std::string>(value_); };
+        std::vector<std::string> asOptions()    const { assert(type_ == eParameterType::OPTIONS); return boost::any_cast<std::vector<std::string>>(value_); };
     };
 
     
@@ -89,7 +89,7 @@ namespace flow{
         /// If the block is auto runnable, stop it.
         void stop();
         
-        // void operator()(std::unordered_map<std::string,std::any> _data, std::unordered_map<std::string,bool> _valid);
+        // void operator()(std::unordered_map<std::string,boost::any> _data, std::unordered_map<std::string,bool> _valid);
 
         /// Retreive number of inputs.
         int nInputs();

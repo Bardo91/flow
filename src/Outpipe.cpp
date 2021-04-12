@@ -70,7 +70,7 @@ namespace flow{
         }
     }
 
-    void Outpipe::flush(std::any _data){
+    void Outpipe::flush(boost::any _data){
         policiesGuard.lock();
         for(auto p:registeredPolicies_){
             p->update(tagTranslators_[p], _data);

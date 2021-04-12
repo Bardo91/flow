@@ -28,7 +28,7 @@
 #include <vector>
 #include <cstdlib>
 
-#include <any>
+#include <boost/any.hpp>
 #include <unordered_map>
 #include <thread>
 #include <chrono>
@@ -61,7 +61,7 @@ namespace flow{
             int registrations();
 
             /// Flush data through the pipe
-            void flush(std::any _data);
+            void flush(boost::any _data);
 
             /// Get name of the pipe
             std::string tag() const;

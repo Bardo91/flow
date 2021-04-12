@@ -28,7 +28,7 @@
 #include <vector>
 #include <cstdlib>
 
-#include <any>
+#include <boost/any.hpp>
 #include <unordered_map>
 #include <thread>
 #include <chrono>
@@ -76,7 +76,7 @@ namespace flow{
 
             Policy(std::vector<PolicyInput*> _inputs);
             bool registerCallback(PolicyMask _mask, PolicyCallback _callback);
-            void update(std::string _tag, std::any _data);
+            void update(std::string _tag, boost::any _data);
     
             int nInputs();
             std::vector<std::string> inputTags();

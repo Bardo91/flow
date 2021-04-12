@@ -26,20 +26,20 @@
 namespace flow{
 
     #if defined(__linux__)
-        std::map<std::string, std::map<std::string, std::function<std::any(std::any&)>>> DataFlow::conversions_ = {};
+        std::map<std::string, std::map<std::string, std::function<boost::any(boost::any&)>>> DataFlow::conversions_ = {};
     #endif 
 
     DataFlow::DataFlow(std::map<std::string, std::string> _flows, std::function<void(DataFlow _f)> _callback){
         callback_ = _callback;
         for(auto &f:_flows){
             types_[f.first] = f.second;
-            data_[f.first] = std::any();
+            data_[f.first] = boost::any();
             updated_[f.first] = false;
         }
         lastUsageT_ = std::chrono::system_clock::now();
     }
 
-    void DataFlow::update(std::string _tag, std::any _data){
+    void DataFlow::update(std::string _tag, boost::any _data){
         if(data_.find(_tag)!= data_.end()){
             // Can we check here the type?
             data_[_tag] = _data;
@@ -81,8 +81,8 @@ namespace flow{
             }
         }
 
-        if( strcmp(typeid(std::any).name(), _to.c_str()) == 0 ||
-            strcmp(typeid(std::any).name(), _from.c_str()) == 0){ 
+        if( strcmp(typeid(boost::any).name(), _to.c_str()) == 0 ||
+            strcmp(typeid(boost::any).name(), _from.c_str()) == 0){ 
             return true;
         }
 

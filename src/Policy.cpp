@@ -56,7 +56,7 @@ namespace flow{
         return true;
     }
 
-    void Policy::update(std::string _tag, std::any _data){
+    void Policy::update(std::string _tag, boost::any _data){
         for(auto flow:flows_){
             flow->update(_tag, _data);
         }

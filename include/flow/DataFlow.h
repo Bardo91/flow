@@ -25,7 +25,7 @@
 
 #include <flow/Export.h>
 
-#include <any>
+#include <boost/any.hpp>
 #include <chrono>
 #include <cstdlib>
 #include <functional>
@@ -46,7 +46,7 @@ namespace flow{
         DataFlow(std::map<std::string, std::string> _flows, std::function<void(DataFlow _f)> _callback);
 
         /// Update an specific input tag. If all the inputs have been satisfied then the callback is called.
-        void update(std::string _tag, std::any _data);
+        void update(std::string _tag, boost::any _data);
 
         /// Query to check internal status of data and update the DataFlow
         void checkData();
@@ -60,7 +60,7 @@ namespace flow{
 
     private:
         std::map<std::string, std::string>  types_;
-        std::map<std::string, std::any>     data_;
+        std::map<std::string, boost::any>     data_;
         std::map<std::string, bool>         updated_;
         std::function<void(DataFlow _f)> callback_;
         
@@ -68,7 +68,7 @@ namespace flow{
         float usageFreq_ = 0;
 
     public:
-        static std::map<std::string, std::map<std::string, std::function<std::any(std::any&)>>> conversions_;
+        static std::map<std::string, std::map<std::string, std::function<boost::any(boost::any&)>>> conversions_;
         static bool checkIfConversionAvailable(std::string const &_from, std::string const &_to);
     };
 
@@ -81,12 +81,12 @@ namespace flow {
         if(types_.find(_tag) != types_.end()){
             //throw std::invalid_argument("Input tag does not exist, Add it as policy");
             if(strcmp(typeid(T_).name(), data_[_tag].type().name()) == 0 ){
-                return std::any_cast<T_>(data_[_tag]);                
+                return boost::any_cast<T_>(data_[_tag]);                
             }else{
                 if( auto iter = conversions_.find(data_[_tag].type().name()); iter != conversions_.end()){
                     if(iter->second.find(typeid(T_).name()) != iter->second.end()){
-                        std::function<std::any(std::any&)> fn = iter->second[typeid(T_).name()];
-                        return std::any_cast<T_>(fn(data_[_tag]));
+                        std::function<boost::any(boost::any&)> fn = iter->second[typeid(T_).name()];
+                        return boost::any_cast<T_>(fn(data_[_tag]));
                     }
                 }
             }
@@ -102,7 +102,7 @@ namespace flow {
     }
 
     template<>
-    inline std::any DataFlow::get(std::string const& _tag) {
+    inline boost::any DataFlow::get(std::string const& _tag) {
         return data_[_tag];
     }
 }                                                                                \
@@ -110,7 +110,7 @@ namespace flow {
 
 #if defined(WIN32)
     #define INIT_FLOW_CONVERSION_MAP()                                                                                  \
-        std::map<std::string, std::map<std::string, std::function<std::any(std::any&)>>> flow::DataFlow::conversions_ = {};
+        std::map<std::string, std::map<std::string, std::function<boost::any(boost::any&)>>> flow::DataFlow::conversions_ = {};
 #else
     #define INIT_FLOW_CONVERSION_MAP()                             
 #endif
