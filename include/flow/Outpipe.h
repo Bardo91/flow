@@ -51,6 +51,13 @@ namespace flow{
             /// Create an output pipe with a given name and type.
             Outpipe(std::string _tag, std::string _type);
 
+            /// Create an output pipe with a given name and type.
+            template<typename T_>
+            explicit Outpipe(std::string _tag){
+                type_ = typeid(T_).name();
+                tag_ = _tag;
+            }
+
             /// Associate an input stream to the pipe to be updated when the pipe flushes data.
             bool registerPolicy(Policy * _pol, std::string _policyTag);
 
