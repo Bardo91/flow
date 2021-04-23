@@ -46,6 +46,12 @@ namespace flow{
         void emplace(Task _task);
 
         ~ThreadPool();
+      
+        /// Get size of task queue
+        unsigned queueSize() {
+            return tasks_.size();
+        }
+        
     private:
         ThreadPool(size_t _nThreads);
     

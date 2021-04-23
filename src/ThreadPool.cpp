@@ -66,7 +66,8 @@ namespace flow{
                         task = std::move(tasks_.front());
                         tasks_.pop();
                     }
-                    task();
+                    if(task)
+                        task();
                 }
             });
         }
