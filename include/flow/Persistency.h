@@ -24,6 +24,16 @@
 
 #include <string>
 
+
+#if defined(__linux__)
+    #include <experimental/filesystem>  // Not implemented until g++8
+    namespace fs = std::experimental::filesystem;
+#elif defined(_WIN32)
+    #include <filesystem>
+    namespace fs = std::filesystem;
+#endif
+
+
 namespace flow{
 
     
@@ -31,12 +41,12 @@ namespace flow{
     /// @ingroup  flow
     class Persistency{
     public:
-        static std::string resourceDir () {
+        static fs::path resourceDir () {
             #if defined(_WIN32)
-                return "c:/.flow/plugins/resources/";
+                return "c:\\.flow\\plugins\\resources";
             #elif defined(__linux__)
                 std::string userDir(getenv("USER"));
-                std::string resourcesDir = "/home/"+userDir+"/.flow/plugins/resources/";
+                std::string resourcesDir = "/home/"+userDir+"/.flow/plugins/resources";
                 return resourcesDir;
             #endif
         }
