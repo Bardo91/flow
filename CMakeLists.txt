@@ -60,7 +60,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC
 ##################################################
 
 if(UNIX)
-    target_link_libraries(${PROJECT_NAME} LINK_PUBLIC pthread X11)
+    target_link_libraries(${PROJECT_NAME} LINK_PUBLIC pthread X11 stdc++fs)
 endif()
 
 if(${BUNDLE_COMPILATION})
